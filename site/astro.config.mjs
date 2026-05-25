@@ -2,14 +2,10 @@
 import { defineConfig } from 'astro/config';
 
 import react from '@astrojs/react';
-import tailwindcss from '@tailwindcss/vite';
 import mdx from '@astrojs/mdx';
 
-// https://astro.build/config
+// Tailwind v4 wired via PostCSS — avoids @tailwindcss/vite × rolldown-vite
+// binding incompatibility. See postcss.config.mjs.
 export default defineConfig({
   integrations: [react(), mdx()],
-
-  vite: {
-    plugins: [tailwindcss()]
-  }
 });
