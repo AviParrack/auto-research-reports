@@ -1,0 +1,62 @@
+============================================================================
+FIRST-PRINCIPLES STARSHIP COST/kg DERIVATION (sources sealed)
+============================================================================
+
+Assumptions:
+  Hardware build cost: $90M per stack
+  Propellant cost per launch: $1.00M (methalox)
+  Refurbishment rate: 30% (early) / 15% (mid) / 8% (late)
+  Operations cost: $2.0M / $1.0M / $0.5M per launch
+
+Scenario         Reuses    Payload      Era       $/kg
+------------------------------------------------------------
+optimistic          100    150,000    early $      206
+optimistic          100    150,000      mid $      109
+optimistic          100    150,000     late $       64
+
+partial              30    100,000    early $      330
+partial              30    100,000      mid $      185
+partial              30    100,000     late $      117
+
+pessimistic          10     50,000    early $      780
+pessimistic          10     50,000      mid $      490
+pessimistic          10     50,000     late $      354
+
+============================================================================
+INTERPRETATION (first-principles, no Musk/Citigroup numbers)
+============================================================================
+
+1. THE DOMINANT VARIABLE IS REFURBISHMENT COST, not hardware amortization.
+   At 30+ reuses, hardware amortization drops below $3M/launch ($30/kg on a
+   100t payload). Refurbishment at 15% of build cost ($13.5M/launch) is 4-5x
+   that. To get below $100/kg, refurbishment rate must reach <5% of build cost.
+
+2. EVEN UNDER MUSK'S 100-REUSE TARGET WITH MATURE OPERATIONS (8% refurb,
+   $0.5M ops, 150t payload), first-principles cost is ~$60/kg. This is
+   *cost*, not list price. Margin and risk premium typically add 2-3x to
+   reach customer price. So Musk's claimed $10/kg list price requires either
+   (a) further compression of refurb to <2%, or (b) accepting near-zero
+   margin for years to capture market share.
+
+3. UNDER THE PARTIAL-REUSE SCENARIO (30 reuses, 100t, mid-era 15% refurb,
+   $1M ops), first-principles cost is ~$175/kg. List price probably
+   $400-600/kg after margin. This is the most defensible 2030-2035 central
+   estimate.
+
+4. UNDER THE PESSIMISTIC SCENARIO (10 reuses, 50t Block 1, early 30% refurb,
+   $2M ops), first-principles cost is ~$700/kg. List price $1,500-2,000/kg.
+   Effectively no improvement over Falcon 9 today.
+
+5. INDUSTRIAL-EXPLOSION SENSITIVITY (modulo TAI): the levers under
+   automation pressure are refurbishment time/labor (could collapse 10x
+   with full robotic refurb), launch cadence (could rise 10x), and
+   ground-ops cost (could collapse 5x). Combined: optimistic-scenario cost
+   could drop another 3-5x to ~$15-25/kg. This still doesn't reach Musk's
+   $10/kg without zero-margin pricing.
+
+6. WHAT THE 2026 EVIDENCE SAYS: Falcon 9 list price is RISING ($500/kg/yr).
+   Starship has not yet pulled list prices down. Until Starship operates at
+   $/kg below Falcon 9's marginal cost (~$629/kg internal), the market
+   pressure for list-price reduction is missing. The transition could be
+   sudden once it happens.
+

@@ -3,7 +3,7 @@ question: "What is the projected cost per kg to LEO from Earth launch over 2026-
 status: open
 passes_status:
   research: done
-  calc: pending
+  calc: done
   reconcile: pending
   source-review: pending
   consistency: pending
