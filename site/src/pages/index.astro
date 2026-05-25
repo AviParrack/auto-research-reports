@@ -37,7 +37,9 @@ const reports = loadAllReports();
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') checkAndReload();
       });
-      setInterval(checkAndReload, 60000);
+      window.addEventListener('pageshow', () => checkAndReload());
+      window.addEventListener('focus', () => checkAndReload());
+      setInterval(checkAndReload, 30000);
     </script>
   </head>
   <body class="min-h-screen">

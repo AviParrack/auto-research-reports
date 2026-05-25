@@ -37,16 +37,28 @@ const tabs = [
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <script is:inline define:vars={{ BUILD_HASH }}>
       async function checkAndReload() {
+        const badge = document.getElementById('freshness-badge');
         try {
-          const resp = await fetch('/build-hash.txt', { cache: 'no-store' });
-          if (!resp.ok) return;
+          const resp = await fetch('/build-hash.txt?cb=' + Date.now(), { cache: 'no-store' });
+          if (!resp.ok) {
+            if (badge) { badge.textContent = '?'; badge.title = 'check failed ' + resp.status; }
+            return;
+          }
           const live = (await resp.text()).trim();
           if (live && live !== BUILD_HASH) {
+            if (badge) { badge.textContent = '↻'; badge.title = 'newer deploy detected, reloading'; }
             const url = new URL(location.href);
             url.searchParams.set('v', live);
             location.replace(url.toString());
+            return;
           }
-        } catch { /* offline or blocked — ignore */ }
+          if (badge) {
+            badge.textContent = '✓';
+            badge.title = 'latest (checked ' + new Date().toLocaleTimeString() + ')';
+          }
+        } catch (e) {
+          if (badge) { badge.textContent = '⚠'; badge.title = 'check error: ' + e; }
+        }
       }
       (async () => {
         try {
@@ -60,7 +72,9 @@ const tabs = [
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') checkAndReload();
       });
-      setInterval(checkAndReload, 60000);
+      window.addEventListener('pageshow', () => checkAndReload());
+      window.addEventListener('focus', () => checkAndReload());
+      setInterval(checkAndReload, 30000);
     </script>
   </head>
   <body class="min-h-screen">
@@ -97,7 +111,10 @@ const tabs = [
     </main>
     <footer class="max-w-6xl mx-auto px-6 py-6 mt-12 border-t border-[var(--color-line)] text-xs text-[var(--color-ink-soft)] flex justify-between">
       <div>report data updated {reportUpdatedStr}</div>
-      <div>site built {buildTime}</div>
+      <div>
+        site built <span class="font-mono">{buildTime}</span>
+        <span id="freshness-badge" class="ml-2 px-1.5 py-0.5 rounded bg-[var(--color-paper-dim)]" title="checking for new deploys...">⏳</span>
+      </div>
     </footer>
   </body>
 </html>
