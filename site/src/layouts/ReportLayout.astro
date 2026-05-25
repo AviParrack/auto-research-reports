@@ -80,8 +80,8 @@ const tabs = [
       <slot />
     </main>
     <footer class="max-w-6xl mx-auto px-6 py-6 mt-12 border-t border-[var(--color-line)] text-xs text-[var(--color-ink-soft)] flex justify-between">
-      <div>last updated {report.meta.last_updated}</div>
-      <div>built {buildTime} · auto-research engine</div>
+      <div>report data updated {String(report.meta.last_updated).replace(/T/, ' ').replace(/\.\d+Z?$/, '').replace(/Z$/, ' UTC')}</div>
+      <div>site built {buildTime}</div>
     </footer>
   </body>
 </html>
