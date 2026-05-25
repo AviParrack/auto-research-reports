@@ -1,11 +1,26 @@
 id: q4-gear-ratio
 question: "What capital-mass-to-product-mass ratio (Metzger's gear ratio) must lunar capital achieve for economic viability, and is this attainable with realistic ISRU technology?"
-status: open
+status: researching
 passes_status:
-  research: pending
+  research: done
   calc: pending
   reconcile: pending
   source-review: pending
   consistency: pending
   write: pending
-last_pass: 0
+last_pass: 1
+sources_gathered:
+  - metzger-2023
+sources_to_review:
+  - metzger-2023
+  - kornuta-tent
+  - sowers-tent
+  - pelech-strip-borehole
+  - charania-depascuale
+  - jones-strip-mining
+  - bennett-reassessment
+public_figures_to_review:
+  - philip-metzger
+  - george-sowers
+  - andrew-mccalip
+  - elon-musk
