@@ -64,12 +64,28 @@ const tabs = [
         theme: 'base',
         themeVariables: {
           fontFamily: 'Inter, system-ui, sans-serif',
-          fontSize: '14px',
+          fontSize: '18px',
+          primaryColor: '#fafaf7',
+          primaryTextColor: '#1a1a1a',
+          primaryBorderColor: '#4a4a4a',
+          lineColor: '#4a4a4a',
         },
         securityLevel: 'loose',
-        flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' },
+        flowchart: {
+          useMaxWidth: false,
+          htmlLabels: false,
+          curve: 'basis',
+          nodeSpacing: 30,
+          rankSpacing: 60,
+          padding: 14,
+        },
       });
     </script>
+    <style>
+      .mermaid svg { max-width: 100%; height: auto; }
+      .mermaid .node rect, .mermaid .node circle, .mermaid .node ellipse, .mermaid .node polygon { rx: 6; ry: 6; }
+      .mermaid .nodeLabel { padding: 0.4em 0.6em; font-size: 18px !important; line-height: 1.3 !important; }
+    </style>
 
     {/* Tippy.js for hover tooltips on glossary terms + source citations */}
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
@@ -162,6 +178,7 @@ const tabs = [
     <script is:inline>
       (function() {
         let initialised = false;
+        let selectedIdx = -1;
         function tryInit() {
           if (initialised) return;
           if (typeof PagefindUI !== 'function') { return setTimeout(tryInit, 100); }
@@ -177,26 +194,104 @@ const tabs = [
           });
           initialised = true;
         }
+
+        function getResultLinks() {
+          // Pagefind renders results inside #search-target. Each result is a
+          // .pagefind-ui__result with an <a> wrapping the title.
+          return Array.from(document.querySelectorAll('#search-target .pagefind-ui__result a'));
+        }
+
+        function highlight(idx) {
+          const links = getResultLinks();
+          if (links.length === 0) return;
+          if (idx < 0) idx = links.length - 1;
+          if (idx >= links.length) idx = 0;
+          selectedIdx = idx;
+          links.forEach((a, i) => {
+            if (i === idx) {
+              a.style.background = 'var(--color-paper-dim)';
+              a.style.outline = '2px solid var(--color-accent)';
+              a.style.outlineOffset = '2px';
+              a.scrollIntoView({ block: 'nearest' });
+            } else {
+              a.style.background = '';
+              a.style.outline = '';
+            }
+          });
+        }
+
+        function openSelected() {
+          const links = getResultLinks();
+          if (selectedIdx >= 0 && selectedIdx < links.length) {
+            links[selectedIdx].click();
+          } else if (links.length > 0) {
+            links[0].click();
+          }
+        }
+
+        function closeSearch() {
+          document.getElementById('search-modal').classList.add('hidden');
+          selectedIdx = -1;
+        }
+        window.__closeSearch = closeSearch;
+
         document.addEventListener('keydown', (e) => {
-          // Cmd+K (Mac) or Ctrl+K (Windows/Linux)
+          const modal = document.getElementById('search-modal');
+          const isOpen = modal && !modal.classList.contains('hidden');
+
+          // Cmd+K / Ctrl+K toggles open
           if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
             e.preventDefault();
             tryInit();
-            const m = document.getElementById('search-modal');
-            m.classList.remove('hidden');
-            setTimeout(() => {
-              const inp = m.querySelector('input');
-              if (inp) inp.focus();
-            }, 50);
+            if (isOpen) {
+              closeSearch();
+            } else {
+              modal.classList.remove('hidden');
+              setTimeout(() => {
+                const inp = modal.querySelector('input');
+                if (inp) inp.focus();
+              }, 50);
+            }
+            return;
           }
+
+          if (!isOpen) return;
+
           if (e.key === 'Escape') {
-            const m = document.getElementById('search-modal');
-            if (m && !m.classList.contains('hidden')) m.classList.add('hidden');
+            closeSearch();
+            return;
+          }
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            highlight(selectedIdx + 1);
+            return;
+          }
+          if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            highlight(selectedIdx - 1);
+            return;
+          }
+          if (e.key === 'Enter') {
+            const inp = modal.querySelector('input');
+            // If a result is highlighted, open it. Otherwise let Enter run a search.
+            if (selectedIdx >= 0) {
+              e.preventDefault();
+              openSelected();
+            } else if (inp && inp.value && getResultLinks().length > 0) {
+              e.preventDefault();
+              highlight(0);
+              openSelected();
+            }
+            return;
           }
         });
-        window.__closeSearch = () => {
-          document.getElementById('search-modal').classList.add('hidden');
-        };
+
+        // Reset highlight when user types in the search box
+        document.addEventListener('input', (e) => {
+          if (e.target && e.target.closest && e.target.closest('#search-target')) {
+            selectedIdx = -1;
+          }
+        });
       })();
     </script>
 

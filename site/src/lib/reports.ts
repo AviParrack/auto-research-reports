@@ -276,9 +276,8 @@ export function buildMermaidTree(report: Report, slug: string): string {
   lines.push("  classDef synthesis fill:#f0efe9,stroke:#4a4a4a,stroke-width:1px,color:#1a1a1a;");
   lines.push("  classDef constraint fill:#fafaf7,stroke:#9ca3af,stroke-width:1px,stroke-dasharray:4 3,color:#1a1a1a;");
 
-  // Root node
-  const rootLabel = '"' + truncateForMermaid(report.tree.root.question, 50) + '"';
-  lines.push(`  root[${rootLabel}]:::root`);
+  // Root node — short label only (full question lives in title attribute)
+  lines.push(`  root["${escapeMermaidLabel(report.tree.root.question, 60)}"]`);
   lines.push(`  click root "/${slug}/" "Report"`);
 
   // Each top-level node
@@ -289,8 +288,10 @@ export function buildMermaidTree(report: Report, slug: string): string {
     const totalCount = subPasses.length;
 
     const safeId = node.id.replace(/[^a-zA-Z0-9]/g, '_');
-    const shortLabel = node.id + (totalCount > 0 ? `<br/>${doneCount}/${totalCount}` : '');
-    const labelText = '"`' + shortLabel + '`"';
+    // Clean single-line label: id and progress on one line.
+    // Avoid <br/>, markdown ticks, special chars that confuse the Mermaid parser.
+    const progress = totalCount > 0 ? ` ${doneCount}/${totalCount}` : '';
+    const labelText = `"${escapeMermaidLabel(node.id + progress, 32)}"`;
     lines.push(`  ${safeId}[${labelText}]`);
 
     // Edge from parent
@@ -313,6 +314,16 @@ export function buildMermaidTree(report: Report, slug: string): string {
 
 function truncateForMermaid(s: string, max: number): string {
   const t = s.replace(/[`"]/g, "'");
+  return t.length > max ? t.slice(0, max - 1) + '…' : t;
+}
+
+/** Cleans label text for inside Mermaid double-quoted node text. */
+function escapeMermaidLabel(s: string, max: number): string {
+  const t = s
+    .replace(/[`<>]/g, '')      // strip backticks + HTML brackets
+    .replace(/"/g, "'")          // double → single quote to stay inside the wrapper
+    .replace(/\s+/g, ' ')        // collapse whitespace
+    .trim();
   return t.length > max ? t.slice(0, max - 1) + '…' : t;
 }
 
