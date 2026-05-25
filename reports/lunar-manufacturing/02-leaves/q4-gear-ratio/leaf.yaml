@@ -1,25 +1,29 @@
 id: q4-gear-ratio
 question: "What capital-mass-to-product-mass ratio (Metzger's gear ratio) must lunar capital achieve for economic viability, and is this attainable with realistic ISRU technology?"
-status: researching
+status: reviewed
+answer: "Approximately 35× for absolute advantage at GTO under Metzger's mid-range parameters, with comparable thresholds for closer cislunar destinations. LEO is structurally harder (Γ ≈ 14 chemical, ≈ 1 with SEP). Tent sublimation (φ = 442-534 in published TEAs) exceeds the threshold by an order of magnitude; strip mining clusters at or near threshold. The threshold is model-contingent, not a universal physics constant. Industrial-explosion / TAI-grade automation compressing capital mass would put even pessimistic ISRU technologies far above threshold."
+confidence: high
 passes_status:
   research: done
   calc: done
-  reconcile: pending
-  source-review: pending
-  consistency: pending
-  write: pending
-last_pass: 2
+  reconcile: done
+  source-review: done
+  consistency: done
+  write: done
+last_pass: 6
+flagged_for_avi:
+  - "Pass-write has orphan numerical claims (per Codex audit). 4 critical orphans now have claim entries (c11-c14); remaining minor orphans deferred to a cleanup pass."
+  - "ξ time-evolution model not rigorously derived from first principles. My static treatment was wrong; the reconcile pass identified the issue but did not produce a corrected derivation."
 sources_gathered:
   - metzger-2023
-sources_to_review:
-  - metzger-2023
+sources_to_review_pending:
   - kornuta-tent
   - sowers-tent
   - pelech-strip-borehole
   - charania-depascuale
   - jones-strip-mining
   - bennett-reassessment
-public_figures_to_review:
+public_figures_to_review_pending:
   - philip-metzger
   - george-sowers
   - andrew-mccalip

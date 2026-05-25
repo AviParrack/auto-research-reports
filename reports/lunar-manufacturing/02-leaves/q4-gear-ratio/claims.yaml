@@ -73,19 +73,176 @@
       comment_file: null
 
 - id: q4.c5
-  text: "Under conservative parameter ranges (x ∈ [10, 200], ξ ∈ [1, 5], ω = 0.1), the calc cannot produce a finite threshold for closer destinations (LLO, EML1, GEO, GTO) — the (ω+ξ)·Γ_X < 1 floor is violated. This indicates the parameter ranges are too pessimistic OR the framework requires careful unit reasoning beyond the first-principles guesses."
+  text: "Under a static (steady-state) interpretation of launch-normalized finance cost ξ, the (ω+ξ)·Γ_X < 1 floor is binding for nearly all cislunar destinations. Real-world models like Metzger 2023 use time-evolving cost treatments where finance contribution amortizes across capital lifetime, allowing the constraint to be met at maturity. This static-vs-amortized distinction is the source of my calc's degenerate sweep."
   type: estimate
   evidence:
     - source: first-principles-calc
       ref: pass-02-calc-output.txt
       verdict: supports
+    - source: metzger-2023
+      ref: section-5
+      verdict: partial
   confidence: medium
   derivation_path: passes/pass-02-calc.md
   audit:
     gpt:
       status: flagged
-      audit_file: passes/pass-02-audit.md
-      notes: "Codex flagged: this suggests my x and ξ baselines are wrong. Reconcile pass should derive proper ξ from WACC × buildup × amortization, not guess."
+      audit_file: passes/pass-03-audit.md
+      notes: "Codex notes my ξ time-evolution argument is partly hand-waving; real Metzger model has more sophisticated finance treatment than I summarised. Flag remains until calc-v2 redoes with proper finance dynamics."
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q4.c6
+  text: "Metzger's φ ≈ 35 threshold is a model-contingent absolute-advantage value rather than a universal physics threshold. It corresponds to Metzger's MVP design (beneficiation, φ=36.5) achieving lunar absolute advantage at GTO destination within his specific cost model and architectural assumptions."
+  type: factual
+  evidence:
+    - source: metzger-2023
+      ref: section-6.5-table-2
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-03-audit.md
+      notes: "Codex confirmed after I weakened from 'mature-operation GTO with chemical+SEP' (too specific) to 'model-contingent threshold'."
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q4.c7
+  text: "Tent sublimation studies report production mass ratios well above the threshold (Kornuta φ=442, Sowers φ=534) — roughly an order of magnitude better than the breakeven for lunar absolute advantage at any cislunar destination including LEO."
+  type: factual
+  evidence:
+    - source: metzger-2023
+      ref: table-2
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-03-audit.md
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q4.c8
+  text: "Strip mining φ estimates cluster around the threshold with substantial spread (Jones 22.2, Charania-DePascuale 26.5, Bennett 43.4, Pelech 3.7). The disagreement is driven by multiple factors including M_K mass estimates (often biased high by terrestrial-excavator analogies), economies of scale assumptions, and whether finance + operations costs are included in the model."
+  type: factual
+  evidence:
+    - source: metzger-2023
+      ref: section-6.2-6.3-table-2
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-03-audit.md
+      notes: "Original draft said 'mainly about M_K'; Codex flagged that as too strong. Updated to list multiple factors."
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q4.c9
+  text: "Lunar propellant achieving absolute advantage at LEO in Metzger's model requires non-chemical delivery architecture — specifically SEP (solar electric propulsion) with molecular water propellant at I_sp ≈ 2000 s. Under pure-chemical reusable round-trip, the LEO destination remains structurally unreachable due to Γ_LEO ≈ 14. Aerobraking is a plausible alternative that would similarly reduce Γ_LEO."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.md
+      verdict: supports
+    - source: metzger-2023
+      ref: figure-4-section-5
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-03-reconcile.md
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-03-audit.md
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q4.c10
+  text: "The dominant lever for improving lunar competitiveness under accelerated automation (industrial explosion or TAI-grade hardware design) is φ itself — production mass ratio. If automation compresses M_K (capital mass) by 10×, φ rises proportionally, putting tent-sublimation-level performance (φ ≈ 500) within reach of mass-produced robotic systems rather than bespoke designs. The threshold is structural; what compresses is the headroom above it."
+  type: estimate
+  evidence:
+    - source: first-principles-reasoning
+      ref: pass-03-reconcile.md
+      verdict: supports
+  confidence: medium
+  audit:
+    gpt:
+      status: unaudited
+      audit_file: null
+      notes: "Forward-looking claim about TAI/automation sensitivity. Speculative but follows directly from the framework."
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q4.c11
+  text: "Capital-transport cost gear ratio G ranges from approximately 6 (RLL acting as direct LEO→LS tug, Metzger baseline) to 15 (full Starship-class round-trip architecture). The choice of transport architecture changes G by 2.5× and is the single biggest architectural lever for capital delivery cost."
+  type: factual
+  evidence:
+    - source: metzger-2023
+      ref: section-4.9-table-1
+      verdict: supports
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-03-audit.md
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q4.c12
+  text: "Solar electric propulsion (SEP) with molecular water propellant at I_sp ≈ 2000 s used on the lunar-product return leg can drop Γ_LEO from approximately 14 (pure chemical reusable round-trip) to approximately 1. This single architectural choice is the difference between LEO being structurally unreachable and being viable in Metzger's model around year 19."
+  type: factual
+  evidence:
+    - source: metzger-2023
+      ref: section-4.10-figure-4-table-1
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-write-audit.md
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q4.c13
+  text: "Metzger 2023 reviews seven prior techno-economic analyses of lunar propellant production and finds the dominant disagreement traces to two architectural choices: (a) gear ratio G determined by transport architecture (SLS-class vs commercial launch), and (b) production mass ratio φ determined by mining technology and capital mass estimates. Secondary factors include economies of scale assumptions, finance treatment, and modelling of operations costs."
+  type: factual
+  evidence:
+    - source: metzger-2023
+      ref: section-6.1-to-6.7
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-write-audit.md
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q4.c14
+  text: "Pessimistic published TEAs (Charania-DePascuale G=64.9, Jones G=41.8) used Space Launch System pricing for capital transport. With 2026 commercial launch reality (Falcon Heavy or future Starship), G drops by an order of magnitude. Their pessimistic conclusions about lunar ISRU viability are an artefact of the transport assumption, not the underlying ISRU process."
+  type: factual
+  evidence:
+    - source: metzger-2023
+      ref: section-6.1-6.2
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-write-audit.md
     human:
       status: unnoted
       comment_file: null
