@@ -86,7 +86,15 @@ function collectStatsForPass(passEntry: any): CritiqueStats | null {
   return stats.total > 0 ? stats : null;
 }
 
-function collectArtifactsForPass(passEntry: any): Array<{ filename: string; body: string }> {
+/** A single Claude→Codex→Claude conversation thread for one sub-pass kind. */
+interface ConversationThread {
+  kind: string;             // 'research' | 'calc' | 'reconcile' | etc.
+  claude?: { filename: string; body: string };
+  codexAudit?: { filename: string; body: string };
+  claudeResponse?: { filename: string; body: string };
+}
+
+function collectConversationsForPass(passEntry: any): ConversationThread[] {
   if (!passEntry.focus || !passEntry.focus.startsWith('leaf:')) return [];
   const leafId = passEntry.focus.slice('leaf:'.length);
   const passesDir = path.join(REPORTS_DIR, slug!, '02-leaves', leafId, 'passes');
@@ -95,22 +103,101 @@ function collectArtifactsForPass(passEntry: any): Array<{ filename: string; body
   const kinds = passEntry.kinds || [];
   const isFullPass = passEntry.pass_id?.endsWith('full');
 
-  return fs.readdirSync(passesDir)
-    .filter((f) => f.endsWith('.md'))
-    .filter((f) => {
-      if (isFullPass) return true; // rollup: show everything
-      // Match by sub-pass kind appearing in filename
-      return kinds.some((k: string) => f.includes(k));
-    })
-    .sort()
-    .map((f) => ({ filename: f, body: fs.readFileSync(path.join(passesDir, f), 'utf8') }));
+  const allFiles = fs.readdirSync(passesDir).filter((f) => f.endsWith('.md'));
+
+  // Determine which kinds to render for this entry
+  const kindsToShow = isFullPass
+    ? ['research', 'calc', 'reconcile', 'source-review', 'consistency', 'write']
+    : kinds;
+
+  const threads: ConversationThread[] = [];
+  for (const kind of kindsToShow) {
+    const thread: ConversationThread = { kind };
+    // Match files for this kind, distinguishing claude/audit/response
+    for (const f of allFiles) {
+      if (!f.includes(kind)) continue;
+      const fp = path.join(passesDir, f);
+      const body = fs.readFileSync(fp, 'utf8');
+      if (f.includes('-audit.md')) thread.codexAudit = { filename: f, body };
+      else if (f.includes('-response.md')) thread.claudeResponse = { filename: f, body };
+      else thread.claude = { filename: f, body };
+    }
+    if (thread.claude || thread.codexAudit || thread.claudeResponse) {
+      threads.push(thread);
+    }
+  }
+  return threads;
 }
 
 const entriesWithStats = entries.map((e) => ({
   entry: e,
   stats: collectStatsForPass(e),
-  artifacts: collectArtifactsForPass(e),
+  threads: collectConversationsForPass(e),
 }));
+
+/**
+ * Parse a Codex audit body (YAML-style) and pull out claim verdicts so we can
+ * render them as coloured cards rather than raw YAML text.
+ * Format Codex produces: ` - id: c1\n   quote: "..."\n   verdict: supports\n   reason: "..."`
+ */
+interface AuditClaim { id: string; quote?: string; verdict: string; reason?: string; }
+function parseAuditClaims(body: string): { intro: string; claims: AuditClaim[]; tail: string } {
+  const lines = body.split('\n');
+  const claims: AuditClaim[] = [];
+  let intro: string[] = [];
+  let tail: string[] = [];
+  let inClaimsBlock = false;
+  let current: Partial<AuditClaim> | null = null;
+  let postClaims = false;
+
+  for (const line of lines) {
+    if (!inClaimsBlock && /^(claims|sources|per_claim):/i.test(line.trim())) {
+      inClaimsBlock = true;
+      continue;
+    }
+    if (inClaimsBlock && !postClaims) {
+      // Claim start: "- id: ..." or "  - id: ..."
+      const idMatch = line.match(/^\s*-\s*id:\s*(.+?)\s*$/);
+      if (idMatch) {
+        if (current && current.id) claims.push(current as AuditClaim);
+        current = { id: idMatch[1].replace(/['"]/g, ''), verdict: 'unknown' };
+        continue;
+      }
+      if (current) {
+        const quoteMatch = line.match(/^\s+quote:\s*['"]?(.+?)['"]?\s*$/);
+        if (quoteMatch) { current.quote = quoteMatch[1]; continue; }
+        const verdictMatch = line.match(/^\s+verdict:\s*(.+?)\s*$/);
+        if (verdictMatch) { current.verdict = verdictMatch[1].trim().replace(/['"]/g, ''); continue; }
+        const reasonMatch = line.match(/^\s+reason:\s*['"]?(.+?)['"]?\s*$/);
+        if (reasonMatch) { current.reason = reasonMatch[1]; continue; }
+        const notesMatch = line.match(/^\s+notes?:\s*['"]?(.+?)['"]?\s*$/);
+        if (notesMatch && !current.reason) { current.reason = notesMatch[1]; continue; }
+      }
+      // Stop on a clearly-out-of-claims-block top-level key
+      if (/^(overall|notes|sources):/i.test(line) && claims.length > 0) {
+        if (current && current.id) claims.push(current as AuditClaim);
+        current = null;
+        postClaims = true;
+        tail.push(line);
+        continue;
+      }
+    } else if (postClaims) {
+      tail.push(line);
+    } else {
+      intro.push(line);
+    }
+  }
+  if (current && current.id) claims.push(current as AuditClaim);
+  return { intro: intro.join('\n'), claims, tail: tail.join('\n') };
+}
+
+function verdictColor(v: string): { bg: string; fg: string } {
+  const x = v.toLowerCase();
+  if (x.startsWith('support') || x === 'pass') return { bg: 'rgba(45,106,79,0.15)', fg: 'var(--color-leaf)' };
+  if (x === 'weak' || x === 'mixed' || x === 'partial') return { bg: 'rgba(217,119,6,0.15)', fg: 'var(--color-warn)' };
+  if (x === 'unsupported' || x === 'contradicted' || x === 'reject') return { bg: 'rgba(185,28,28,0.15)', fg: 'var(--color-flag)' };
+  return { bg: 'var(--color-paper-dim)', fg: 'var(--color-ink-soft)' };
+}
 ---
 <ReportLayout report={report} title={`Pass Log — ${report.meta.root_question}`} activeTab="log">
   <div class="mb-6">
@@ -127,7 +214,7 @@ const entriesWithStats = entries.map((e) => ({
     </div>
   ) : (
     <ul class="space-y-2">
-      {entriesWithStats.map(({ entry: e, stats, artifacts }: any) => (
+      {entriesWithStats.map(({ entry: e, stats, threads }: any) => (
         <li class="border border-[var(--color-line)] rounded"><details><summary class="cursor-pointer hover:bg-[var(--color-paper-dim)]/30 p-3 list-none">
         <div class="flex items-baseline gap-2"><span class="text-[var(--color-ink-soft)]">▸</span><div class="flex-1">
           <div class="flex items-baseline justify-between gap-3 mb-1">
@@ -167,22 +254,82 @@ const entriesWithStats = entries.map((e) => ({
             {e.commit && <span>commit: {e.commit}</span>}
           </div>
         </div></div></summary>
-        {artifacts.length > 0 && (
+        {threads.length > 0 && (
           <div class="px-3 pb-3 pt-1 border-t border-[var(--color-line)]">
-            <div class="text-xs uppercase tracking-wider text-[var(--color-ink-soft)] mb-2 mt-3">Artifacts produced in this pass ({artifacts.length})</div>
-            <ul class="space-y-2">
-              {artifacts.map((a: any) => (
+            <div class="text-xs uppercase tracking-wider text-[var(--color-ink-soft)] mb-3 mt-3">Conversation</div>
+            <ul class="space-y-3">
+              {threads.map((t: any) => {
+                const parsed = t.codexAudit ? parseAuditClaims(t.codexAudit.body) : null;
+                return (
                 <li class="border border-[var(--color-line)] rounded">
                   <details>
-                    <summary class="cursor-pointer p-2 hover:bg-[var(--color-paper-dim)]/30 text-sm">
-                      <span class="font-mono text-xs text-[var(--color-ink-soft)] mr-2">{a.filename}</span>
-                      {a.filename.includes('audit') && <span class="text-xs px-1.5 py-0.5 rounded bg-[var(--color-paper-dim)]">codex critique</span>}
-                      {a.filename.includes('response') && <span class="text-xs px-1.5 py-0.5 rounded bg-[var(--color-paper-dim)]">claude response</span>}
+                    <summary class="cursor-pointer p-3 hover:bg-[var(--color-paper-dim)]/30 list-none flex items-baseline gap-2">
+                      <span class="text-[var(--color-ink-soft)]">▸</span>
+                      <span class="font-medium">{t.kind}</span>
+                      <span class="text-xs text-[var(--color-ink-soft)] ml-2">
+                        {t.claude && <span>Claude</span>}
+                        {t.codexAudit && <span> → Codex audit{parsed && parsed.claims.length > 0 && <span> ({parsed.claims.length})</span>}</span>}
+                        {t.claudeResponse && <span> → Claude response</span>}
+                      </span>
                     </summary>
-                    <article class="prose-leaf p-3 text-sm" set:html={renderMath(a.body, { inline: false })} />
+
+                    {t.claude && (
+                      <div class="border-t border-[var(--color-line)]">
+                        <div class="px-3 pt-3 pb-1 flex items-center gap-2">
+                          <span class="text-xs uppercase tracking-wider font-mono px-2 py-0.5 rounded bg-[var(--color-accent)]/10 text-[var(--color-accent)]">Claude · {t.kind}</span>
+                          <span class="text-xs font-mono text-[var(--color-ink-soft)]">{t.claude.filename}</span>
+                        </div>
+                        <article class="prose-leaf p-3 text-sm" set:html={renderMath(t.claude.body, { inline: false })} />
+                      </div>
+                    )}
+
+                    {t.codexAudit && (
+                      <div class="border-t border-[var(--color-line)] bg-[var(--color-paper-dim)]/30">
+                        <div class="px-3 pt-3 pb-1 flex items-center gap-2">
+                          <span class="text-xs uppercase tracking-wider font-mono px-2 py-0.5 rounded bg-[var(--color-ink)]/10 text-[var(--color-ink-soft)]">Codex · critique</span>
+                          <span class="text-xs font-mono text-[var(--color-ink-soft)]">{t.codexAudit.filename}</span>
+                        </div>
+                        {parsed && parsed.claims.length > 0 ? (
+                          <div class="px-3 py-3 space-y-2">
+                            {parsed.intro && parsed.intro.trim() && (
+                              <article class="prose-leaf text-sm" set:html={renderMath(parsed.intro, { inline: false })} />
+                            )}
+                            <ul class="space-y-1.5">
+                              {parsed.claims.map((c: any) => {
+                                const color = verdictColor(c.verdict);
+                                return (
+                                <li class="text-sm border-l-2 pl-3" style={`border-color: ${color.fg};`}>
+                                  <div class="flex items-baseline gap-2">
+                                    <span class="font-mono text-xs text-[var(--color-ink-soft)]">{c.id}</span>
+                                    <span class="text-xs px-1.5 py-0.5 rounded font-mono" style={`background: ${color.bg}; color: ${color.fg};`}>{c.verdict}</span>
+                                  </div>
+                                  {c.quote && <div class="text-xs italic text-[var(--color-ink-soft)] mt-0.5">"{c.quote}"</div>}
+                                  {c.reason && <div class="text-sm mt-0.5">{c.reason}</div>}
+                                </li>);
+                              })}
+                            </ul>
+                            {parsed.tail && parsed.tail.trim() && (
+                              <article class="prose-leaf text-sm mt-2 pt-2 border-t border-[var(--color-line)]" set:html={renderMath(parsed.tail, { inline: false })} />
+                            )}
+                          </div>
+                        ) : (
+                          <pre class="px-3 py-3 text-xs font-mono overflow-x-auto whitespace-pre-wrap">{t.codexAudit.body}</pre>
+                        )}
+                      </div>
+                    )}
+
+                    {t.claudeResponse && (
+                      <div class="border-t border-[var(--color-line)]">
+                        <div class="px-3 pt-3 pb-1 flex items-center gap-2">
+                          <span class="text-xs uppercase tracking-wider font-mono px-2 py-0.5 rounded bg-[var(--color-accent)]/10 text-[var(--color-accent)]">Claude · response</span>
+                          <span class="text-xs font-mono text-[var(--color-ink-soft)]">{t.claudeResponse.filename}</span>
+                        </div>
+                        <article class="prose-leaf p-3 text-sm" set:html={renderMath(t.claudeResponse.body, { inline: false })} />
+                      </div>
+                    )}
                   </details>
-                </li>
-              ))}
+                </li>);
+              })}
             </ul>
           </div>
         )}
