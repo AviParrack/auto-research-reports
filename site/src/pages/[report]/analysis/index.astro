@@ -1,6 +1,6 @@
 ---
 import ReportLayout from '../../../layouts/ReportLayout.astro';
-import { listReportSlugs, loadReport, type TreeNode } from '../../../lib/reports';
+import { listReportSlugs, loadReport, buildMermaidTree, type TreeNode } from '../../../lib/reports';
 
 export function getStaticPaths() {
   return listReportSlugs().map((slug) => ({ params: { report: slug } }));
@@ -12,6 +12,7 @@ const report = loadReport(slug!);
 const leafNodes = report.tree.nodes.filter((n) => n.type === 'leaf');
 const synthesisNodes = report.tree.nodes.filter((n) => n.type === 'synthesis');
 const constraintNodes = report.tree.nodes.filter((n) => n.type === 'constraint');
+const mermaidSyntax = buildMermaidTree(report, slug!);
 
 function leafFor(node: TreeNode) {
   return report.leaves.find((l) => l.id === node.id);
@@ -30,6 +31,16 @@ function progress(node: TreeNode) {
       The question DAG decomposed into Input Questions (atomic factual leaves), Analyses (synthesis nodes that combine inputs), and Side Chapters (constraint or orthogonal deep-dives).
     </p>
   </div>
+
+  <details class="mb-8 border border-[var(--color-line)] rounded" open>
+    <summary class="cursor-pointer p-3 hover:bg-[var(--color-paper-dim)]/30">
+      <span class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)]">Question DAG</span>
+      <span class="ml-2 text-xs text-[var(--color-ink-soft)]">click any node to jump to its leaf</span>
+    </summary>
+    <div class="p-4 overflow-x-auto">
+      <pre class="mermaid">{mermaidSyntax}</pre>
+    </div>
+  </details>
 
   {leafNodes.length > 0 && (
     <section class="mb-10">

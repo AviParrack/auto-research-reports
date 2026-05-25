@@ -56,10 +56,29 @@ const tabs = [
       });
     </script>
 
+    {/* Mermaid for tree DAG visualisations */}
+    <script type="module" is:inline>
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        themeVariables: {
+          fontFamily: 'Inter, system-ui, sans-serif',
+          fontSize: '14px',
+        },
+        securityLevel: 'loose',
+        flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' },
+      });
+    </script>
+
     {/* Tippy.js for hover tooltips on glossary terms + source citations */}
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
     <script defer src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer src="https://unpkg.com/tippy.js@6"></script>
+
+    {/* Pagefind search UI (indexed at build time, served from /pagefind/) */}
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+    <script src="/pagefind/pagefind-ui.js" defer></script>
     <script is:inline define:vars={{ payload: tooltipPayload, slug: report.slug }}>
       window.__tooltipPayload = payload;
       window.__reportSlug = slug;
@@ -127,6 +146,60 @@ const tabs = [
     </script>
   </head>
   <body class="min-h-screen">
+    {/* Search modal — opens on Cmd+K / Ctrl+K */}
+    <div id="search-modal" class="hidden fixed inset-0 z-50 bg-[var(--color-ink)]/40" onclick="window.__closeSearch()">
+      <div class="max-w-2xl mx-auto mt-20 bg-[var(--color-paper)] border border-[var(--color-line)] rounded-lg shadow-2xl" onclick="event.stopPropagation()">
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs uppercase tracking-wider text-[var(--color-ink-soft)]">Search the report</span>
+            <span class="text-xs font-mono text-[var(--color-ink-soft)]">esc to close</span>
+          </div>
+          <div id="search-target"></div>
+        </div>
+      </div>
+    </div>
+
+    <script is:inline>
+      (function() {
+        let initialised = false;
+        function tryInit() {
+          if (initialised) return;
+          if (typeof PagefindUI !== 'function') { return setTimeout(tryInit, 100); }
+          new PagefindUI({
+            element: '#search-target',
+            showSubResults: true,
+            resetStyles: false,
+            showImages: false,
+            translations: {
+              placeholder: 'Search claims, leaves, sources, glossary…',
+              zero_results: 'No matches for "[SEARCH_TERM]"',
+            },
+          });
+          initialised = true;
+        }
+        document.addEventListener('keydown', (e) => {
+          // Cmd+K (Mac) or Ctrl+K (Windows/Linux)
+          if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+            e.preventDefault();
+            tryInit();
+            const m = document.getElementById('search-modal');
+            m.classList.remove('hidden');
+            setTimeout(() => {
+              const inp = m.querySelector('input');
+              if (inp) inp.focus();
+            }, 50);
+          }
+          if (e.key === 'Escape') {
+            const m = document.getElementById('search-modal');
+            if (m && !m.classList.contains('hidden')) m.classList.add('hidden');
+          }
+        });
+        window.__closeSearch = () => {
+          document.getElementById('search-modal').classList.add('hidden');
+        };
+      })();
+    </script>
+
     <header class="border-b border-[var(--color-line)] bg-[var(--color-paper)]">
       <div class="max-w-6xl mx-auto px-6 py-4">
         <div class="flex items-baseline justify-between mb-3">
@@ -139,20 +212,30 @@ const tabs = [
           {report.meta.root_question}
         </h1>
       </div>
-      <nav class="max-w-6xl mx-auto px-6 flex gap-6 -mb-px">
-        {tabs.map((tab) => (
-          <a
-            href={tab.href}
-            class:list={[
-              'pb-3 text-sm border-b-2 transition-colors',
-              activeTab === tab.id
-                ? 'border-[var(--color-accent)] text-[var(--color-accent)] font-medium'
-                : 'border-transparent text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]',
-            ]}
-          >
-            {tab.label}
-          </a>
-        ))}
+      <nav class="max-w-6xl mx-auto px-6 flex items-center justify-between -mb-px">
+        <div class="flex gap-6">
+          {tabs.map((tab) => (
+            <a
+              href={tab.href}
+              class:list={[
+                'pb-3 text-sm border-b-2 transition-colors',
+                activeTab === tab.id
+                  ? 'border-[var(--color-accent)] text-[var(--color-accent)] font-medium'
+                  : 'border-transparent text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]',
+              ]}
+            >
+              {tab.label}
+            </a>
+          ))}
+        </div>
+        <button
+          onclick="document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))"
+          class="text-xs text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] pb-3 flex items-center gap-1"
+          title="Search the report (Cmd+K)"
+        >
+          <span>Search</span>
+          <kbd class="font-mono px-1.5 py-0.5 rounded border border-[var(--color-line)] bg-[var(--color-paper-dim)] text-[10px]">⌘K</kbd>
+        </button>
       </nav>
     </header>
     <main class="max-w-6xl mx-auto px-6 py-8">

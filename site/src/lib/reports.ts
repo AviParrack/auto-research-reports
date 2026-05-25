@@ -259,3 +259,63 @@ export function getLeafBySlug(report: Report, leafId: string): Leaf | undefined 
 export function getNodeChildren(tree: Tree, parentId: string): TreeNode[] {
   return tree.nodes.filter((n) => n.parent === parentId);
 }
+
+/**
+ * Build a Mermaid graph definition from the tree. Renders top-down.
+ * Each node is keyed by id with the short id as label. Color coded by type
+ * + completion. Clicking a node navigates to the leaf detail page (the
+ * `click` directive is interpreted by Mermaid at render time).
+ */
+export function buildMermaidTree(report: Report, slug: string): string {
+  const lines = ['graph TD'];
+  // Style class definitions
+  lines.push("  classDef root fill:#fafaf7,stroke:#c4622d,stroke-width:2.5px,color:#1a1a1a;");
+  lines.push("  classDef leaf fill:#fafaf7,stroke:#4a4a4a,stroke-width:1px,color:#1a1a1a;");
+  lines.push("  classDef leafDone fill:#e8f3ee,stroke:#2d6a4f,stroke-width:1.5px,color:#1a1a1a;");
+  lines.push("  classDef leafInProg fill:#fef3e3,stroke:#d97706,stroke-width:1.5px,color:#1a1a1a;");
+  lines.push("  classDef synthesis fill:#f0efe9,stroke:#4a4a4a,stroke-width:1px,color:#1a1a1a;");
+  lines.push("  classDef constraint fill:#fafaf7,stroke:#9ca3af,stroke-width:1px,stroke-dasharray:4 3,color:#1a1a1a;");
+
+  // Root node
+  const rootLabel = '"' + truncateForMermaid(report.tree.root.question, 50) + '"';
+  lines.push(`  root[${rootLabel}]:::root`);
+  lines.push(`  click root "/${slug}/" "Report"`);
+
+  // Each top-level node
+  for (const node of report.tree.nodes) {
+    const leaf = report.leaves.find((l) => l.id === node.id);
+    const subPasses = leaf ? Object.entries(leaf.passes_status) : [];
+    const doneCount = subPasses.filter(([, v]) => v === 'done').length;
+    const totalCount = subPasses.length;
+
+    const safeId = node.id.replace(/[^a-zA-Z0-9]/g, '_');
+    const shortLabel = node.id + (totalCount > 0 ? `<br/>${doneCount}/${totalCount}` : '');
+    const labelText = '"`' + shortLabel + '`"';
+    lines.push(`  ${safeId}[${labelText}]`);
+
+    // Edge from parent
+    const parentSafeId = node.parent === 'root' ? 'root' : node.parent.replace(/[^a-zA-Z0-9]/g, '_');
+    lines.push(`  ${parentSafeId} --> ${safeId}`);
+
+    // Click action → leaf detail page
+    lines.push(`  click ${safeId} "/${slug}/leaves/${node.id}/" "${escapeMermaid(node.question)}"`);
+
+    // Style class
+    let cls = 'leaf';
+    if (node.type === 'synthesis') cls = 'synthesis';
+    else if (node.type === 'constraint') cls = 'constraint';
+    else if (doneCount === totalCount && totalCount > 0) cls = 'leafDone';
+    else if (doneCount > 0) cls = 'leafInProg';
+    lines.push(`  class ${safeId} ${cls};`);
+  }
+  return lines.join('\n');
+}
+
+function truncateForMermaid(s: string, max: number): string {
+  const t = s.replace(/[`"]/g, "'");
+  return t.length > max ? t.slice(0, max - 1) + '…' : t;
+}
+
+function escapeMermaid(s: string): string {
+  return s.replace(/"/g, '&quot;').slice(0, 200);
+}
