@@ -1,11 +1,39 @@
 id: q2-lunar-ascent-cost
 question: "What is the projected cost per kg from lunar surface to LEO over 2026-2040, broken out by chemical rocket vs mass driver delivery?"
-status: drafting
+status: reviewed
+answer: "Lunar-surface-to-LEO cost spans $50–$13,029/kg across realistic aerobraking-included scenarios (chemical Earth-imports-only $1,303–$13,029/kg, chemical aggressive-ISRU $994–$8,912/kg, mass-driver+SEP $50–$528/kg). The architectural choice (aerobraking vs propulsive; mass-driver vs chemical) is more economically consequential than the choice of propellant chemistry. Only mass-driver+SEP at late-era throughput closes within a factor of 2 of q1's optimistic-late Starship cost ($50 vs $59/kg). Late-era Earth-imports approaches aggressive-ISRU within ~$300/kg due to falling terrestrial L_p; in practice ISRU's competitiveness requires production cost below the gear-ratio-amplified Earth-imports floor. Strong agreement with trade-press evidence ([orbital-refueling-newspaceeconomy] $4,000/kg matches calc $4,162/kg)."
+confidence: medium-high
 passes_status:
   research: done
   calc: done
   reconcile: done
   source-review: done
   consistency: done
-  write: pending
-last_pass: 5
+  write: done
+last_pass: 6
+flagged_for_avi:
+  - "SEP transfer cost is asserted, not derived from first principles. Codex flagged this as severity-high in pass-02-audit. A future calc v2 should derive SEP cost from Isp + ΔV + power + vehicle dry mass + reuse count. Headline mass-driver $/kg figures depend on this assumption."
+  - "Mass driver $10B capital is my extrapolation, not a Handmer figure. Reactor alone is $2-4B per Handmer; total capital could be 2-4× my assumption. Would shift early-era $/kg by ±$50-100 — small but real."
+  - "Vehicle reusability assumption (lunar ascent vehicle amortized as if reusable) doesn't separately model the return-to-Moon leg. Codex flagged as severity-high in pass-02. Trade-press 8-10 reuses for HLS-class supports the mid-era assumption; late-era 50 reuses is optimistic."
+  - "Several primary sources accessible only via abstract + secondary summaries (Coutts-Sowers paywalled, Metzger arXiv PDF binary-only, AIAA-4123 paywalled, Lewis NTRS binary-only, Kornuta 2019 OSTI binary). Headline numbers don't depend critically on these but a future source-review with direct primary access would tighten confidence on q2.c10 and q2.c11."
+sources_gathered:
+  - handmer-mass-driver-2026
+  - metzger-2023
+  - coutts-sowers-2025
+  - wiki-delta-v
+  - wiki-mass-driver
+  - lunarpedia-mass-driver
+  - starship-hls-wiki
+  - sciencearray-mass-drivers
+  - orbital-refueling-newspaceeconomy
+  - payload-cargo-landers
+sources_to_review_pending:
+  - aiaa-2025-4123-mass-driver-cost-benefit
+  - lewis-ntrs-lunar-ascent-vehicle
+  - kornuta-2019-commercial-lunar-propellant
+  - miller-2023-thesis-mass-driver
+public_figures_to_review_pending:
+  - casey-handmer
+  - philip-metzger
+  - george-sowers
+  - dallas-bienhoff
