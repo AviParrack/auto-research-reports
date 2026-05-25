@@ -6,7 +6,7 @@ fetched: 2026-05-25
 fetcher: claude
 type: post
 authors: ["AIAA Aerospace America editors"]
-year: 2024
+year: 2021
 ---
 
 # "Walking on Rocket Propellant" — Aerospace America (AIAA)
@@ -32,7 +32,7 @@ carbon (or a small lunar-meteoritic carbon trickle that is not bulk-viable).
 ## oxygen-from-regolith-trl
 
 Components for oxygen-from-regolith systems are "at a technology readiness
-level of at least 4 on NASA's nine-level TRL scale" (article was 2024;
+level of at least 4 on NASA's nine-level TRL scale" (article was 2021;
 subsequent reporting has moved several to TRL 5-6 — see sierra-space and
 lyon-industries-isru-2026).
 
