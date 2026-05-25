@@ -1,0 +1,88 @@
+============================================================
+q6 orbital demand — first-principles decomposition
+============================================================
+
+Assumptions sealed from sources. Three acceleration regimes:
+  - stall: Apollo-drought analog, programs collapse
+  - bau:   business-as-usual incremental progress
+  - tai_c: TAI-compression / industrial explosion
+
+Horizon: 2026-2040 (15 years).
+
+===== REGIME: STALL =====
+
+  SDC: 0 GW deployed by 2040
+    Total mass to orbit: 20,000 t
+    Annual average:      1,333 t/yr
+  SBSP: 0 GW deployed by 2040
+    Total mass to orbit: 0 t
+    Annual average:      0 t/yr
+  Depots: 0 ships/yr refueled
+    Annual propellant through LEO depots: 0 t/yr
+  Lunar cargo: 0 t/yr to surface by 2040
+  Mars cargo: 0 t/yr avg 2026-2040
+  Servicing: 50 t/yr
+
+  >>> TOTAL LEO mass demand (annual avg): 1,383 t/yr
+  >>> TOTAL deep-space (Mars surface): 0 t/yr extra
+
+===== REGIME: BAU =====
+
+  SDC: 50 GW deployed by 2040
+    Total mass to orbit: 2,000,000 t
+    Annual average:      133,333 t/yr
+  SBSP: 5 GW deployed by 2040
+    Total mass to orbit: 25,000 t
+    Annual average:      1,667 t/yr
+  Depots: 10 ships/yr refueled
+    Annual propellant through LEO depots: 8,000 t/yr
+  Lunar cargo: 30 t/yr to surface by 2040
+  Mars cargo: 200 t/yr avg 2026-2040
+  Servicing: 200 t/yr
+
+  >>> TOTAL LEO mass demand (annual avg): 143,230 t/yr
+  >>> TOTAL deep-space (Mars surface): 200 t/yr extra
+
+===== REGIME: TAI_C =====
+
+  SDC: 1000 GW deployed by 2040
+    Total mass to orbit: 40,000,000 t
+    Annual average:      2,666,667 t/yr
+  SBSP: 100 GW deployed by 2040
+    Total mass to orbit: 500,000 t
+    Annual average:      33,333 t/yr
+  Depots: 200 ships/yr refueled
+    Annual propellant through LEO depots: 160,000 t/yr
+  Lunar cargo: 500 t/yr to surface by 2040
+  Mars cargo: 15,000 t/yr avg 2026-2040
+  Servicing: 2,000 t/yr
+
+  >>> TOTAL LEO mass demand (annual avg): 2,862,500 t/yr
+  >>> TOTAL deep-space (Mars surface): 15,000 t/yr extra
+
+============================================================
+Sanity checks
+============================================================
+
+SBSP TAI-C 100 GW × 5 kg/kW = 500,000 t total over 15 yr
+  → 33,000 t/yr SBSP alone. Equivalent to ~165 Starship-200t
+    launches/year just for SBSP. Plausibility check:
+    Mankins 80,000 t for 4 GW reference design at 20 kg/kW
+    → 100 GW at 5 kg/kW = 500,000 t. Consistent.
+
+Depot TAI-C 160,000 t/yr LEO propellant ÷ 100 t/Starship-tanker
+  → 1600 tanker flights/year, ~4.4/day.
+  Plausibility: SpaceX target 1,000 ships/year production;
+  this scenario uses ~1,600 tanker flights/year — broadly
+  consistent with the industrial-explosion launch cadence.
+
+SDC TAI-C 1,000 GW × 40 t/MW × 1000 MW/GW = 40,000,000 t
+  → 40 Mt over 15 yr = 2.67 Mt/yr. This is at the architectural
+    limit of any conceivable Earth launch program. Implies
+    cheap orbital deployment requires in-space manufacturing
+    (lunar-sourced structural mass) to be tractable.
+
+This last sanity check IS the lunar-manufacturing thesis:
+  under TAI-C, orbital demand exceeds plausible Earth-launch
+  capacity, which is exactly the condition under which lunar
+  manufacturing becomes the binding architecture.

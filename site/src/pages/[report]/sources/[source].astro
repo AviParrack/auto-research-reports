@@ -53,7 +53,11 @@ for (const leaf of report.leaves) {
 }
 ---
 <ReportLayout report={report} title={`${sourceMeta?.title || sourceSlug} — Source`} activeTab="sources">
-  <a href={`/${slug}/sources/`} class="text-sm text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] mb-4 inline-block">← All sources</a>
+  <div class="text-sm text-[var(--color-ink-soft)] mb-4 flex items-center gap-3">
+    <a href={`/${slug}/sources/`} class="hover:text-[var(--color-accent)]">← Sources</a>
+    <span class="text-[var(--color-line)]">·</span>
+    <a href={`/${slug}/`} class="hover:text-[var(--color-accent)]">Report home</a>
+  </div>
 
   <div class="mb-6">
     <div class="text-xs font-mono text-[var(--color-ink-soft)] mb-1">{sourceSlug}</div>

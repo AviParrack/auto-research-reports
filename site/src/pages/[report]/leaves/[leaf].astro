@@ -21,7 +21,11 @@ const node = report.tree.nodes.find((n) => n.id === leafId);
 const bodyHtml = leaf?.body ? renderMath(leaf.body, { inline: false }) : null;
 ---
 <ReportLayout report={report} title={node?.question ?? leafId!} activeTab="leaves">
-  <a href={`/${slug}/leaves/`} class="text-sm text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] mb-4 inline-block">← All leaves</a>
+  <div class="text-sm text-[var(--color-ink-soft)] mb-4 flex items-center gap-3">
+    <a href={`/${slug}/analysis/`} class="hover:text-[var(--color-accent)]">← Analysis</a>
+    <span class="text-[var(--color-line)]">·</span>
+    <a href={`/${slug}/`} class="hover:text-[var(--color-accent)]">Report home</a>
+  </div>
 
   <div class="mb-6">
     <div class="text-xs font-mono text-[var(--color-ink-soft)] mb-1">{leafId}</div>

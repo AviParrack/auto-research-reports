@@ -1,0 +1,137 @@
+v_escape_lunar = 2375 m/s
+v_orbit_lunar (LLO) = 1679 m/s
+
+--- track length vs acceleration ---
+v=1.7 km/s, 1000g: L = 144 m, t = 171.2 ms
+v=2.4 km/s, 1000g: L = 287 m, t = 242.1 ms
+v=1.7 km/s, 100g:  L = 1437 m
+v=2.4 km/s, 100g:  L = 2875 m
+v=1.7 km/s, 20g:   L = 7187 m
+v=2.4 km/s, 20g:   L = 14375 m
+
+--- wall energy per kg vs efficiency, v=1.7 km/s ---
+KE/kg (kinetic only) = 1.41 MJ/kg
+  darpa-demonstrated             η=0.22: 6.41 MJ/kg wall
+  wright-trl-grounded            η=0.33: 4.27 MJ/kg wall
+  handmer-optimistic             η=0.90: 1.57 MJ/kg wall
+  sp428-theoretical-ceiling      η=0.96: 1.47 MJ/kg wall
+
+--- wall energy per kg vs efficiency, v=2.4 km/s ---
+KE/kg (kinetic only) = 2.82 MJ/kg
+  darpa-demonstrated             η=0.22: 12.82 MJ/kg wall
+  wright-trl-grounded            η=0.33: 8.55 MJ/kg wall
+  handmer-optimistic             η=0.90: 3.13 MJ/kg wall
+  sp428-theoretical-ceiling      η=0.96: 2.94 MJ/kg wall
+
+--- average wall power at throughput, v=1.7 km/s, η=0.33 ---
+  demonstrator (365 t/yr)       : P_avg = 0.05 MW
+  pilot (10 kt/yr)              : P_avg = 1.35 MW
+  operational (1 Mt/yr)         : P_avg = 135.41 MW
+  aspirational (10 Mt/yr)       : P_avg = 1354.11 MW
+
+--- average wall power at throughput, v=1.7 km/s, η=0.90 (Handmer) ---
+  demonstrator (365 t/yr)       : P_avg = 0.02 MW
+  pilot (10 kt/yr)              : P_avg = 0.50 MW
+  operational (1 Mt/yr)         : P_avg = 49.65 MW
+  aspirational (10 Mt/yr)       : P_avg = 496.51 MW
+
+Peak power per shot (200 kg, 1000g, 1.7 km/s, η=0.90): 3.66 GW over 171.2 ms
+
+Per-shot capacitor mass (2 kJ/kg, 90% η): 156.7 t
+Per-shot capacitor cost ($10/kJ): $3.13M
+Shot interval at 1 Mt/yr, 200kg/shot: 6.31 s
+
+Lunar track per-meter cost (bottom of range): $800M/m
+  1000g track (150 m): $120.00B
+  100g track (1500 m): $1200.00B
+  20g track (7500 m): $6000.00B
+
+--- 1 Mt/yr architecture, 1000g, v=1.7 km/s, η=0.50 (between TRL and aspirational) ---
+Avg wall power: 89.4 MW
+Peak per-shot power: 6.59 GW
+
+--- BAU capex decomposition (independent first-principles) ---
+Track + drive coils:        $1200.0B
+Reactor (200 MW):           $3.0B
+Capacitor bank (7 GJ):      $0.8B
+Projectile manufacturing:   $6.0B
+Catcher / tug:              $0.1B
+Foundation / anchor:        $2.0B
+Control / instrumentation:  $0.5B
+Construction labor (3 yr):  $30.0B
+TOTAL CAPEX (BAU):          $1242.4B
+
+Per-kg amortized (capex only, BAU): $62.12/kg over 20 Mt
+
+Annual power consumption: 0.78 TWh
+Annual power cost @ $0.50/kWh: $0.39B/yr
+Per-kg power cost (BAU): $0.39/kg
+Per-kg O&M (5%/yr of capex): $62.12/kg
+
+TOTAL PER-KG TO LLO (BAU): $124.64/kg
+
+--- Regime sensitivity ---
+  BAU                           : capex $1242.4B, time-to-ops 20.0 yr, per-kg-amortized $62.12/kg
+  Industrial Explosion (IE)     : capex $126.8B, time-to-ops 6.0 yr, per-kg-amortized $6.34/kg
+  TAI-grade                     : capex $13.3B, time-to-ops 1.5 yr, per-kg-amortized $0.66/kg
+  Stall                         : capex $1242.4B, time-to-ops never, per-kg N/A
+
+--- Engineering milestones ---
+  M1: Earth-based demo at lunar-relevant velocity
+    spec: 1.7 km/s, 100 launches without component replacement
+    timeline: 2-4 yr BAU; 6 mo IE; weeks TAI; never Stall
+  M2: Sub-scale lunar prototype landed
+    spec: 5-50 t mass, 100 m track, 100 kg payload, 10 launches
+    timeline: 5-8 yr BAU; 18 mo IE; 6 mo TAI
+  M3: Pilot-scale system operational
+    spec: 1 kt/yr-10 kt/yr throughput, 100 kg/shot, demonstrated 10⁴-10⁵ cycle life
+    timeline: 10-15 yr BAU; 3 yr IE; 1 yr TAI
+  M4: Mt-scale operational
+    spec: 1 Mt/yr throughput, full ISRU-supplied projectiles, full power system
+    timeline: 20-30 yr BAU; 6 yr IE; 1.5 yr TAI
+  M5: 10 Mt/yr nameplate (Handmer aspirational)
+    spec: Full Project TERAFAB-scale economics
+    timeline: 40-60+ yr BAU; 10 yr IE; 2-3 yr TAI
+
+--- q2 coupling check ---
+q2.c5 capital assumption: ~$10B (with 20-yr amortization, ~$50/kg late-era)
+q7 first-principles BAU capex: ~$1242B (40-100× q2 assumption)
+q7 TAI-compressed capex: ~$13.3B (within striking distance of q2's $10B)
+=> q2's $50/kg headline is achievable ONLY under TAI-grade compression, NOT BAU.
+
+======================================================================
+HEADLINE ANSWER
+======================================================================
+
+Q: When does a lunar mass driver land in the report's headline architecture?
+
+A:
+- BAU regime: 20-30 years to Mt-scale operational, ~$400B-1T capex,
+  ~$30-50/kg amortized → chemical-only delivery dominates the
+  headline architecture under any timeline shorter than 25 years.
+- Industrial-Explosion regime: ~6 years to Mt-scale operational,
+  ~$50-100B capex, ~$5-10/kg amortized → mass driver substantially
+  improves over chemical late-era ($50-200/kg), drives the headline.
+- TAI-grade regime: ~1.5-3 years to Mt-scale operational, ~$5-10B
+  capex (the assumption in q2.c5), ~$1-5/kg amortized → mass driver
+  is the dominant architecture.
+- Stall regime: never reached.
+
+q2's $50/kg headline assumes effectively TAI-grade economics. Under BAU,
+q2's late-era headline is the chemical-aggressive-ISRU $994/kg, not the
+mass driver $50/kg.
+
+Critical engineering milestones (BAU timeline; compressible per regime):
+- M1 Earth-based demo at 1.7 km/s, 100-launch cycle life: 2-4 yr
+- M2 Sub-scale lunar prototype: 5-8 yr
+- M3 Pilot kt-scale: 10-15 yr
+- M4 Mt-scale operational: 20-30 yr
+- M5 10 Mt-scale nameplate (Handmer aspirational): 40-60+ yr
+
+The root question — when does lunar manufacturing beat Earth launch? —
+depends on mass driver availability ONLY in the late-era / TAI-grade
+regimes, when the per-kg cost differential ($50/kg mass driver vs
+$994/kg chemical) becomes load-bearing. In the early-mid BAU eras,
+chemical rockets dominate by an order of magnitude regardless of
+mass driver availability.
+

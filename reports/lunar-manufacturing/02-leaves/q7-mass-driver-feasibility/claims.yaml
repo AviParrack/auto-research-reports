@@ -1,0 +1,189 @@
+# Claims for q7-mass-driver-feasibility.
+# Each claim traces to a derivation (calc) or cited source (reconcile/source-review).
+# Claims added during the calc pass (sources sealed).
+
+- id: q7.c1
+  text: "Lunar escape velocity is 2,375 m/s and lunar low orbit (LLO) circular speed is 1,679 m/s, derived from the lunar mass (7.342e22 kg) and radius (1,737.4 km) via v_esc = sqrt(2GM/R) and v_orbit = sqrt(GM/R). Mascon-anomaly-assisted designs (Janhunen 2024) can catch projectiles launched at LLO speed (1.7 km/s) rather than escape (2.4 km/s), reducing kinetic energy per kg by ~50% (1.41 MJ/kg vs 2.82 MJ/kg)."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex accepted the kinematics; minor flag that 'LLO speed' is slightly imprecise (surface circular vs nonzero altitude)."
+    human:
+      status: unnoted
+
+- id: q7.c2
+  text: "Constant-acceleration kinematics fix the track-length × acceleration trade: for v=1.7 km/s, a 1000g profile requires 144 m, 100g requires 1.4 km, 20g requires 7.2 km; for v=2.4 km/s, lengths roughly double. This is the inescapable physical trade between track length and projectile g-loading."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-02-audit.md
+    human:
+      status: unnoted
+
+- id: q7.c3
+  text: "Net system efficiency for a lunar mass driver is bounded by the demonstrated range: 22% (DARPA 45-stage coilgun, modern Earth-tested) at the low end to 90% (Handmer 2026 engineer-advocate optimistic). The 96% claimed in 1979 NASA SP-428 is electromagnetic-conversion-only, not net system efficiency. A conservative low-end-of-aspirational midpoint of 50% gives wall energy 2.82 MJ/kg at 1.7 km/s and 5.64 MJ/kg at 2.4 km/s."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged that 'engineering ceiling' is too strong a label; sensitivity range is the right framing. Calc updated. Codex also flagged eta=0.50 as not the arithmetic midpoint of 0.33 and 0.90; reframed as 'conservative low-end-of-aspirational.'"
+    human:
+      status: unnoted
+
+- id: q7.c4
+  text: "At operational throughput of 1 Mt/yr, average wall power is approximately 89 MW (η=0.50, v=1.7 km/s). Peak instantaneous power per 200-kg shot at 1000g is approximately 6.6 GW over 171 ms. This peak-to-average ratio (~75x) sets the pulsed-power capacitor bank / flywheel requirement. At 10 Mt/yr (Handmer aspirational nameplate), average wall power rises to 894 MW."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex caught arithmetic in original calc summarizing different efficiencies under single eta=0.50 label. Fixed in updated calc."
+    human:
+      status: unnoted
+
+- id: q7.c5
+  text: "Energy storage per shot at 200 kg, 1.7 km/s, η=0.90 is approximately 315 MJ. At defense-grade pulsed-power capacitor energy density (~2 kJ/kg) this requires approximately 157 t of capacitors per shot; with 5× redundancy and $10/kJ at scale, the per-shot capacitor capex is approximately $3.1M and the bank capex is approximately $0.8B including Earth-to-Moon shipping. At 1 Mt/yr throughput (5M shots/yr, 6.3 s interval), recycle time is well within state-of-art switching."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged that '6-second recycling' only addresses switching, not thermal load, pulse shaping, cycle-life under 10^6-10^9 shot lifetime. Added to load-bearing variables."
+    human:
+      status: unnoted
+
+- id: q7.c6
+  text: "Independent component-by-component BAU capital decomposition for a 1 Mt/yr, 100g track (1.5 km), η=0.50 architecture lands at approximately $1,242B total. Track + drive coils dominate ($1,200B, ~96% of total), driven by a sourced-prior 200× lunar construction multiplier applied to EMALS per-meter cost. Other line items: reactor $3B, capacitor bank $0.8B, projectile manufacturing plant $6B, catcher $0.15B, foundation $2B, control $0.5B, construction labor $30B."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: low
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged the 200x lunar construction multiplier as unsupported scenario assumption. Accepted; confidence downgraded to low."
+    human:
+      status: unnoted
+
+- id: q7.c7
+  text: "Per-kg amortized cost to LLO under BAU (1 Mt/yr × 20 yr, $1,242B capex, $0.50/kWh lunar electricity, 5%/yr O&M) is approximately $125/kg (capex $62 + O&M $62 + power $0.40). This does NOT include the SEP transfer leg from LLO to LEO (which q2.c5 includes in its $50/kg headline). The BAU result substantially diverges from q2's $50/kg figure; the divergence collapses only under TAI-grade compression."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: low
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged earlier '$300-500/kg under BAU including SEP' as not derived; removed and deferred to reconcile pass for explicit q2 bridge."
+    human:
+      status: unnoted
+
+- id: q7.c8
+  text: "Regime sensitivity for capex and time-to-Mt-scale-operational: BAU ($1,242B / 20-30 yr), Industrial Explosion ($127B / 6 yr), TAI-grade ($13.3B / 1.5 yr), Stall (never). The TAI-grade figure is within striking distance of q2.c5's $10B capital assumption, meaning q2's $50/kg headline is achievable only under TAI-grade compression of the BAU baseline; under any time horizon shorter than ~25 years BAU, chemical rockets dominate the architecture regardless of mass-driver availability."
+  type: estimate
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: speculative
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged regime compression factors as scenario priors not externally validated. Confidence downgraded to speculative. The structural framing (regime-dependent, capex spans 2 OOM across regimes) survives the critique."
+    human:
+      status: unnoted
+
+- id: q7.c9
+  text: "Discrete engineering milestones to Mt-scale operational, with regime-dependent timelines (scenario priors per anti-pattern #11): M1 (Earth-based demo at 1.7 km/s with 100-launch cycle life) 2-4 yr BAU / 6 mo IE / weeks TAI; M2 (sub-scale lunar prototype, 100 m track, 100 kg payload, 10 launches) 5-8 yr / 18 mo / 6 mo; M3 (pilot kt-scale operational, 10^4-10^5 cycle life) 10-15 yr / 3 yr / 1 yr; M4 (Mt-scale operational, ISRU-supplied projectiles) 20-30 yr / 6 yr / 1.5 yr; M5 (10 Mt-scale Handmer nameplate) 40-60+ yr / 10 yr / 2-3 yr."
+  type: estimate
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: speculative
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged milestones as unsupported scenario priors. Confidence downgraded to speculative. The cycle-life gap (10^6-10^9 shots required vs ~10^3 demonstrated) is the binding engineering risk between milestones."
+    human:
+      status: unnoted
+
+- id: q7.c10
+  text: "Cycle-life gap is the most under-discussed engineering risk in the mass-driver literature. At 1 Mt/yr × 200 kg/shot × 20 yr the system requires approximately 100 million shots; at 10 Mt/yr (q2's nameplate) approximately 1 billion shots. State-of-art demonstrated cycle life for EM launchers is approximately 100-1,000 shots; the Navy EMRG program was cancelled in 2021 after roughly $500M investment with cycle-life and barrel-wear as the binding failure modes. The 5-7 orders of magnitude gap between demonstrated and required cycle life is independent of capital cost and TAI compression; it requires an engineering breakthrough to close."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium-high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex surfaced this in audit as the highest-severity load-bearing risk in the calc. Accepted and added as q7.c10."
+    human:
+      status: unnoted
+
+- id: q7.c11
+  text: "The root question's answer — when does lunar manufacturing beat Earth launch for orbital infrastructure? — depends on mass driver availability ONLY in the late-era / TAI-grade regimes. Under BAU and any time horizon shorter than ~25 years, mass drivers do not reach Mt-scale operational regardless of investment level (the engineering milestones M2-M5 require sequential physical lead-times that BAU compressibility cannot collapse). In the early-mid BAU eras chemical rockets dominate the architecture by an order of magnitude regardless of mass-driver availability. Under Industrial Explosion or TAI-grade compression, mass drivers reach operational scale within the report's planning horizon and become the dominant architecture."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged the framing as importing q1/q2 figures not audited in q7's calc and reintroducing calendar dates. Both issues fixed in updated calc."
+    human:
+      status: unnoted

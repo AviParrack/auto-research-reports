@@ -1,0 +1,107 @@
+# Claims for q6-orbital-demand.
+# Each claim must trace to a derivation (calc) or a cited source (reconcile/source-review).
+# Claims added during the calc pass (sources sealed).
+
+- id: q6.c1
+  text: "Space-based data center orbital mass intensity under first-principles decomposition is ~40 t/MW continuous compute, with engineering-decomposition range 30-50 t/MW. Components: 20 t compute hardware + 8 t solar panels + 8 t radiators + 4 t structure/station-keeping per MW continuous."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+
+- id: q6.c2
+  text: "Cislunar / LEO total mass demand for the 2026-2040 horizon spans approximately 20,000 t (stall) to 2,000,000 t (BAU) to 40,000,000 t (TAI-compression). Three orders of magnitude separate the regimes; the regime identity — not the calendar year — determines feasibility (anti-pattern #11)."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium-high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+
+- id: q6.c3
+  text: "Space-based data centers dominate total LEO mass demand under BAU and TAI-compression regimes by a factor exceeding 5x over all other sectors combined. SDC's coupling to AI compute power demand growth makes it the high-elasticity sector; SBSP, propellant depots, and lunar/Mars cargo are 1-2 orders of magnitude smaller throughout."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium-high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+
+- id: q6.c4
+  text: "Space-based solar power orbital mass scales as approximately 5 kg/kW deployed under partial-mass-production-scaling assumptions (intermediate between Mankins SPS-ALPHA target ~1 kg/kW and state-of-art (2015) ~6.7 kg/kW). Three regimes: stall 0 GW, BAU 5 GW (≈25,000 t over 15 yr), TAI-C 100 GW (≈500,000 t over 15 yr)."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+
+- id: q6.c5
+  text: "Propellant depot annual throughput is approximately 800 t/yr per outbound interplanetary or HLS-class Starship refueled (8 tanker flights × 100 t per tanker, Musk's lower-bound estimate). BAU 10 ships/yr → 8,000 t/yr LEO depot throughput; TAI-C 200 ships/yr → 160,000 t/yr."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium-high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+
+- id: q6.c6
+  text: "Under TAI-compression, SDC mass demand (~2.7 Mt/yr) alone exceeds plausible Earth-launch throughput by approximately one order of magnitude. This is the q1-q6 demand-elasticity-cost coupling: cheap launch enables TAI-C demand, but TAI-C demand structurally requires lunar-sourced mass supply for orbital build-out at all-conceivable Earth-launch capacities. Lunar manufacturing becomes architecturally necessary under TAI-C, not merely competitive."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium-high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+
+- id: q6.c7
+  text: "Under stall regime, cumulative 2026-2040 cislunar / LEO mass demand (~20,000 t total, ~1,400 t/yr average) is small enough that Earth-launch alone trivially fulfills it. The lunar-manufacturing thesis fails for lack of demand, not for lack of supply, in this regime. Q6 demand is the cross-leaf veto for synthesis under stall."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+
+- id: q6.c8
+  text: "The 450 t/yr near-term lunar-derived propellant demand floor from Kornuta 2019 / Metzger 2023 corresponds to one sub-segment of BAU-regime LEO refueling (~5.6% of BAU's 8,000 t/yr total). The 450 t/yr is the lunar-derived market specifically; the total depot demand includes all-source refueling for Artemis HLS, commercial GEO, Mars-bound Starships, and deep-space programs."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.md
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending

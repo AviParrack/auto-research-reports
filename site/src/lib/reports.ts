@@ -96,6 +96,8 @@ export interface Claim {
   };
 }
 
+export type SourceTier = 'S' | 'A' | 'B' | 'C' | 'D' | 'E';
+
 export interface SourceMeta {
   slug: string;
   title?: string;
@@ -104,6 +106,31 @@ export interface SourceMeta {
   authors?: string[];
   type?: string;
   body: string;
+  // Tier-hierarchy metadata (spec: source-tiers.md). Older sources won't have these.
+  tier?: SourceTier;
+  peerReviewed?: boolean;
+  venue?: string;
+  topics?: string[];
+  publicFigure?: string;
+  date?: string;
+}
+
+export interface ReviewSummary {
+  consistent: number;
+  novelSupporting: number;
+  meritsInvestigation: number;
+  differentConclusion: number;
+  notRelevant: number;
+  total: number;
+}
+
+export interface ReviewData {
+  hasReview: boolean;
+  reviewPath?: string;
+  reviewedPass?: number | string;
+  reviewedBy?: string;
+  date?: string;
+  summary?: ReviewSummary;
 }
 
 export interface PassArtifact {
@@ -154,6 +181,22 @@ function safeYamlLoad<T = any>(filePath: string, fallback: T): T {
   }
 }
 
+/** Frontmatter loader that survives malformed YAML headers. gray-matter
+ *  embeds its own strict js-yaml; if the report-side writes an unquoted URL
+ *  with a colon (real failure mode seen 2026-05-26), the whole build dies.
+ *  Soft-fail to empty frontmatter + raw body. */
+function safeMatter(filePath: string): { data: Record<string, any>; content: string } {
+  const text = fs.readFileSync(filePath, 'utf8');
+  try {
+    return matter(text);
+  } catch (err: any) {
+    console.warn(`[reports] frontmatter parse failed for ${filePath}: ${err?.message || err}`);
+    // Strip the malformed frontmatter block manually so the body still renders
+    const m = text.match(/^---\n[\s\S]*?\n---\n?/);
+    return { data: {}, content: m ? text.slice(m[0].length) : text };
+  }
+}
+
 export function loadReport(slug: string): Report {
   const dir = path.join(REPORTS_DIR, slug);
   const meta = safeYamlLoad<Meta>(path.join(dir, 'meta.yaml'), {} as Meta);
@@ -175,7 +218,7 @@ export function loadReport(slug: string): Report {
       const reportPath = path.join(leafDir, 'passes/pass-write.md');
       let body: string | undefined;
       if (fs.existsSync(reportPath)) {
-        body = matter(fs.readFileSync(reportPath, 'utf8')).content;
+        body = safeMatter(reportPath).content;
       }
 
       // Sources: each subdir of sources/ with an extract.md
@@ -186,15 +229,22 @@ export function loadReport(slug: string): Report {
           if (!sEntry.isDirectory()) continue;
           const extractPath = path.join(sourcesDir, sEntry.name, 'extract.md');
           if (!fs.existsSync(extractPath)) continue;
-          const parsed = matter(fs.readFileSync(extractPath, 'utf8'));
+          const parsed = safeMatter(extractPath);
+          const d = parsed.data as any;
           sources.push({
             slug: sEntry.name,
-            title: (parsed.data as any).title,
-            url: (parsed.data as any).url,
-            year: (parsed.data as any).year,
-            authors: (parsed.data as any).authors,
-            type: (parsed.data as any).type,
+            title: d.title,
+            url: d.url,
+            year: d.year,
+            authors: d.authors,
+            type: d.type,
             body: parsed.content,
+            tier: typeof d.tier === 'string' ? d.tier.toUpperCase() as SourceTier : undefined,
+            peerReviewed: typeof d.peer_reviewed === 'boolean' ? d.peer_reviewed : undefined,
+            venue: d.venue,
+            topics: Array.isArray(d.topics) ? d.topics : undefined,
+            publicFigure: d.public_figure,
+            date: d.date,
           });
         }
       }
@@ -207,7 +257,7 @@ export function loadReport(slug: string): Report {
           if (!pEntry.endsWith('.md')) continue;
           const m = pEntry.match(/^pass-\d+-(.+)\.md$/);
           const kind = m ? m[1] : pEntry.replace('.md', '');
-          const parsed = matter(fs.readFileSync(path.join(passesDir, pEntry), 'utf8'));
+          const parsed = safeMatter(path.join(passesDir, pEntry));
           passArtifacts.push({ filename: pEntry, kind, body: parsed.content });
         }
         passArtifacts.sort((a, b) => a.filename.localeCompare(b.filename));
@@ -234,7 +284,71 @@ export interface GlossaryEntry {
 export function loadGlossary(slug: string): GlossaryEntry[] {
   const p = path.join(REPORTS_DIR, slug, 'glossary.yaml');
   if (!fs.existsSync(p)) return [];
-  return (yaml.load(fs.readFileSync(p, 'utf8')) as GlossaryEntry[]) ?? [];
+  return safeYamlLoad<GlossaryEntry[]>(p, []);
+}
+
+/** Parse a Newman-taxonomy verdict-count table from review.md body.
+ *  Looks for `## Summary` followed by a markdown table; falls back to
+ *  scanning `**Verdict:**` lines if the summary table is missing.
+ *  Returns null if no verdict signal is found. */
+function parseReviewSummary(body: string): ReviewSummary | undefined {
+  const bucketLabel = (raw: string): keyof ReviewSummary | null => {
+    const x = raw.toLowerCase().trim().replace(/[-_]/g, ' ');
+    if (x.includes('consistent')) return 'consistent';
+    if (x.includes('novel')) return 'novelSupporting';
+    if (x.includes('merits')) return 'meritsInvestigation';
+    if (x.includes('different')) return 'differentConclusion';
+    if (x.includes('not relevant')) return 'notRelevant';
+    return null;
+  };
+  const result: ReviewSummary = {
+    consistent: 0, novelSupporting: 0, meritsInvestigation: 0,
+    differentConclusion: 0, notRelevant: 0, total: 0,
+  };
+  let found = false;
+  // Pass 1: Summary table — rows like "| Consistent | 3 |"
+  const summaryStart = body.search(/^##\s+Summary/mi);
+  if (summaryStart >= 0) {
+    const slice = body.slice(summaryStart, summaryStart + 1500);
+    const rowRe = /\|\s*([A-Za-z][A-Za-z\s\-_]*?)\s*\|\s*(\d+)\s*\|/g;
+    let m: RegExpExecArray | null;
+    while ((m = rowRe.exec(slice)) !== null) {
+      const key = bucketLabel(m[1]);
+      if (!key || key === 'total' as any) continue;
+      result[key] += parseInt(m[2], 10);
+      found = true;
+    }
+  }
+  // Pass 2: fallback — count `**Verdict:** X` occurrences (handles single-claim Tier C/D shape)
+  if (!found) {
+    const verdictRe = /\*\*Verdict:?\*\*\s*([^\n*]+)/gi;
+    let m: RegExpExecArray | null;
+    while ((m = verdictRe.exec(body)) !== null) {
+      const key = bucketLabel(m[1]);
+      if (!key || key === 'total' as any) continue;
+      result[key]++;
+      found = true;
+    }
+  }
+  if (!found) return undefined;
+  result.total = result.consistent + result.novelSupporting + result.meritsInvestigation + result.differentConclusion + result.notRelevant;
+  return result;
+}
+
+/** Load a per-leaf source review file (if present) and parse its verdict summary. */
+export function loadSourceReview(reportSlug: string, leafId: string, sourceSlug: string): ReviewData {
+  const reviewPath = path.join(REPORTS_DIR, reportSlug, '02-leaves', leafId, 'sources', sourceSlug, 'review.md');
+  if (!fs.existsSync(reviewPath)) return { hasReview: false };
+  const parsed = safeMatter(reviewPath);
+  const d = parsed.data as any;
+  return {
+    hasReview: true,
+    reviewPath,
+    reviewedPass: d.reviewed_pass,
+    reviewedBy: d.reviewed_by,
+    date: d.date,
+    summary: parseReviewSummary(parsed.content),
+  };
 }
 
 /** Build a compact tooltip payload that can be inlined as JSON in pages. */

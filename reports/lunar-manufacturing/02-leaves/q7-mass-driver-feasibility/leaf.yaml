@@ -3,9 +3,9 @@ question: "What engineering and capital work remains before a lunar mass driver 
 status: researching
 passes_status:
   research: done
-  calc: pending
+  calc: done
   reconcile: pending
   source-review: pending
   consistency: pending
   write: pending
-last_pass: 1
+last_pass: 2

@@ -345,7 +345,11 @@ const tabs = [
     <header class="border-b border-[var(--color-line)] bg-[var(--color-paper)]">
       <div class="max-w-6xl mx-auto px-6 py-4">
         <div class="flex items-baseline justify-between mb-3">
-          <a href="/" class="text-sm text-[var(--color-ink-soft)] hover:text-[var(--color-accent)]">← Auto-Research</a>
+          <div class="text-sm text-[var(--color-ink-soft)] flex items-center gap-2">
+            <a href="/" class="hover:text-[var(--color-accent)]">← Auto-Research</a>
+            <span class="text-[var(--color-line)]">/</span>
+            <a href={`/${report.slug}/`} class="font-mono text-xs hover:text-[var(--color-accent)]">{report.slug}</a>
+          </div>
           <div class="text-xs text-[var(--color-ink-soft)] font-mono">
             pass #{report.meta.current_pass} · {report.meta.status}
           </div>
