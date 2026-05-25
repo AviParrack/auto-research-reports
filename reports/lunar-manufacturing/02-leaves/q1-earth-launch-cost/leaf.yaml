@@ -5,6 +5,7 @@ passes_status:
   research: done
   calc: done
   reconcile: done
+  source-review: done
   source-review: pending
   consistency: pending
   write: pending
