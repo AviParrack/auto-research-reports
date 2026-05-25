@@ -99,13 +99,13 @@
     - source: spaceambition-2026-sbsp
       ref: valcoe-firm-advantage
       verdict: supports
-  confidence: high
+  confidence: medium
   derivation_path: passes/pass-02-calc.md
   audit:
     gpt:
-      status: passed
-      audit_file: passes/pass-02-audit.md
-      notes: "Codex noted bracketing rather than first-principles derivation, and asked for clarification of kW definition. Both addressed: 5 kg/kW is mid-line bracketing of Mankins+SOA, kW means DC generation at satellite."
+      status: flagged
+      audit_file: passes/pass-03-audit.md
+      notes: "Codex pass-02: bracketing not first-principles, kW definition needed — both addressed. Codex pass-03: BAU 5 GW deployment 'strategic + niche' resolution under-supported by extracts; confidence downgraded from high to medium accordingly."
 
 - id: q6.c5
   text: "Propellant depot annual throughput is approximately 800 t/yr per outbound interplanetary or HLS-class Starship refueled, under Musk's 8-tanker estimate (lower bound; NASA's 16-tanker estimate doubles the figure). BAU 10 ships/yr → 8,000-16,000 t/yr LEO depot throughput; TAI-C 200 ships/yr → 160,000-320,000 t/yr. Each tanker payload ~100 t per Wikipedia depot taxonomy and Handmer's 1,200 t/Starship analysis."
@@ -132,19 +132,31 @@
       notes: "Codex flagged Musk-8 as lower-bound, not stable midpoint. Accepted; updated claim text to explicit lower-bound/upper-bound range with NASA-16."
 
 - id: q6.c6
-  text: "Under TAI-compression, SDC mass demand (~2.7 Mt/yr) alone exceeds plausible Earth-launch throughput by approximately an order of magnitude (Earth-launch capacity at ~200 active reusable Starships × 10 flights/yr × 200 t = ~400,000 t/yr). The q1-q6 demand-elasticity-cost coupling implies that lunar-sourced BULK MASS (structure, radiators, silicon for panels, sintered regolith) covers roughly half the SDC mass budget; the other half — compute hardware (GPUs, memory, networking, PSUs) — remains Earth-launch-bound regardless. Lunar manufacturing is therefore architecturally necessary but not sufficient under TAI-C."
+  text: "Under TAI-compression, SDC mass demand (~2.7 Mt/yr) alone exceeds plausible Earth-launch throughput by approximately an order of magnitude (Earth-launch capacity at ~200 active reusable Starships × 10 flights/yr × 200 t = ~400,000 t/yr). The q1-q6 demand-elasticity-cost coupling implies that lunar-sourced BULK MASS (structure, radiators, silicon for panels, sintered regolith) covers roughly half the SDC mass budget; the other half — compute hardware (GPUs, memory, networking, PSUs) — remains Earth-launch-bound regardless. Lunar manufacturing is therefore architecturally necessary but not sufficient under TAI-C. The conclusion is conditional on the TAI-C SDC demand scenario obtaining (q6.c2); McCalip's BAU cost-critique does not directly engage with the TAI-C necessity logic."
   type: derived
   evidence:
     - source: first-principles-calc
       ref: pass-02-calc.py
       verdict: supports
+    - source: metzger-2023-economics
+      ref: demand-elastic-feedback
+      verdict: supports
+    - source: handmer-2026-dc-orbit
+      ref: 2x-cost-premium
+      verdict: partial
+    - source: introl-2026-orbital-dc
+      ref: spacex-xai-projection
+      verdict: supports
+    - source: mccalip-quote-fomo
+      ref: 1gw-3x-quote
+      verdict: contradicts
   confidence: medium
   derivation_path: passes/pass-02-calc.md
   audit:
     gpt:
       status: flagged
-      audit_file: passes/pass-02-audit.md
-      notes: "Codex flagged the original 'lunar-sourced mass is necessary' framing as too strong because ~50% of SDC mass is Earth-launch-only compute hardware. Accepted; reframed to bulk-mass-half / compute-half split."
+      audit_file: passes/pass-03-audit.md
+      notes: "Codex flagged (pass-02) the 'lunar-sourced mass is necessary' overclaim. Codex flagged (pass-03) that this is conditional on TAI-C scenario, not a source-settled resolution. Both accepted; conditional framing added."
 
 - id: q6.c7
   text: "Under stall regime, cumulative 2026-2040 cislunar / LEO mass demand (~20,000 t total, ~1,400 t/yr average) is small enough that Earth-launch alone trivially fulfills it. The lunar-manufacturing thesis fails for lack of demand, not for lack of supply, in this regime. Q6 demand is the cross-leaf veto for synthesis under stall."
@@ -189,3 +201,135 @@
   audit:
     gpt:
       status: passed
+
+- id: q6.c9
+  text: "The orbital data center industry as of February 2026 has multiple operational deployments and aggressive mega-constellation FCC filings: Starcloud-1 (60 kg, NVIDIA H100, Nov 2025); Axiom Space (2 nodes, Jan 2026); Kepler Communications (10 sats, 300 kg each, Jan 2026); SpaceX/xAI January 2026 filing for up to 1M satellites projecting 100 GW; Blue Origin Project Sunrise filing for ~52,000 satellites; Starcloud filing for 88,000 satellites with 5 GW hypercluster vision."
+  type: factual
+  evidence:
+    - source: introl-2026-orbital-dc
+      ref: spacex-xai-1m-sats
+      verdict: supports
+    - source: introl-2026-orbital-dc
+      ref: bluemoon-sunrise
+      verdict: supports
+    - source: introl-2026-orbital-dc
+      ref: starcloud-5gw-hypercluster
+      verdict: supports
+    - source: introl-2026-orbital-dc
+      ref: kepler-mass
+      verdict: supports
+    - source: starcloud-factories-2026
+      ref: 88000-sats-fcc
+      verdict: supports
+    - source: bisnow-2026-bluemoon-sunrise
+      ref: bluemoon-sunrise-51600
+      verdict: supports
+    - source: fortune-2026-bezos-musk
+      ref: spacex-1m-sats
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: unaudited
+
+- id: q6.c10
+  text: "Public-figure positions on orbital data center viability bracket a 1.6x cost-multiple range: Casey Handmer's 2x per-token premium (still profitable for SpaceX-internal architecture); Andrew McCalip's 3.2x cost multiple (failed economics outside FOMO); Philip Metzger's exponential-AI-conditional optimism; Jeff Bezos's 'beat terrestrial cost in next couple decades' commitment via Project Sunrise. The viability range maps approximately to BAU (McCalip) vs TAI-C (Handmer, Metzger, Bezos)."
+  type: factual
+  evidence:
+    - source: handmer-quote-gpus-orbit
+      ref: 2x-cost-premium-quote
+      verdict: supports
+    - source: mccalip-quote-fomo
+      ref: 1gw-3x-quote
+      verdict: supports
+    - source: metzger-quote-orbital-dc
+      ref: exponential-conditional
+      verdict: supports
+    - source: bezos-orbital-dc-statement
+      ref: bezos-beat-terrestrial
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: unaudited
+
+- id: q6.c11
+  text: "Musk's stated Mars colonization upper-bound (1 million tons of cargo) and launch cadence ramp (20 / 100 / 500 missions per Mars window in 2028/29 / 2030/31 / 2033 at 75-300 t each) define the upper envelope of cislunar propellant + structural mass demand under industrial-explosion / TAI-C regimes. These are aspirational targets per Musk's May 2025 presentation, not operational commitments; treat as upper bound for the TAI-C scenario in q6.c2 + q6.c5."
+  type: factual
+  evidence:
+    - source: musk-mars-1m-tons
+      ref: 1m-tons-colony
+      verdict: supports
+    - source: musk-mars-1m-tons
+      ref: cadence-2028-2033
+      verdict: supports
+    - source: wiki-mars-colonization
+      ref: not-saved-tier-E
+      verdict: partial
+  confidence: medium
+  audit:
+    gpt:
+      status: unaudited
+
+- id: q6.c12
+  text: "NASA Artemis lunar surface cargo demand 2028-2040 features a structural lander capability gap: current planned capability ~1,500 kg/mission, vs multi-tonne mission objectives. NASA M2M Architecture white papers (2024 + 2025) identify three resolution paths: develop larger commercial cargo lander, use Starship HLS-derived cargo variant, or rescope program objectives. Annual cadence post-Artemis-V approximately one landing per year under BAU; cargo throughput therefore 1.5-100 t/yr depending on path."
+  type: factual
+  evidence:
+    - source: nasa-m2m-cargo-2024
+      ref: current-capability-1500kg
+      verdict: supports
+    - source: nasa-m2m-cargo-2024
+      ref: gap-vs-objectives
+      verdict: supports
+    - source: nasa-m2m-cargo-2024
+      ref: annual-cadence
+      verdict: supports
+    - source: nasa-m2m-logistics-2025
+      ref: strategic-tradeoff
+      verdict: supports
+    - source: wiki-artemis-cargo
+      ref: not-saved-tier-E
+      verdict: partial
+  confidence: high
+  audit:
+    gpt:
+      status: unaudited
+
+- id: q6.c13
+  text: "Satellite servicing market is projected to grow from $2.4B (2023) to $5.1B (2030) at 11.5% CAGR per MarketsAndMarkets industry research. Translated to mass throughput at $25-40 kg/$M revenue, this represents ~50 t/yr (current) to ~200 t/yr (2030) — small relative to SDC and depot demand under all regimes. Industrial-explosion deployment of mega-constellations could shift this by 1-2 orders of magnitude (~2,000 t/yr) if routine in-orbit assembly + ADR scales."
+  type: factual
+  evidence:
+    - source: marketsandmarkets-2026-osam
+      ref: market-2023-24b
+      verdict: supports
+    - source: marketsandmarkets-2026-osam
+      ref: market-2030-51b
+      verdict: supports
+    - source: marketsandmarkets-2026-osam
+      ref: cagr-115pct
+      verdict: supports
+  confidence: medium
+  audit:
+    gpt:
+      status: unaudited
+
+- id: q6.c14
+  text: "Orbital data center bandwidth ceiling (per Cote 2026): global orbital comms capacity ~500-800 Tbps total vs 5-20 Tbps per single ground-based DC. If true and not mitigated by optical inter-satellite links (OISL) for in-orbit compute aggregation, this caps the TAI-C SDC scenario at ~200 GW rather than the 1,000 GW headline figure, a factor-of-5 sensitivity within the existing regime uncertainty. AI training workloads (high compute-per-output-byte) are less constrained than inference serving."
+  type: factual
+  evidence:
+    - source: cote-2026-orbital-dc
+      ref: global-orbital-bandwidth-cap
+      verdict: supports
+    - source: cote-2026-orbital-dc
+      ref: niche-only-conclusion
+      verdict: partial
+    - source: pickard-2026-orbital-dc
+      ref: bandwidth-binding-constraint
+      verdict: supports
+    - source: pickard-2026-orbital-dc
+      ref: ground-station-real-estate
+      verdict: supports
+  confidence: medium
+  audit:
+    gpt:
+      status: unaudited
