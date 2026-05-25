@@ -4,8 +4,8 @@ status: researching
 passes_status:
   research: done
   calc: done
-  reconcile: pending
+  reconcile: done
   source-review: pending
   consistency: pending
   write: pending
-last_pass: 2
+last_pass: 3

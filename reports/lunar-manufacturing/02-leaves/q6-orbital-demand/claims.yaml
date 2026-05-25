@@ -3,69 +3,133 @@
 # Claims added during the calc pass (sources sealed).
 
 - id: q6.c1
-  text: "Space-based data center orbital mass intensity under first-principles decomposition is ~40 t/MW continuous compute, with engineering-decomposition range 30-50 t/MW. Components: 20 t compute hardware + 8 t solar panels + 8 t radiators + 4 t structure/station-keeping per MW continuous."
+  text: "Space-based data center orbital mass intensity under first-principles engineering decomposition is ~40 t/MW continuous compute, with range 30-55 t/MW. Components (post-Codex revision): 5-10 t compute hardware + 15-25 t solar panels (peak-to-continuous corrected) + 5-10 t radiators + 5-10 t structure/station-keeping per MW continuous. Mid-line 40 t/MW cross-corroborated by peraspera 30-50 t/MW and luminix 42 t/MW independent engineering analyses."
   type: derived
   evidence:
     - source: first-principles-calc
       ref: pass-02-calc.py
       verdict: supports
+    - source: peraspera-2025-orbital-compute
+      ref: mass-per-mw-extrapolated
+      verdict: supports
+    - source: luminix-2026-sdc
+      ref: mass-per-mw-luminix
+      verdict: supports
   confidence: high
   derivation_path: passes/pass-02-calc.md
   audit:
     gpt:
-      status: pending
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged the SDC line-item arithmetic (compute 10 GPU/kW + solar 8 t/MW). Both corrected; total 40 t/MW preserved because cross-corroborated. Revised line items consistent."
 
 - id: q6.c2
-  text: "Cislunar / LEO total mass demand for the 2026-2040 horizon spans approximately 20,000 t (stall) to 2,000,000 t (BAU) to 40,000,000 t (TAI-compression). Three orders of magnitude separate the regimes; the regime identity — not the calendar year — determines feasibility (anti-pattern #11)."
+  text: "Cislunar / LEO total mass demand for the 2026-2040 horizon spans approximately 20,000 t (stall) to 2,150,000 t (BAU) to 42,900,000 t (TAI-compression). Three orders of magnitude separate the regimes; the regime identity — not the calendar year — determines feasibility (anti-pattern #11). The McCalip 3.2x cost-multiple skepticism and Handmer 2x cost-premium optimism bracket the BAU-to-TAI-C transition; Cote's bandwidth ceiling caveats the TAI-C upper bound by factor ~5x within the existing regime uncertainty."
   type: derived
   evidence:
     - source: first-principles-calc
       ref: pass-02-calc.py
       verdict: supports
+    - source: marcy-2026-arxiv
+      ref: us-data-center-power-2035
+      verdict: supports
+    - source: introl-2026-orbital-dc
+      ref: spacex-xai-projection
+      verdict: supports
+    - source: metzger-2023-economics
+      ref: demand-elastic-feedback
+      verdict: supports
+    - source: mccalip-quote-fomo
+      ref: 1gw-3x-quote
+      verdict: partial
+    - source: cote-2026-orbital-dc
+      ref: niche-only-conclusion
+      verdict: partial
   confidence: medium-high
   derivation_path: passes/pass-02-calc.md
   audit:
     gpt:
-      status: pending
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged regime GW targets as adoption-scenario rather than first-principles. Accepted; the regime framework, not calendar dates, is the deliverable per anti-pattern #11."
 
 - id: q6.c3
-  text: "Space-based data centers dominate total LEO mass demand under BAU and TAI-compression regimes by a factor exceeding 5x over all other sectors combined. SDC's coupling to AI compute power demand growth makes it the high-elasticity sector; SBSP, propellant depots, and lunar/Mars cargo are 1-2 orders of magnitude smaller throughout."
+  text: "Space-based data centers dominate total LEO mass demand under BAU and TAI-compression regimes by a factor exceeding ~7x over all other sectors combined. SDC's coupling to AI compute power demand growth makes it the high-elasticity sector; SBSP (1.25% of SDC under TAI-C), propellant depots (6%), and lunar/Mars cargo (smaller still) are 1-2 orders of magnitude smaller throughout."
   type: derived
   evidence:
     - source: first-principles-calc
       ref: pass-02-calc.py
       verdict: supports
+    - source: marcy-2026-arxiv
+      ref: us-data-center-power-2035
+      verdict: supports
+    - source: introl-2026-orbital-dc
+      ref: market-projection
+      verdict: supports
+    - source: scientificamerican-2026-sdc
+      ref: us-dc-demand-half-of-growth
+      verdict: supports
   confidence: medium-high
   derivation_path: passes/pass-02-calc.md
   audit:
     gpt:
-      status: pending
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex caught the '1-2% scale' undercount; corrected to 6% (depots) + 1.25% (SBSP) = 7.25% of SDC under TAI-C."
 
 - id: q6.c4
-  text: "Space-based solar power orbital mass scales as approximately 5 kg/kW deployed under partial-mass-production-scaling assumptions (intermediate between Mankins SPS-ALPHA target ~1 kg/kW and state-of-art (2015) ~6.7 kg/kW). Three regimes: stall 0 GW, BAU 5 GW (≈25,000 t over 15 yr), TAI-C 100 GW (≈500,000 t over 15 yr)."
+  text: "Space-based solar power orbital mass scales as approximately 5 kg/kW (of DC generation at satellite) under partial-mass-production-scaling assumptions (intermediate between Mankins SPS-ALPHA target ~1 kg/kW and state-of-art (2015) ~6.7 kg/kW). Three regimes: stall 0 GW, BAU 5 GW (≈25,000 t over 15 yr), TAI-C 100 GW (≈500,000 t over 15 yr). BAU deployment assumes strategic-autonomy demand (China 2028 1 km array; Aetherflux Q1 2027) rather than full commercial LCOE competitiveness."
   type: derived
   evidence:
     - source: first-principles-calc
       ref: pass-02-calc.py
+      verdict: supports
+    - source: caltech-sspd-mankins-niac
+      ref: mass-per-kw-current
+      verdict: supports
+    - source: caltech-sspd-mankins-niac
+      ref: reference-80000t-per-4gw
+      verdict: supports
+    - source: nasa-otps-sbsp-2024
+      ref: launch-cost-threshold
+      verdict: partial
+    - source: orbysa-2026-sbsp
+      ref: china-1km-array-2028
+      verdict: supports
+    - source: spaceambition-2026-sbsp
+      ref: valcoe-firm-advantage
       verdict: supports
   confidence: high
   derivation_path: passes/pass-02-calc.md
   audit:
     gpt:
-      status: pending
+      status: passed
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex noted bracketing rather than first-principles derivation, and asked for clarification of kW definition. Both addressed: 5 kg/kW is mid-line bracketing of Mankins+SOA, kW means DC generation at satellite."
 
 - id: q6.c5
-  text: "Propellant depot annual throughput is approximately 800 t/yr per outbound interplanetary or HLS-class Starship refueled (8 tanker flights × 100 t per tanker, Musk's lower-bound estimate). BAU 10 ships/yr → 8,000 t/yr LEO depot throughput; TAI-C 200 ships/yr → 160,000 t/yr."
+  text: "Propellant depot annual throughput is approximately 800 t/yr per outbound interplanetary or HLS-class Starship refueled, under Musk's 8-tanker estimate (lower bound; NASA's 16-tanker estimate doubles the figure). BAU 10 ships/yr → 8,000-16,000 t/yr LEO depot throughput; TAI-C 200 ships/yr → 160,000-320,000 t/yr. Each tanker payload ~100 t per Wikipedia depot taxonomy and Handmer's 1,200 t/Starship analysis."
   type: derived
   evidence:
     - source: first-principles-calc
       ref: pass-02-calc.py
       verdict: supports
+    - source: handmer-2025-propellant-stability
+      ref: per-starship-propellant
+      verdict: supports
+    - source: kornuta-2019-clpa
+      ref: near-term-demand-450t
+      verdict: partial
+    - source: metzger-2023-economics
+      ref: near-term-annual-demand-450t
+      verdict: partial
   confidence: medium-high
   derivation_path: passes/pass-02-calc.md
   audit:
     gpt:
-      status: pending
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged Musk-8 as lower-bound, not stable midpoint. Accepted; updated claim text to explicit lower-bound/upper-bound range with NASA-16."
 
 - id: q6.c6
   text: "Under TAI-compression, SDC mass demand (~2.7 Mt/yr) alone exceeds plausible Earth-launch throughput by approximately an order of magnitude (Earth-launch capacity at ~200 active reusable Starships × 10 flights/yr × 200 t = ~400,000 t/yr). The q1-q6 demand-elasticity-cost coupling implies that lunar-sourced BULK MASS (structure, radiators, silicon for panels, sintered regolith) covers roughly half the SDC mass budget; the other half — compute hardware (GPUs, memory, networking, PSUs) — remains Earth-launch-bound regardless. Lunar manufacturing is therefore architecturally necessary but not sufficient under TAI-C."
@@ -89,21 +153,39 @@
     - source: first-principles-calc
       ref: pass-02-calc.py
       verdict: supports
+    - source: nasa-otps-sbsp-2024
+      ref: competitive-conditions
+      verdict: supports
+    - source: peraspera-2025-orbital-compute
+      ref: 2030-horizon-crawl
+      verdict: supports
+    - source: mccalip-quote-fomo
+      ref: fomo-quote
+      verdict: partial
   confidence: high
   derivation_path: passes/pass-02-calc.md
   audit:
     gpt:
-      status: pending
+      status: passed
 
 - id: q6.c8
-  text: "The 450 t/yr near-term lunar-derived propellant demand floor from Kornuta 2019 / Metzger 2023 corresponds to one sub-segment of BAU-regime LEO refueling (~5.6% of BAU's 8,000 t/yr total). The 450 t/yr is the lunar-derived market specifically; the total depot demand includes all-source refueling for Artemis HLS, commercial GEO, Mars-bound Starships, and deep-space programs."
+  text: "The 450 t/yr near-term lunar-derived propellant demand floor from Kornuta 2019 / Metzger 2023 corresponds to one sub-segment of BAU-regime LEO refueling (~5.6% of BAU's 8,000 t/yr total). The 450 t/yr is the lunar-derived market specifically; the total depot demand includes all-source refueling for Artemis HLS, commercial GEO, Mars-bound Starships, and deep-space programs. The framing distinction (lunar-derived vs all-source) is mine; the 450 t/yr figure is jointly attributed to Kornuta-Metzger."
   type: derived
   evidence:
     - source: first-principles-calc
       ref: pass-02-calc.md
       verdict: supports
+    - source: kornuta-2019-clpa
+      ref: near-term-demand-450t
+      verdict: supports
+    - source: metzger-2023-economics
+      ref: near-term-annual-demand-450t
+      verdict: supports
+    - source: ida-demand-drivers
+      ref: 450t-near-term
+      verdict: supports
   confidence: medium
   derivation_path: passes/pass-02-calc.md
   audit:
     gpt:
-      status: pending
+      status: passed

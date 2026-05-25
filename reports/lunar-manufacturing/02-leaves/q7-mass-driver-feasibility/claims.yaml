@@ -9,6 +9,15 @@
     - source: first-principles-calc
       ref: pass-02-calc.py
       verdict: supports
+    - source: janhunen-2024-gravity-anomalies
+      ref: velocity-reduction
+      verdict: supports
+    - source: lunarpedia-mass-drivers
+      ref: canonical-energy
+      verdict: supports
+    - source: handmer-mass-driver-2026
+      ref: track-and-acceleration
+      verdict: supports
   confidence: high
   derivation_path: passes/pass-02-calc.md
   audit:
@@ -42,6 +51,18 @@
     - source: first-principles-calc
       ref: pass-02-calc.py
       verdict: supports
+    - source: coilgun-wiki-engineering
+      ref: darpa-coilgun-efficiency
+      verdict: supports
+    - source: wright-kuznetsov-kloesel-2011
+      ref: efficiency-decomposition
+      verdict: supports
+    - source: nasa-mass-drivers-iii-1979
+      ref: claimed-efficiency
+      verdict: partial
+    - source: handmer-mass-driver-2026
+      ref: power-and-reactor
+      verdict: supports
   confidence: medium
   derivation_path: passes/pass-02-calc.md
   audit:
@@ -53,12 +74,15 @@
       status: unnoted
 
 - id: q7.c4
-  text: "At operational throughput of 1 Mt/yr, average wall power is approximately 89 MW (η=0.50, v=1.7 km/s). Peak instantaneous power per 200-kg shot at 1000g is approximately 6.6 GW over 171 ms. This peak-to-average ratio (~75x) sets the pulsed-power capacitor bank / flywheel requirement. At 10 Mt/yr (Handmer aspirational nameplate), average wall power rises to 894 MW."
+  text: "At operational throughput of 1 Mt/yr, average wall power is approximately 89 MW (η=0.50, v=1.7 km/s). Peak instantaneous power per 200-kg shot at 1000g is approximately 6.6 GW over 171 ms. This peak-to-average ratio (~75x) sets the pulsed-power capacitor bank / flywheel requirement. At 10 Mt/yr (Handmer aspirational nameplate), average wall power rises to 894 MW (consistent with Handmer's 450 MW at his higher 90% efficiency assumption)."
   type: derived
   evidence:
     - source: first-principles-calc
       ref: pass-02-calc.py
       verdict: supports
+    - source: handmer-mass-driver-2026
+      ref: power-and-reactor
+      verdict: partial
   confidence: high
   derivation_path: passes/pass-02-calc.md
   audit:
@@ -161,6 +185,15 @@
     - source: first-principles-calc
       ref: pass-02-calc.py
       verdict: supports
+    - source: dsiac-hypervelocity-2015
+      ref: barrel-wear
+      verdict: supports
+    - source: coilgun-wiki-engineering
+      ref: darpa-coilgun-efficiency
+      verdict: supports
+    - source: handmer-mass-driver-2026
+      ref: unresolved-engineering
+      verdict: supports
   confidence: medium-high
   derivation_path: passes/pass-02-calc.md
   audit:
@@ -168,6 +201,102 @@
       status: passed
       audit_file: passes/pass-02-audit.md
       notes: "Codex surfaced this in audit as the highest-severity load-bearing risk in the calc. Accepted and added as q7.c10."
+    human:
+      status: unnoted
+
+- id: q7.c12
+  text: "The 1979 NASA SP-428 Mass Drivers III chapter projected $3.137 billion (1979 dollars) for a baseline operational lunar mass driver by mid-1985, with 42 kg/s throughput, 96.4% claimed system efficiency, and 488 m total length. Inflated to 2026 dollars, this is approximately $13 billion. The 1985 operational target was not met; no operational lunar mass driver has been built in the intervening 40 years. The 2011 Wright et al. NASA/IEEE peer-reviewed reanalysis with TRL-grounded subsystems reached a negative cost-benefit conclusion."
+  type: factual
+  evidence:
+    - source: nasa-mass-drivers-iii-1979
+      ref: capital-cost
+      verdict: supports
+    - source: nasa-mass-drivers-iii-1979
+      ref: operational-target
+      verdict: supports
+    - source: wright-kuznetsov-kloesel-2011
+      ref: negative-verdict
+      verdict: supports
+    - source: kolm-l5-news-1980
+      ref: lunar-cost-headline
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: unaudited
+      notes: "Added in pass-3 reconcile from primary-source extracts."
+    human:
+      status: unnoted
+
+- id: q7.c13
+  text: "Pearson, Levin, Oldson, Wykes (NIAC Phase II Final Report, 2005) demonstrated that a lunar space elevator using commercially available M5 fiber is technically feasible without carbon nanotubes. A 30mm × 0.023mm M5 ribbon supports 2,000 kg at the lunar surface and 100 cargo vehicles of 580 kg each distributed along the length. This is the canonical non-mass-driver architecture for cis-lunar bulk transport. From 2005 NIAC funding to 2019 LiftPort status update, no progress was made beyond conceptualized design — the bottleneck for this alternative is capital and program commitment, not physics."
+  type: factual
+  evidence:
+    - source: pearson-lunar-elevator-2005
+      ref: feasibility-verdict
+      verdict: supports
+    - source: pearson-lunar-elevator-2005
+      ref: ribbon-spec
+      verdict: supports
+    - source: pearson-lunar-elevator-2005
+      ref: post-2005-progress
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: unaudited
+      notes: "Added in pass-3 reconcile from primary-source extract."
+    human:
+      status: unnoted
+
+- id: q7.c14
+  text: "Modern public-figure positions on lunar mass drivers (mid-2020s): Elon Musk publicly committed strategic intent through 'Project TERAFAB' announcements in Feb-May 2026, with aspirational figures of $500/kg and 500-1000 TW/yr of AI satellite deployment, but no funded engineering program. Phil Metzger treated Musk's pivot as a vindication of the O'Neill paradigm. Robert Peterkin (General Atomics EMS, EMALS builder) advocates evolutionary path from EMALS to lunar EM launch, with the next demonstration milestone defined as '100 launches at lunar orbit speed without needing to replace launcher components.'"
+  type: factual
+  evidence:
+    - source: musk-mass-driver-tweet-2026
+      ref: giga-texas-march-2026-quote-2
+      verdict: supports
+    - source: musk-mass-driver-tweet-2026
+      ref: capacity-claim
+      verdict: supports
+    - source: musk-mass-driver-tweet-2026
+      ref: cost-claim-attributed
+      verdict: supports
+    - source: musk-mass-driver-tweet-2026
+      ref: not-funded
+      verdict: supports
+    - source: metzger-twitter-2025
+      ref: metzger-quote-verbatim
+      verdict: supports
+    - source: peterkin-general-atomics-2023
+      ref: demonstration-milestone
+      verdict: supports
+  confidence: medium-high
+  audit:
+    gpt:
+      status: unaudited
+      notes: "Added in pass-3 reconcile from tier-B public-figure extracts."
+    human:
+      status: unnoted
+
+- id: q7.c15
+  text: "SpinLaunch is the most-funded modern Earth-based kinetic launch development. Since 2014, approximately $150M private capital has been deployed; in August 2025 the company demonstrated 10,000g acceleration survival for a 1U CubeSat. Full operational system design targets 2.1 km/s muzzle velocity with 400 kg payload. April 2025 strategic pivot: announced Meridian (280-satellite constellation) launched on conventional chemical rockets — implying the operational kinetic system is not on a near-term schedule. The trajectory is consistent with q7's BAU M2-M3 estimate of 10-15 years from program start to pilot-scale operational; political will and capital scale (not physics) are the binding constraints on Earth-based kinetic launch."
+  type: factual
+  evidence:
+    - source: spinlaunch-status-2025
+      ref: capital-and-timeline
+      verdict: supports
+    - source: spinlaunch-status-2025
+      ref: august-2025-demo
+      verdict: supports
+    - source: spinlaunch-status-2025
+      ref: pivot-2025
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: unaudited
+      notes: "Added in pass-3 reconcile from trade-press extract."
     human:
       status: unnoted
 
