@@ -1,11 +1,33 @@
 id: q1-earth-launch-cost
 question: "What is the projected cost per kg to LEO from Earth launch over 2026-2040, with realistic uncertainty bands?"
-status: open
+status: reviewed
+answer: "Three operational scenarios bracket Starship cost-per-kg to LEO: optimistic ($59-277/kg internal cost), partial ($107-466/kg, demonstrated by B1076 34-reuse milestone), pessimistic ($194-878/kg). The dominant variable is refurbishment rate, not hardware amortization. Musk's $10/kg target sits outside the calc envelope unless TAI-grade compression AND zero-margin pricing both occur. SatBase 2026 evidence shows Falcon 9 list prices rising at $500/kg/year — Starship has not yet pulled market prices down. Citigroup $100/kg by 2040 fits the optimistic-late corner."
+confidence: medium-high
 passes_status:
   research: done
   calc: done
   reconcile: done
   source-review: done
-  consistency: pending
-  write: pending
-last_pass: 0
+  consistency: done
+  write: done
+last_pass: 6
+flagged_for_avi:
+  - "Citigroup 2040 forecast secondhand-cited; primary BusinessWire URL surfaced by Codex audit but not yet fetched (timed out). Worth a refetch."
+  - "Falcon-9-to-Starship reuse extrapolation is a structural caveat carried through claims c6 + c8."
+sources_gathered:
+  - satbase-2026-falcon9
+  - musk-10kg-target
+  - shotwell-2017-refurb
+  - b1076-34-reuses-2026
+sources_to_review_pending:
+  - citigroup-2040-forecast
+  - patel-semianalysis-skeptic
+  - berger-arstechnica-starship-reporting
+  - mccalip-varda-economics
+public_figures_to_review_pending:
+  - elon-musk
+  - gwynne-shotwell
+  - dylan-patel
+  - eric-berger
+  - andrew-mccalip
+  - citigroup-analysts

@@ -45,6 +45,51 @@ const bodyHtml = leaf?.body ? renderMath(leaf.body, { inline: false }) : null;
         <article class="prose-leaf mb-10" set:html={bodyHtml} />
       )}
 
+      {/* Agreement heat map — per-claim evidence-verdict tiles */}
+      {leaf.claims.length > 0 && (
+        <section class="mb-8 border border-[var(--color-line)] rounded p-4">
+          <div class="flex items-baseline justify-between mb-3">
+            <div class="text-xs uppercase tracking-wider text-[var(--color-ink-soft)]">Evidence agreement</div>
+            <div class="flex items-center gap-3 text-xs text-[var(--color-ink-soft)]">
+              <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-sm" style="background: var(--color-leaf)"></span>supports</span>
+              <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-sm" style="background: var(--color-warn)"></span>partial</span>
+              <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-sm" style="background: var(--color-flag)"></span>contradicts</span>
+              <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-sm" style="background: var(--color-unaudited)"></span>none</span>
+            </div>
+          </div>
+          <ul class="space-y-1.5">
+            {leaf.claims.map((claim) => {
+              // Compute supports/partial/contradicts/none counts
+              const counts = { supports: 0, partial: 0, contradicts: 0 };
+              for (const ev of claim.evidence || []) {
+                const v = ev.verdict || '';
+                if (v === 'supports') counts.supports++;
+                else if (v === 'partial' || v === 'weak') counts.partial++;
+                else if (v === 'contradicts' || v === 'contradicted' || v === 'unsupported') counts.contradicts++;
+              }
+              const evCount = claim.evidence?.length || 0;
+              return (
+              <li class="flex items-center gap-3">
+                <span class="font-mono text-xs text-[var(--color-ink-soft)] w-12 shrink-0">{claim.id}</span>
+                <div class="flex gap-0.5 shrink-0" title={`${counts.supports} supports · ${counts.partial} partial · ${counts.contradicts} contradicts`}>
+                  {evCount === 0 ? (
+                    <span class="inline-block w-4 h-4 rounded-sm" style="background: var(--color-unaudited); opacity: 0.4"></span>
+                  ) : (claim.evidence || []).map((ev) => {
+                    const v = ev.verdict || '';
+                    let bg = 'var(--color-unaudited)';
+                    if (v === 'supports') bg = 'var(--color-leaf)';
+                    else if (v === 'partial' || v === 'weak') bg = 'var(--color-warn)';
+                    else if (v === 'contradicts' || v === 'contradicted' || v === 'unsupported') bg = 'var(--color-flag)';
+                    return <span class="inline-block w-4 h-4 rounded-sm" style={`background: ${bg}`} title={`${ev.source}: ${v}`}></span>;
+                  })}
+                </div>
+                <span class="text-sm text-[var(--color-ink-soft)] truncate flex-1" title={claim.text}>{claim.text}</span>
+              </li>);
+            })}
+          </ul>
+        </section>
+      )}
+
       {/* Compact pass status strip */}
       <section class="mb-8 border border-[var(--color-line)] rounded p-3 bg-[var(--color-paper-dim)]/30">
         <div class="text-xs uppercase tracking-wider text-[var(--color-ink-soft)] mb-2">Pass status</div>
@@ -79,15 +124,17 @@ const bodyHtml = leaf?.body ? renderMath(leaf.body, { inline: false }) : null;
                   </div>
                   <div class="flex items-center gap-1 shrink-0">
                     <span class="text-xs font-mono text-[var(--color-ink-soft)]">{claim.confidence}</span>
-                    <span title={`GPT audit: ${claim.audit.gpt.status}`} class:list={[
-                      'text-xs',
-                      claim.audit.gpt.status === 'passed' ? 'text-[var(--color-leaf)]'
-                      : claim.audit.gpt.status === 'flagged' ? 'text-[var(--color-flag)]'
-                      : 'text-[var(--color-unaudited)]'
-                    ]}>
-                      {claim.audit.gpt.status === 'passed' ? '✓' : claim.audit.gpt.status === 'flagged' ? '⚠' : '○'}
-                    </span>
-                    {claim.audit.human.status === 'noted' && <span title="Has human comment" class="text-xs text-[var(--color-accent)]">💬</span>}
+                    {claim.audit?.gpt && (
+                      <span title={`GPT audit: ${claim.audit.gpt.status}`} class:list={[
+                        'text-xs',
+                        claim.audit.gpt.status === 'passed' ? 'text-[var(--color-leaf)]'
+                        : claim.audit.gpt.status === 'flagged' ? 'text-[var(--color-flag)]'
+                        : 'text-[var(--color-unaudited)]'
+                      ]}>
+                        {claim.audit.gpt.status === 'passed' ? '✓' : claim.audit.gpt.status === 'flagged' ? '⚠' : '○'}
+                      </span>
+                    )}
+                    {claim.audit?.human?.status === 'noted' && <span title="Has human comment" class="text-xs text-[var(--color-accent)]">💬</span>}
                   </div>
                 </div>
                 {claim.evidence && claim.evidence.length > 0 && (

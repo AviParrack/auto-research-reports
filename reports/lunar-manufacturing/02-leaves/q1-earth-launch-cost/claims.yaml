@@ -1,0 +1,122 @@
+# Claims for q1-earth-launch-cost.
+
+- id: q1.c1
+  text: "Starship internal-cost-per-kg to LEO under the partial-reuse central scenario (30 reuses, 100t payload, 15% refurb rate, $1M ops per launch) is $107-466/kg, depending on era within 2030-2035."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+    - source: b1076-34-reuses-2026
+      ref: spaceflight-now-2026-03-30
+      verdict: supports
+  confidence: medium-high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-02-audit.md
+    human:
+      status: unnoted
+
+- id: q1.c2
+  text: "The dominant variable in Starship $/kg economics is refurbishment cost, not hardware amortization. At 30+ reuses, per-launch hardware contribution drops below ~$30/kg on 100t payload; refurbishment at 15% of build cost contributes ~$135/kg — roughly 4× the hardware amortization."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+    - source: shotwell-2017-refurb
+      ref: april-2017-statement
+      verdict: partial
+  confidence: high
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-02-audit.md
+
+- id: q1.c3
+  text: "Elon Musk's stated Starship target of $10/kg to LEO is not derivable from Falcon-9-anchored first-principles assumptions without (a) refurbishment cost compression to <2% of build cost, (b) operations cost reduction beyond Falcon 9 historical scaling, and (c) zero or negative margin during market-capture phase. It remains aspirational, not modelled."
+  type: derived
+  evidence:
+    - source: musk-10kg-target
+      ref: wccftech-summary
+      verdict: contradicts
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium-high
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-write-audit.md
+
+- id: q1.c4
+  text: "Citigroup's 2040 forecast of $100/kg operator cost falls inside the optimistic-late scenario of the q1 framework. The wccftech-reported 'roughly $1,600/kg full-reuse → $100-150/kg long-term' projection traces the partial-to-optimistic arc of the same framework. Both anchor as moderate-bullish industry views consistent with first-principles modeling."
+  type: factual
+  evidence:
+    - source: musk-10kg-target
+      ref: wccftech-alt-projection
+      verdict: supports
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-write-audit.md
+      notes: "Citigroup source not yet primary-extracted; secondhand citation flagged for source-review breadth."
+
+- id: q1.c5
+  text: "Falcon 9 customer list prices are rising at approximately $500/kg/year structural increase as of 2026, with February 2026 rideshare at $7,000/kg and dedicated launch at ~$3,240/kg amortised on a 22.8-tonne payload. This contradicts naive interpretations of 'Starship will drive launch costs down imminently'; Starship has not yet pulled list prices down."
+  type: factual
+  evidence:
+    - source: satbase-2026-falcon9
+      ref: 2026-02-28
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-write-audit.md
+
+- id: q1.c6
+  text: "The B1076 Falcon 9 first-stage milestone of 34 reuses (March 2026) converts the q1 partial scenario (30 reuses) from aspirational to operationally demonstrated for Falcon 9 hardware. Fleet-average reuse count is likely closer to 15-20, suggesting the pessimistic scenario (10 reuses) is too pessimistic for typical mature operations."
+  type: factual
+  evidence:
+    - source: b1076-34-reuses-2026
+      ref: spaceflight-now-2026-03-30
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-write-audit.md
+
+- id: q1.c7
+  text: "Under industrial-explosion / TAI-grade automation pressure, refurbishment labor could compress ~10×, launch cadence rise ~10×, and ground-operations cost compress ~5×. Combined, the optimistic-scenario internal cost drops from $59/kg to ~$15-25/kg. Musk's $10/kg target sits just beyond this compressed envelope and still requires near-zero margin pricing."
+  type: estimate
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.md
+      verdict: supports
+  confidence: medium
+  audit:
+    gpt:
+      status: unaudited
+      notes: "Speculative TAI sensitivity; follows directly from framework but quantitative claim about compression factors not externally validated."
+
+- id: q1.c8
+  text: "Falcon 9 first-stage reuse evidence does not directly transfer to Starship full-system reuse: Starship reuses both stages (booster + ship), has heat-shield wear and methalox propellant, and uses tower-catch recovery. The 34-reuse Falcon 9 milestone bounds Starship optimism (probably not exceeded early) and pessimism (Starship designed for reuse from day one); it is not a direct prediction."
+  type: factual
+  evidence:
+    - source: b1076-34-reuses-2026
+      ref: review.md
+      verdict: partial
+  confidence: high
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-03-audit.md
+      notes: "Codex flagged the cross-system extrapolation caveat originally; carried into claims explicitly."
