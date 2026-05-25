@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import type { Report } from '../lib/reports';
+import { BUILD_HASH } from '../lib/build-hash';
 
 interface Props {
   report: Report;
@@ -24,8 +25,27 @@ const tabs = [
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
+    <meta name="build-hash" content={BUILD_HASH} />
     <title>{title} — Auto-Research</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline define:vars={{ BUILD_HASH }}>
+      (async () => {
+        try {
+          if ('serviceWorker' in navigator) {
+            const regs = await navigator.serviceWorker.getRegistrations();
+            for (const r of regs) { try { await r.unregister(); } catch {} }
+          }
+          const resp = await fetch('/build-hash.txt', { cache: 'no-store' });
+          if (!resp.ok) return;
+          const live = (await resp.text()).trim();
+          if (live && live !== BUILD_HASH) {
+            const url = new URL(location.href);
+            url.searchParams.set('v', live);
+            location.replace(url.toString());
+          }
+        } catch { /* offline or blocked — ignore */ }
+      })();
+    </script>
   </head>
   <body class="min-h-screen">
     <header class="border-b border-[var(--color-line)] bg-[var(--color-paper)]">
