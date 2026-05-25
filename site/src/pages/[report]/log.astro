@@ -11,7 +11,8 @@ export function getStaticPaths() {
 const { report: slug } = Astro.params;
 const report = loadReport(slug!);
 
-const logPath = path.resolve(process.cwd(), '../reports', slug!, 'pass-log.jsonl');
+const REPORTS_DIR = path.resolve(process.cwd(), '../reports');
+const logPath = path.join(REPORTS_DIR, slug!, 'pass-log.jsonl');
 let entries: any[] = [];
 if (fs.existsSync(logPath)) {
   entries = fs.readFileSync(logPath, 'utf8')
@@ -23,23 +24,88 @@ if (fs.existsSync(logPath)) {
     .filter(Boolean)
     .reverse();
 }
+
+// Helper: for each pass, find audit + response artefacts and tally verdicts
+interface CritiqueStats {
+  supports: number;
+  weak: number;
+  unsupported: number;
+  contradicted: number;
+  accepted: number;
+  disputed: number;
+  total: number;
+  source?: string;
+}
+
+function collectStatsForPass(passEntry: any): CritiqueStats | null {
+  // Heuristic: focus is like "leaf:q4-gear-ratio". Look at all audit files in that leaf
+  // and tally verdicts that match the kinds in the pass entry.
+  if (!passEntry.focus || !passEntry.focus.startsWith('leaf:')) return null;
+  const leafId = passEntry.focus.slice('leaf:'.length);
+  const passesDir = path.join(REPORTS_DIR, slug!, '02-leaves', leafId, 'passes');
+  if (!fs.existsSync(passesDir)) return null;
+
+  const auditFiles = fs.readdirSync(passesDir).filter((f) => f.includes('-audit.md'));
+  if (auditFiles.length === 0) return null;
+
+  const stats: CritiqueStats = {
+    supports: 0, weak: 0, unsupported: 0, contradicted: 0,
+    accepted: 0, disputed: 0, total: 0,
+  };
+
+  for (const f of auditFiles) {
+    // Only count audits matching the kinds in this pass entry
+    const kindsOnFile = passEntry.kinds || [];
+    const isRelevant = kindsOnFile.length === 0 || kindsOnFile.some((k: string) => f.includes(k)) || kindsOnFile.includes('research');
+    if (!isRelevant && passEntry.pass_id !== 'p002.full') continue;
+
+    const body = fs.readFileSync(path.join(passesDir, f), 'utf8');
+    // Crude verdict count via regex on the YAML-ish bodies Codex produces
+    const supports = (body.match(/verdict:\s*supports/gi) || []).length;
+    const weak = (body.match(/verdict:\s*weak/gi) || []).length;
+    const unsupported = (body.match(/verdict:\s*unsupported/gi) || []).length;
+    const contradicted = (body.match(/verdict:\s*contradicted/gi) || []).length;
+    stats.supports += supports;
+    stats.weak += weak;
+    stats.unsupported += unsupported;
+    stats.contradicted += contradicted;
+  }
+
+  // Response files mark accept/dispute (heuristic: count "Accepted" headings vs "Disputed")
+  const responseFiles = fs.readdirSync(passesDir).filter((f) => f.includes('-response.md'));
+  for (const f of responseFiles) {
+    const body = fs.readFileSync(path.join(passesDir, f), 'utf8');
+    const accepted = (body.match(/^##\s*Accepted/gim) || []).length;
+    const disputed = (body.match(/^##\s*Disputed/gim) || []).length;
+    stats.accepted += accepted;
+    stats.disputed += disputed;
+  }
+
+  stats.total = stats.supports + stats.weak + stats.unsupported + stats.contradicted;
+  return stats.total > 0 ? stats : null;
+}
+
+const entriesWithStats = entries.map((e) => ({ entry: e, stats: collectStatsForPass(e) }));
 ---
 <ReportLayout report={report} title={`Pass Log — ${report.meta.root_question}`} activeTab="log">
   <div class="mb-6">
     <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-2">Pass Log</h2>
-    <p class="text-sm text-[var(--color-ink-soft)]">One line per pass. Most recent first.</p>
+    <p class="text-sm text-[var(--color-ink-soft)]">
+      One line per pass. Most recent first. Coloured bars show critique verdicts
+      from Codex tag-team — green = supports, amber = weak, red = unsupported/contradicted.
+    </p>
   </div>
 
-  {entries.length === 0 ? (
+  {entriesWithStats.length === 0 ? (
     <div class="border border-[var(--color-line)] rounded p-6 text-[var(--color-ink-soft)]">
       No passes logged yet.
     </div>
   ) : (
     <ul class="space-y-2">
-      {entries.map((e: any) => (
+      {entriesWithStats.map(({ entry: e, stats }: any) => (
         <li class="border border-[var(--color-line)] rounded p-3">
           <div class="flex items-baseline justify-between gap-3 mb-1">
-            <div class="flex items-baseline gap-2">
+            <div class="flex items-baseline gap-2 flex-wrap">
               <span class="font-mono text-xs text-[var(--color-ink-soft)]">{e.pass_id}</span>
               <span class="font-medium">{e.focus}</span>
               {e.kinds && (
@@ -50,8 +116,27 @@ if (fs.existsSync(logPath)) {
             </div>
             <div class="text-xs font-mono text-[var(--color-ink-soft)]">{e.started}</div>
           </div>
-          <div class="text-sm text-[var(--color-ink-soft)]">{e.outcome}</div>
-          <div class="text-xs font-mono text-[var(--color-ink-soft)] mt-1 flex gap-3">
+          <div class="text-sm text-[var(--color-ink-soft)] mb-1">{e.outcome}</div>
+          {stats && stats.total > 0 && (
+            <div class="my-2">
+              <div class="flex h-2 rounded overflow-hidden border border-[var(--color-line)]" title={`${stats.supports} supports · ${stats.weak} weak · ${stats.unsupported} unsupported · ${stats.contradicted} contradicted`}>
+                {stats.supports > 0 && <div style={`width: ${(stats.supports / stats.total) * 100}%; background: var(--color-leaf);`} title={`${stats.supports} supports`}></div>}
+                {stats.weak > 0 && <div style={`width: ${(stats.weak / stats.total) * 100}%; background: var(--color-warn);`} title={`${stats.weak} weak`}></div>}
+                {stats.unsupported > 0 && <div style={`width: ${(stats.unsupported / stats.total) * 100}%; background: var(--color-flag); opacity: 0.7;`} title={`${stats.unsupported} unsupported`}></div>}
+                {stats.contradicted > 0 && <div style={`width: ${(stats.contradicted / stats.total) * 100}%; background: var(--color-flag);`} title={`${stats.contradicted} contradicted`}></div>}
+              </div>
+              <div class="text-xs font-mono text-[var(--color-ink-soft)] mt-1 flex gap-3 flex-wrap">
+                <span class="text-[var(--color-leaf)]">✓ {stats.supports} supports</span>
+                {stats.weak > 0 && <span class="text-[var(--color-warn)]">~ {stats.weak} weak</span>}
+                {stats.unsupported > 0 && <span class="text-[var(--color-flag)]">✗ {stats.unsupported} unsupported</span>}
+                {stats.contradicted > 0 && <span class="text-[var(--color-flag)]">✗ {stats.contradicted} contradicted</span>}
+                {(stats.accepted > 0 || stats.disputed > 0) && (
+                  <span>· {stats.accepted} accepted / {stats.disputed} disputed</span>
+                )}
+              </div>
+            </div>
+          )}
+          <div class="text-xs font-mono text-[var(--color-ink-soft)] flex gap-3 flex-wrap">
             {e.models && <span>models: {e.models.join(', ')}</span>}
             {e.commit && <span>commit: {e.commit}</span>}
           </div>

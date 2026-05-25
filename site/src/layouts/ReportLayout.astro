@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import type { Report } from '../lib/reports';
 import { BUILD_HASH } from '../lib/build-hash';
+import { buildTooltipPayload } from '../lib/reports';
 
 interface Props {
   report: Report;
@@ -18,6 +19,7 @@ function fmtTs(v: unknown): string {
   return String(v);
 }
 const reportUpdatedStr = fmtTs(report.meta.last_updated);
+const tooltipPayload = buildTooltipPayload(report);
 
 const tabs = [
   { id: 'report', label: 'Report', href: `/${report.slug}/` },
@@ -53,6 +55,16 @@ const tabs = [
         });
       });
     </script>
+
+    {/* Tippy.js for hover tooltips on glossary terms + source citations */}
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
+    <script defer src="https://unpkg.com/@popperjs/core@2"></script>
+    <script defer src="https://unpkg.com/tippy.js@6"></script>
+    <script is:inline define:vars={{ payload: tooltipPayload, slug: report.slug }}>
+      window.__tooltipPayload = payload;
+      window.__reportSlug = slug;
+    </script>
+    <script is:inline src="/tooltips.js"></script>
     <script is:inline define:vars={{ BUILD_HASH }}>
       const LOG_PREFIX = '[live-reload]';
       console.log(LOG_PREFIX, 'embedded BUILD_HASH:', BUILD_HASH);

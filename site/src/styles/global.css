@@ -40,3 +40,32 @@ body {
 .prose-leaf table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
 .prose-leaf th, .prose-leaf td { border: 1px solid var(--color-line); padding: 0.5rem 0.75rem; text-align: left; }
 .prose-leaf th { background: var(--color-paper-dim); font-weight: 600; }
+.prose-leaf tbody tr { transition: background-color 0.12s ease; }
+.prose-leaf tbody tr:hover { background: var(--color-paper-dim); }
+
+/* Tooltip-styled inline markers */
+.glossary-term { border-bottom: 1px dotted var(--color-accent); cursor: help; }
+.source-cite {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  padding: 0.05em 0.35em;
+  border-radius: 3px;
+  background: var(--color-paper-dim);
+  color: var(--color-accent);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+.source-cite:hover { background: var(--color-accent); color: white; }
+
+/* Tippy customization */
+.tippy-box[data-theme~='auto-research'] {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  max-width: 360px;
+}
+.tippy-box[data-theme~='auto-research'] .tippy-arrow { color: var(--color-ink); }
+.tippy-box[data-theme~='auto-research'] strong { color: var(--color-accent-soft); }
+.tippy-box[data-theme~='auto-research'] .tippy-content { padding: 0.65rem 0.85rem; }

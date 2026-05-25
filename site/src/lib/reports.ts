@@ -174,6 +174,54 @@ export function loadAllReports(): Report[] {
   return listReportSlugs().map(loadReport);
 }
 
+export interface GlossaryEntry {
+  term: string;
+  symbol?: string;
+  definition: string;
+  category?: string;
+}
+
+export function loadGlossary(slug: string): GlossaryEntry[] {
+  const p = path.join(REPORTS_DIR, slug, 'glossary.yaml');
+  if (!fs.existsSync(p)) return [];
+  return (yaml.load(fs.readFileSync(p, 'utf8')) as GlossaryEntry[]) ?? [];
+}
+
+/** Build a compact tooltip payload that can be inlined as JSON in pages. */
+export function buildTooltipPayload(report: Report): {
+  glossary: Array<{ term: string; symbol?: string; html: string }>;
+  sources: Array<{ slug: string; title?: string; year?: any; authors?: string[]; url?: string; snippet: string }>;
+} {
+  const glossary = loadGlossary(report.slug).map((g) => ({
+    term: g.term,
+    symbol: g.symbol,
+    // Tooltips render plain text (KaTeX will run on display once injected);
+    // we use the symbol + definition.
+    html: (g.symbol ? `<strong>${g.symbol}</strong> &mdash; ` : '') + g.definition,
+  }));
+
+  const seenSources = new Map<string, any>();
+  for (const leaf of report.leaves) {
+    for (const s of leaf.sources) {
+      if (seenSources.has(s.slug)) continue;
+      // Snippet = first ~280 chars of extract body
+      const stripped = s.body.replace(/^#\s+[^\n]+\n+/, '').trim();
+      const snippet = stripped.length > 280
+        ? stripped.slice(0, stripped.lastIndexOf(' ', 280)) + '…'
+        : stripped;
+      seenSources.set(s.slug, {
+        slug: s.slug,
+        title: s.title,
+        year: s.year,
+        authors: s.authors,
+        url: s.url,
+        snippet,
+      });
+    }
+  }
+  return { glossary, sources: [...seenSources.values()] };
+}
+
 export function getLeafBySlug(report: Report, leafId: string): Leaf | undefined {
   return report.leaves.find((l) => l.id === leafId);
 }
