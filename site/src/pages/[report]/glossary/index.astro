@@ -1,0 +1,73 @@
+---
+import ReportLayout from '../../../layouts/ReportLayout.astro';
+import { listReportSlugs, loadReport } from '../../../lib/reports';
+import fs from 'node:fs';
+import path from 'node:path';
+import yaml from 'js-yaml';
+import { marked } from 'marked';
+
+export function getStaticPaths() {
+  return listReportSlugs().map((slug) => ({ params: { report: slug } }));
+}
+
+const { report: slug } = Astro.params;
+const report = loadReport(slug!);
+
+const REPORTS_DIR = path.resolve(process.cwd(), '../reports');
+const glossaryPath = path.join(REPORTS_DIR, slug!, 'glossary.yaml');
+
+interface Entry { term: string; symbol?: string; definition: string; category?: string; used_in?: string[]; }
+let entries: Entry[] = [];
+if (fs.existsSync(glossaryPath)) {
+  entries = (yaml.load(fs.readFileSync(glossaryPath, 'utf8')) as Entry[]) ?? [];
+}
+const byCategory = new Map<string, Entry[]>();
+for (const e of entries) {
+  const cat = e.category || 'general';
+  if (!byCategory.has(cat)) byCategory.set(cat, []);
+  byCategory.get(cat)!.push(e);
+}
+for (const arr of byCategory.values()) {
+  arr.sort((a, b) => a.term.localeCompare(b.term));
+}
+---
+<ReportLayout report={report} title={`Glossary — ${report.meta.root_question}`} activeTab="glossary">
+  <div class="mb-6">
+    <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-2">Glossary ({entries.length})</h2>
+    <p class="text-sm text-[var(--color-ink-soft)] max-w-3xl">
+      Domain-specific terms, units, symbols, and conventions used across the report.
+    </p>
+  </div>
+
+  {entries.length === 0 ? (
+    <div class="border border-[var(--color-line)] rounded p-6 text-[var(--color-ink-soft)]">
+      Glossary empty. Entries are added as the report develops terminology.
+    </div>
+  ) : (
+    <div class="space-y-8">
+      {[...byCategory.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([cat, list]) => (
+        <section>
+          <h3 class="text-lg font-serif font-semibold mb-3 capitalize">{cat}</h3>
+          <dl class="space-y-3">
+            {list.map((e) => (
+              <div class="border-l-2 border-[var(--color-line)] pl-4">
+                <dt class="font-medium">
+                  {e.symbol && <span class="font-mono text-[var(--color-accent)] mr-2">{e.symbol}</span>}
+                  <span>{e.term}</span>
+                </dt>
+                <dd class="text-sm text-[var(--color-ink-soft)] mt-1 prose-leaf" set:html={marked.parseInline(e.definition)} />
+                {e.used_in && e.used_in.length > 0 && (
+                  <div class="text-xs text-[var(--color-ink-soft)] mt-1">
+                    used in: {e.used_in.map((id) => (
+                      <a href={`/${slug}/leaves/${id}/`} class="font-mono mr-2 hover:text-[var(--color-accent)]">{id}</a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </dl>
+        </section>
+      ))}
+    </div>
+  )}
+</ReportLayout>

@@ -1,0 +1,62 @@
+---
+import ReportLayout from '../../../layouts/ReportLayout.astro';
+import { listReportSlugs, loadReport } from '../../../lib/reports';
+
+export function getStaticPaths() {
+  return listReportSlugs().map((slug) => ({ params: { report: slug } }));
+}
+
+const { report: slug } = Astro.params;
+const report = loadReport(slug!);
+
+// Flatten all sources across leaves into a deduplicated, sorted bibliography
+const sourceMap = new Map<string, { slug: string; title?: string; url?: string; year?: any; authors?: string[]; type?: string; usedBy: string[] }>();
+for (const leaf of report.leaves) {
+  for (const s of leaf.sources) {
+    if (!sourceMap.has(s.slug)) {
+      sourceMap.set(s.slug, { ...s, usedBy: [leaf.id] });
+    } else {
+      sourceMap.get(s.slug)!.usedBy.push(leaf.id);
+    }
+  }
+}
+const sources = [...sourceMap.values()].sort((a, b) => a.slug.localeCompare(b.slug));
+---
+<ReportLayout report={report} title={`Sources — ${report.meta.root_question}`} activeTab="sources">
+  <div class="mb-6">
+    <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-2">Sources ({sources.length})</h2>
+    <p class="text-sm text-[var(--color-ink-soft)] max-w-3xl">
+      All cited sources across the report. Each source has been fetched and extracted; many have a corresponding point-by-point Source Review.
+    </p>
+  </div>
+
+  {sources.length === 0 ? (
+    <div class="border border-[var(--color-line)] rounded p-6 text-[var(--color-ink-soft)]">No sources captured yet.</div>
+  ) : (
+    <ul class="space-y-3">
+      {sources.map((s) => (
+        <li class="border border-[var(--color-line)] rounded p-4">
+          <div class="flex items-baseline justify-between gap-3 mb-1.5">
+            <div class="flex-1">
+              <a href={`/${slug}/source-reviews/${s.slug}/`} class="font-mono text-xs text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] mr-2">{s.slug}</a>
+              {s.title && <span class="font-medium">{s.title}</span>}
+            </div>
+            <div class="text-xs text-[var(--color-ink-soft)] font-mono shrink-0 flex items-center gap-2">
+              {s.authors && s.authors.length > 0 && <span>{s.authors.join(', ')}</span>}
+              {s.year && <span>{s.year}</span>}
+              {s.type && <span class="px-1.5 py-0.5 bg-[var(--color-paper-dim)] rounded">{s.type}</span>}
+            </div>
+          </div>
+          {s.url && (
+            <a href={s.url} target="_blank" rel="noopener" class="text-xs text-[var(--color-accent)] hover:underline break-all">{s.url}</a>
+          )}
+          <div class="text-xs text-[var(--color-ink-soft)] mt-2">
+            cited by: {s.usedBy.map((id) => (
+              <a href={`/${slug}/leaves/${id}/`} class="font-mono mr-2 hover:text-[var(--color-accent)]">{id}</a>
+            ))}
+          </div>
+        </li>
+      ))}
+    </ul>
+  )}
+</ReportLayout>

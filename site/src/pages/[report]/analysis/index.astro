@@ -1,0 +1,135 @@
+---
+import ReportLayout from '../../../layouts/ReportLayout.astro';
+import { listReportSlugs, loadReport, type TreeNode } from '../../../lib/reports';
+
+export function getStaticPaths() {
+  return listReportSlugs().map((slug) => ({ params: { report: slug } }));
+}
+
+const { report: slug } = Astro.params;
+const report = loadReport(slug!);
+
+const leafNodes = report.tree.nodes.filter((n) => n.type === 'leaf');
+const synthesisNodes = report.tree.nodes.filter((n) => n.type === 'synthesis');
+const constraintNodes = report.tree.nodes.filter((n) => n.type === 'constraint');
+
+function leafFor(node: TreeNode) {
+  return report.leaves.find((l) => l.id === node.id);
+}
+function progress(node: TreeNode) {
+  const leaf = leafFor(node);
+  if (!leaf) return { done: 0, total: 0 };
+  const subs = Object.values(leaf.passes_status);
+  return { done: subs.filter((s) => s === 'done').length, total: subs.length };
+}
+---
+<ReportLayout report={report} title={`Analysis — ${report.meta.root_question}`} activeTab="analysis">
+  <div class="mb-6">
+    <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-2">Analysis</h2>
+    <p class="text-sm text-[var(--color-ink-soft)] max-w-3xl">
+      The question DAG decomposed into Input Questions (atomic factual leaves), Analyses (synthesis nodes that combine inputs), and Side Chapters (constraint or orthogonal deep-dives).
+    </p>
+  </div>
+
+  {leafNodes.length > 0 && (
+    <section class="mb-10">
+      <h3 class="text-lg font-serif font-semibold mb-3">Input Questions (Leaf)</h3>
+      <ul class="space-y-2">
+        {leafNodes.map((node) => {
+          const p = progress(node);
+          const leaf = leafFor(node);
+          return (
+          <li>
+            <a href={`/${slug}/leaves/${node.id}/`} class="block border border-[var(--color-line)] rounded p-3 hover:border-[var(--color-accent)] hover:bg-[var(--color-paper-dim)]/30 transition-colors">
+              <div class="flex items-baseline justify-between gap-3 mb-1">
+                <div class="flex items-baseline gap-2 flex-1 min-w-0">
+                  <span class="font-mono text-xs text-[var(--color-ink-soft)] shrink-0">{node.id}</span>
+                  <span class="font-medium">{node.question}</span>
+                </div>
+                <span class:list={[
+                  'text-xs px-2 py-0.5 rounded font-mono shrink-0',
+                  node.status === 'answered' ? 'bg-[var(--color-leaf)]/15 text-[var(--color-leaf)]'
+                  : p.done > 0 ? 'bg-[var(--color-warn)]/15 text-[var(--color-warn)]'
+                  : 'bg-[var(--color-paper-dim)] text-[var(--color-ink-soft)]'
+                ]}>
+                  {node.status === 'answered' ? 'answered' : p.total > 0 ? `${p.done}/${p.total} done` : 'open'}
+                </span>
+              </div>
+              {node.answer && <p class="text-sm text-[var(--color-ink-soft)] mt-1">{node.answer}</p>}
+              {leaf && (
+                <div class="text-xs text-[var(--color-ink-soft)] mt-1.5">
+                  {leaf.sources?.length || 0} source{leaf.sources?.length === 1 ? '' : 's'}
+                  {leaf.claims?.length > 0 && <span> · {leaf.claims.length} claim{leaf.claims.length === 1 ? '' : 's'}</span>}
+                </div>
+              )}
+            </a>
+          </li>);
+        })}
+      </ul>
+    </section>
+  )}
+
+  {synthesisNodes.length > 0 && (
+    <section class="mb-10">
+      <h3 class="text-lg font-serif font-semibold mb-3">Analyses</h3>
+      <ul class="space-y-2">
+        {synthesisNodes.map((node) => {
+          const p = progress(node);
+          return (
+          <li>
+            <a href={`/${slug}/leaves/${node.id}/`} class="block border border-[var(--color-line)] rounded p-3 hover:border-[var(--color-accent)] hover:bg-[var(--color-paper-dim)]/30 transition-colors">
+              <div class="flex items-baseline justify-between gap-3 mb-1">
+                <div class="flex items-baseline gap-2 flex-1 min-w-0">
+                  <span class="font-mono text-xs text-[var(--color-ink-soft)] shrink-0">{node.id}</span>
+                  <span class="font-medium">{node.question}</span>
+                </div>
+                <span class:list={[
+                  'text-xs px-2 py-0.5 rounded font-mono shrink-0',
+                  node.status === 'answered' ? 'bg-[var(--color-leaf)]/15 text-[var(--color-leaf)]'
+                  : p.done > 0 ? 'bg-[var(--color-warn)]/15 text-[var(--color-warn)]'
+                  : 'bg-[var(--color-paper-dim)] text-[var(--color-ink-soft)]'
+                ]}>
+                  {node.status === 'answered' ? 'answered' : p.total > 0 ? `${p.done}/${p.total} done` : 'open'}
+                </span>
+              </div>
+              {node.answer && <p class="text-sm text-[var(--color-ink-soft)] mt-1">{node.answer}</p>}
+            </a>
+          </li>);
+        })}
+      </ul>
+    </section>
+  )}
+
+  {constraintNodes.length > 0 && (
+    <section class="mb-10">
+      <h3 class="text-lg font-serif font-semibold mb-3">Side Chapters</h3>
+      <p class="text-xs text-[var(--color-ink-soft)] mb-3">
+        Structural or orthogonal deep-dives surfaced during research. Could materially shift the bottom line but live outside the main DAG.
+      </p>
+      <ul class="space-y-2">
+        {constraintNodes.map((node) => {
+          const p = progress(node);
+          return (
+          <li>
+            <a href={`/${slug}/leaves/${node.id}/`} class="block border border-[var(--color-line)] rounded p-3 hover:border-[var(--color-accent)] hover:bg-[var(--color-paper-dim)]/30 transition-colors">
+              <div class="flex items-baseline justify-between gap-3 mb-1">
+                <div class="flex items-baseline gap-2 flex-1 min-w-0">
+                  <span class="font-mono text-xs text-[var(--color-ink-soft)] shrink-0">{node.id}</span>
+                  <span class="font-medium">{node.question}</span>
+                </div>
+                <span class:list={[
+                  'text-xs px-2 py-0.5 rounded font-mono shrink-0',
+                  p.done > 0 ? 'bg-[var(--color-warn)]/15 text-[var(--color-warn)]'
+                  : 'bg-[var(--color-paper-dim)] text-[var(--color-ink-soft)]'
+                ]}>
+                  {p.total > 0 ? `${p.done}/${p.total} done` : 'open'}
+                </span>
+              </div>
+              {node.answer && <p class="text-sm text-[var(--color-ink-soft)] mt-1">{node.answer}</p>}
+            </a>
+          </li>);
+        })}
+      </ul>
+    </section>
+  )}
+</ReportLayout>

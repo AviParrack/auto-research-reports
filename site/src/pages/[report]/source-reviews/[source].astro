@@ -1,0 +1,78 @@
+---
+import ReportLayout from '../../../layouts/ReportLayout.astro';
+import { listReportSlugs, loadReport } from '../../../lib/reports';
+import fs from 'node:fs';
+import path from 'node:path';
+import matter from 'gray-matter';
+import { marked } from 'marked';
+
+export function getStaticPaths() {
+  const paths = [];
+  const REPORTS_DIR = path.resolve(process.cwd(), '../reports');
+  for (const slug of listReportSlugs()) {
+    const leavesDir = path.join(REPORTS_DIR, slug, '02-leaves');
+    if (!fs.existsSync(leavesDir)) continue;
+    for (const leafName of fs.readdirSync(leavesDir)) {
+      const sourcesDir = path.join(leavesDir, leafName, 'sources');
+      if (!fs.existsSync(sourcesDir)) continue;
+      for (const sName of fs.readdirSync(sourcesDir)) {
+        const reviewPath = path.join(sourcesDir, sName, 'review.md');
+        if (fs.existsSync(reviewPath)) {
+          paths.push({ params: { report: slug, source: sName } });
+        }
+      }
+    }
+  }
+  return paths;
+}
+
+const { report: slug, source: sourceSlug } = Astro.params;
+const report = loadReport(slug!);
+
+const REPORTS_DIR = path.resolve(process.cwd(), '../reports');
+let reviewBody: string | null = null;
+let extractBody: string | null = null;
+let sourceMeta: any = null;
+let leafId: string | null = null;
+
+for (const leaf of report.leaves) {
+  const src = leaf.sources.find((s) => s.slug === sourceSlug);
+  if (src) {
+    const reviewPath = path.join(REPORTS_DIR, slug!, '02-leaves', leaf.id, 'sources', sourceSlug!, 'review.md');
+    if (fs.existsSync(reviewPath)) {
+      const parsed = matter(fs.readFileSync(reviewPath, 'utf8'));
+      reviewBody = parsed.content;
+    }
+    extractBody = src.body;
+    sourceMeta = src;
+    leafId = leaf.id;
+    break;
+  }
+}
+---
+<ReportLayout report={report} title={`Source Review: ${sourceMeta?.title || sourceSlug}`} activeTab="source-reviews">
+  <a href={`/${slug}/source-reviews/`} class="text-sm text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] mb-4 inline-block">← All source reviews</a>
+
+  <div class="mb-6">
+    <div class="text-xs font-mono text-[var(--color-ink-soft)] mb-1">{sourceSlug}</div>
+    <h2 class="text-2xl font-serif font-semibold mb-2">{sourceMeta?.title || sourceSlug}</h2>
+    <div class="text-xs text-[var(--color-ink-soft)] flex flex-wrap gap-3 mb-2">
+      {sourceMeta?.authors && <span>{sourceMeta.authors.join(', ')}</span>}
+      {sourceMeta?.year && <span>{sourceMeta.year}</span>}
+      {sourceMeta?.type && <span class="px-1.5 py-0.5 bg-[var(--color-paper-dim)] rounded">{sourceMeta.type}</span>}
+      {leafId && <span>reviewed in <a href={`/${slug}/leaves/${leafId}/`} class="font-mono hover:text-[var(--color-accent)]">{leafId}</a></span>}
+    </div>
+    {sourceMeta?.url && <a href={sourceMeta.url} target="_blank" rel="noopener" class="text-xs text-[var(--color-accent)] hover:underline break-all">{sourceMeta.url}</a>}
+  </div>
+
+  {reviewBody && (
+    <article class="prose-leaf mb-8" set:html={marked.parse(reviewBody)} />
+  )}
+
+  {extractBody && (
+    <details class="border border-[var(--color-line)] rounded p-4 mt-8">
+      <summary class="cursor-pointer text-sm font-medium hover:text-[var(--color-accent)]">Show source extract</summary>
+      <article class="prose-leaf mt-4 text-sm" set:html={marked.parse(extractBody)} />
+    </details>
+  )}
+</ReportLayout>

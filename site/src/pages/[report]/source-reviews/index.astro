@@ -1,0 +1,51 @@
+---
+import ReportLayout from '../../../layouts/ReportLayout.astro';
+import { listReportSlugs, loadReport } from '../../../lib/reports';
+import fs from 'node:fs';
+import path from 'node:path';
+
+export function getStaticPaths() {
+  return listReportSlugs().map((slug) => ({ params: { report: slug } }));
+}
+
+const { report: slug } = Astro.params;
+const report = loadReport(slug!);
+
+// Find all sources that have a review.md
+const REPORTS_DIR = path.resolve(process.cwd(), '../reports');
+const reviews: Array<{ slug: string; title?: string; leafId: string; hasReview: boolean }> = [];
+for (const leaf of report.leaves) {
+  for (const s of leaf.sources) {
+    const reviewPath = path.join(REPORTS_DIR, slug!, '02-leaves', leaf.id, 'sources', s.slug, 'review.md');
+    if (fs.existsSync(reviewPath)) {
+      reviews.push({ slug: s.slug, title: s.title, leafId: leaf.id, hasReview: true });
+    }
+  }
+}
+---
+<ReportLayout report={report} title={`Source Reviews — ${report.meta.root_question}`} activeTab="source-reviews">
+  <div class="mb-6">
+    <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-2">Source Reviews ({reviews.length})</h2>
+    <p class="text-sm text-[var(--color-ink-soft)] max-w-3xl">
+      Point-by-point reviews of major published sources. Each claim is extracted, quoted, and assigned a verdict (consistent / different conclusion / novel supporting / merits investigation / not relevant).
+    </p>
+  </div>
+
+  {reviews.length === 0 ? (
+    <div class="border border-[var(--color-line)] rounded p-6 text-[var(--color-ink-soft)]">No source reviews yet.</div>
+  ) : (
+    <ul class="space-y-3">
+      {reviews.map((r) => (
+        <li>
+          <a href={`/${slug}/source-reviews/${r.slug}/`} class="block border border-[var(--color-line)] rounded p-4 hover:border-[var(--color-accent)] hover:bg-[var(--color-paper-dim)]/30 transition-colors">
+            <div class="font-medium">{r.title || r.slug}</div>
+            <div class="text-xs text-[var(--color-ink-soft)] mt-1 flex gap-3">
+              <span class="font-mono">{r.slug}</span>
+              <span>reviewed in <a href={`/${slug}/leaves/${r.leafId}/`} class="font-mono hover:text-[var(--color-accent)]">{r.leafId}</a></span>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</ReportLayout>

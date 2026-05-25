@@ -40,14 +40,36 @@ const bodyHtml = leaf?.body ? marked.parse(leaf.body) : null;
 
   {leaf ? (
     <>
+      {/* Lead: the leaf report prose */}
       {bodyHtml && (
-        <article class="prose-leaf mb-8" set:html={bodyHtml} />
+        <article class="prose-leaf mb-10" set:html={bodyHtml} />
       )}
 
+      {/* Compact pass status strip */}
+      <section class="mb-8 border border-[var(--color-line)] rounded p-3 bg-[var(--color-paper-dim)]/30">
+        <div class="text-xs uppercase tracking-wider text-[var(--color-ink-soft)] mb-2">Pass status</div>
+        <div class="flex flex-wrap gap-3 text-xs font-mono">
+          {Object.entries(leaf.passes_status).map(([k, v]) => (
+            <span class:list={[
+              v === 'done' ? 'text-[var(--color-leaf)]'
+              : v === 'in_progress' ? 'text-[var(--color-warn)]'
+              : v === 'needs_rerun' ? 'text-[var(--color-flag)]'
+              : 'text-[var(--color-unaudited)]'
+            ]}>
+              {v === 'done' ? '✓' : v === 'in_progress' ? '◐' : v === 'needs_rerun' ? '↻' : '○'} {k}
+            </span>
+          ))}
+        </div>
+      </section>
+
+      {/* Claims — collapsed by default */}
       {leaf.claims.length > 0 && (
-        <section class="mb-8">
-          <h3 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-3">Claims</h3>
-          <ul class="space-y-2">
+        <details class="mb-6 border border-[var(--color-line)] rounded">
+          <summary class="cursor-pointer p-3 hover:bg-[var(--color-paper-dim)]/30">
+            <span class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)]">Claims</span>
+            <span class="ml-2 text-xs text-[var(--color-ink-soft)]">({leaf.claims.length}) · evidence + audit status</span>
+          </summary>
+          <ul class="space-y-2 p-3 pt-0">
             {leaf.claims.map((claim) => (
               <li class="border border-[var(--color-line)] rounded p-3">
                 <div class="flex items-start justify-between gap-3 mb-1">
@@ -82,10 +104,11 @@ const bodyHtml = leaf?.body ? marked.parse(leaf.body) : null;
               </li>
             ))}
           </ul>
-        </section>
+        </details>
       )}
 
-      <section class="mb-8">
+      {/* Hidden block for the old pass status section — replaced above */}
+      <section class="hidden">
         <h3 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-3">Pass Status</h3>
         <ul class="text-sm font-mono space-y-1">
           {Object.entries(leaf.passes_status).map(([k, v]) => (
@@ -105,14 +128,17 @@ const bodyHtml = leaf?.body ? marked.parse(leaf.body) : null;
       </section>
 
       {leaf.sources && leaf.sources.length > 0 && (
-        <section class="mb-8">
-          <h3 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-3">Sources captured ({leaf.sources.length})</h3>
-          <ul class="space-y-3">
+        <details class="mb-6 border border-[var(--color-line)] rounded">
+          <summary class="cursor-pointer p-3 hover:bg-[var(--color-paper-dim)]/30">
+            <span class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)]">Sources cited</span>
+            <span class="ml-2 text-xs text-[var(--color-ink-soft)]">({leaf.sources.length}) · expandable</span>
+          </summary>
+          <ul class="space-y-3 p-3 pt-0">
             {leaf.sources.map((s) => (
               <li class="border border-[var(--color-line)] rounded p-3">
                 <div class="flex items-baseline justify-between gap-3 mb-1">
                   <div>
-                    <span class="font-mono text-xs text-[var(--color-ink-soft)] mr-2">{s.slug}</span>
+                    <a href={`/${slug}/source-reviews/${s.slug}/`} class="font-mono text-xs text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] mr-2">{s.slug}</a>
                     {s.title && <span class="font-medium">{s.title}</span>}
                   </div>
                   <div class="text-xs text-[var(--color-ink-soft)] font-mono shrink-0">
@@ -131,13 +157,16 @@ const bodyHtml = leaf?.body ? marked.parse(leaf.body) : null;
               </li>
             ))}
           </ul>
-        </section>
+        </details>
       )}
 
       {leaf.passArtifacts && leaf.passArtifacts.length > 0 && (
-        <section>
-          <h3 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-3">Pass artifacts ({leaf.passArtifacts.length})</h3>
-          <ul class="space-y-3">
+        <details class="mb-6 border border-[var(--color-line)] rounded">
+          <summary class="cursor-pointer p-3 hover:bg-[var(--color-paper-dim)]/30">
+            <span class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)]">Pass artifacts</span>
+            <span class="ml-2 text-xs text-[var(--color-ink-soft)]">({leaf.passArtifacts.length}) · debug trail</span>
+          </summary>
+          <ul class="space-y-3 p-3 pt-0">
             {leaf.passArtifacts.map((p) => (
               <li class="border border-[var(--color-line)] rounded p-3">
                 <details>
@@ -151,7 +180,7 @@ const bodyHtml = leaf?.body ? marked.parse(leaf.body) : null;
               </li>
             ))}
           </ul>
-        </section>
+        </details>
       )}
     </>
   ) : (

@@ -1,0 +1,103 @@
+- term: "production mass ratio"
+  symbol: "φ"
+  category: economic
+  definition: "Mass of product (lunar propellant or other bulk export) delivered over the operational lifetime of the capital, divided by the mass of capital landed on the lunar surface. The dominant variable for lunar ISRU competitiveness per Metzger 2023."
+  used_in: [q4-gear-ratio]
+
+- term: "gear ratio on cost"
+  symbol: "G"
+  category: economic
+  definition: "Cost-weighted gear ratio for delivering capital to the lunar surface: $G = L_K G_{K,\\text{LEO-LS}} / L_p$ where $L_K$ is launch cost per kg of capital, $G_{K,\\text{LEO-LS}}$ is the Tsiolkovsky mass gear ratio for capital transport, and $L_p$ is launch cost per kg of competing terrestrial propellant. Reduces to ordinary mass gear ratio when capital and propellant use the same launcher."
+  used_in: [q4-gear-ratio]
+
+- term: "propellant use ratio"
+  symbol: "Γ_X"
+  category: economic
+  definition: "Ratio of cislunar transport gear ratios: $\\Gamma_X = G_{\\text{LS} \\to X} / G_{\\text{LEO} \\to X}$. Captures how much harder it is to deliver lunar product versus terrestrial product to destination X. Γ < 1 means lunar product has a delivery advantage at X."
+  used_in: [q4-gear-ratio]
+
+- term: "launch-normalized equipment cost"
+  symbol: "x"
+  category: economic
+  definition: "$x = \\zeta / L_p$ where ζ is capital development+fabrication cost per kg of capital and $L_p$ is launch cost per kg of competing propellant. Dimensionless ratio measuring how expensive ISRU hardware is relative to launching propellant from Earth."
+  used_in: [q4-gear-ratio]
+
+- term: "launch-normalized finance cost"
+  symbol: "ξ"
+  category: economic
+  definition: "$\\xi = f / L_p$ where $f$ is finance cost per kg of product delivered. Captures the burden of capital amortization, WACC, and buildup-period interest."
+  used_in: [q4-gear-ratio]
+
+- term: "launch-normalized operations cost"
+  symbol: "ω"
+  category: economic
+  definition: "$\\omega = \\lambda / L_p$ where λ is per-product-kg labor and telerobotic operations cost. Generally small (~5-10% of launch cost per kg) for mature operations."
+  used_in: [q4-gear-ratio]
+
+- term: "competitiveness condition"
+  category: economic
+  definition: "Necessary and sufficient inequality for lunar-derived product to have absolute advantage at destination X: $[(x + G)\\phi^{-1} + \\omega + \\xi] \\cdot \\Gamma_X < 1$. Per Metzger 2023 Eq. 8."
+  used_in: [q4-gear-ratio]
+
+- term: "tent sublimation"
+  category: technology
+  definition: "Lunar ice mining technique that erects a clear-walled tent over an icy regolith area and uses sunlight (potentially with reflective concentration) to sublimate ice for collection. Targets high production mass ratios. Studied by Kornuta et al. (ULA-affiliated) and Sowers. Reported φ values 442 (Kornuta) and 534 (Sowers)."
+  used_in: [q4-gear-ratio]
+
+- term: "strip mining (lunar)"
+  category: technology
+  definition: "Lunar ice extraction by mechanically excavating icy regolith and processing it elsewhere. Lower φ than tent sublimation in published TEAs due to higher capital mass per unit output. φ values 3.7-43.4 across published studies."
+  used_in: [q4-gear-ratio]
+
+- term: "beneficiation"
+  category: technology
+  definition: "Pre-processing lunar regolith to concentrate ice content before transport for extraction. Reduces mass moved to processing site. Metzger 2023 MVP uses beneficiation; achieves φ = 36.5."
+  used_in: [q4-gear-ratio]
+
+- term: "solar electric propulsion"
+  symbol: "SEP"
+  category: technology
+  definition: "Spacecraft propulsion using solar-powered electric thrusters, typically Hall-effect or ion engines. Specific impulse $I_{\\text{sp}} \\approx 1000$-$4000$ s (vs ~450 s for LOX/LH2 chemical). Trades thrust for efficiency; transit times measured in months. Key enabler for lunar→LEO product delivery."
+  used_in: [q4-gear-ratio]
+
+- term: "inert mass fraction"
+  symbol: "IMF"
+  category: physics
+  definition: "Fraction of a rocket stage's total mass that is structure + engine + tanks (everything except propellant and payload). LOX/LH2 hydrogen-fuelled stages: IMF ≈ 0.07-0.15. Lower IMF allows higher mass gear ratios."
+  used_in: [q4-gear-ratio]
+
+- term: "specific impulse"
+  symbol: "I_sp"
+  category: physics
+  definition: "Engine efficiency measure: thrust per unit propellant mass flow rate, expressed in seconds. Higher $I_{\\text{sp}}$ gives exponentially better mass ratios per Tsiolkovsky. LOX/LH2: 450 s. Solar electric: 2000-4000 s. Nuclear thermal: ~900 s."
+  used_in: [q4-gear-ratio]
+
+- term: "Tsiolkovsky rocket equation"
+  category: physics
+  definition: "Relates change in velocity to exhaust velocity and mass ratio: $\\Delta v = I_{\\text{sp}} g_0 \\ln(m_0/m_f)$. The exponential dependence is why rocket payload fractions are small for high-Δv missions, and why lunar gravity well (low Δv) gives a 24× physics advantage for launch."
+  used_in: [q4-gear-ratio]
+
+- term: "ISRU"
+  category: technology
+  definition: "In-Situ Resource Utilization. Using locally-available materials (lunar regolith, ice, atmospheric components on Mars) to produce mission-critical commodities such as propellant, structural materials, or oxygen, rather than importing them from Earth."
+  used_in: [q3-isru-feasibility, q4-gear-ratio]
+
+- term: "TRL"
+  category: terminology
+  definition: "Technology Readiness Level. NASA scale 1 (basic principle observed) to 9 (flight-proven through operation). Higher TRL = more mature, more credible deployment timeline. Most lunar ISRU concepts are TRL 3-5 as of 2026."
+  used_in: [q3-isru-feasibility, q4-gear-ratio]
+
+- term: "TAI"
+  category: terminology
+  definition: "Transformative AI. Hypothetical AI capability level that materially changes the economics of physical engineering — through automated capital design, robotic manufacturing without human labor, and rapid iteration on hardware. Relevant to lunar manufacturing as a mechanism for compressing M_K (capital mass) and accelerating buildup."
+  used_in: [q4-gear-ratio, q5-capital-buildup, q7-mass-driver-feasibility]
+
+- term: "WACC"
+  category: economic
+  definition: "Weighted Average Cost of Capital. The blended cost of equity + debt financing for a project, expressed as annual percentage. High WACC (20%+) drives finance cost dominance in early-stage capital-intensive ventures. Public-private partnerships can lower effective WACC to 10-12%."
+  used_in: [q4-gear-ratio, q5-capital-buildup]
+
+- term: "LEO / LLO / EML1 / GEO / GTO / DRO / LS"
+  category: orbits
+  definition: "Cislunar reference orbits. LEO = Low Earth Orbit (~400 km altitude). LLO = Low Lunar Orbit. EML1 = Earth-Moon Lagrange Point 1 (gravitationally stable point between Earth and Moon). GEO = Geostationary Earth Orbit. GTO = Geostationary Transfer Orbit. DRO = (lunar) Distant Retrograde Orbit. LS = Lunar Surface."
+  used_in: [q1-earth-launch-cost, q2-lunar-ascent-cost, q4-gear-ratio, q6-orbital-demand]
