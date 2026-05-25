@@ -1,11 +1,12 @@
 id: q3-isru-feasibility
 question: "Which orbital-infrastructure materials (structural Al/Fe/Si/Ti, glass, oxygen, propellants) are plausibly producible from lunar regolith without complex Earth imports, and at what TRL by 2040?"
-status: open
+status: researching
 passes_status:
-  research: pending
+  research: done
   calc: pending
   reconcile: pending
   source-review: pending
   consistency: pending
   write: pending
-last_pass: 0
+last_pass: 1
+contradictions_with: []
