@@ -85,6 +85,7 @@
       maxWidth: 360,
       placement: 'top',
       delay: [200, 50],
+      content: (ref) => ref.dataset.tippyContent || ref.dataset.def || '',
     });
   }
 

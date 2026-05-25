@@ -77,24 +77,28 @@
   definition: "Relates change in velocity to exhaust velocity and mass ratio: \\(\\Delta v = I_{\\text{sp}} g_0 \\ln(m_0/m_f)\\). The exponential dependence is why rocket payload fractions are small for high-Δv missions, and why lunar gravity well (low Δv) gives a 24× physics advantage for launch."
   used_in: [q4-gear-ratio]
 
-- term: "ISRU"
+- term: "in-situ resource utilization"
+  symbol: "ISRU"
   category: technology
-  definition: "In-Situ Resource Utilization. Using locally-available materials (lunar regolith, ice, atmospheric components on Mars) to produce mission-critical commodities such as propellant, structural materials, or oxygen, rather than importing them from Earth."
+  definition: "Using locally-available materials (lunar regolith, ice, atmospheric components on Mars) to produce mission-critical commodities such as propellant, structural materials, or oxygen, rather than importing them from Earth."
   used_in: [q3-isru-feasibility, q4-gear-ratio]
 
-- term: "TRL"
+- term: "technology readiness level"
+  symbol: "TRL"
   category: terminology
-  definition: "Technology Readiness Level. NASA scale 1 (basic principle observed) to 9 (flight-proven through operation). Higher TRL = more mature, more credible deployment timeline. Most lunar ISRU concepts are TRL 3-5 as of 2026."
+  definition: "NASA scale 1 (basic principle observed) to 9 (flight-proven through operation). Higher TRL = more mature, more credible deployment timeline. Most lunar ISRU concepts are TRL 3-5 as of 2026."
   used_in: [q3-isru-feasibility, q4-gear-ratio]
 
-- term: "TAI"
+- term: "transformative AI"
+  symbol: "TAI"
   category: terminology
-  definition: "Transformative AI. Hypothetical AI capability level that materially changes the economics of physical engineering — through automated capital design, robotic manufacturing without human labor, and rapid iteration on hardware. Relevant to lunar manufacturing as a mechanism for compressing M_K (capital mass) and accelerating buildup."
+  definition: "Hypothetical AI capability level that materially changes the economics of physical engineering — through automated capital design, robotic manufacturing without human labor, and rapid iteration on hardware. Relevant to lunar manufacturing as a mechanism for compressing \\(M_K\\) (capital mass) and accelerating buildup."
   used_in: [q4-gear-ratio, q5-capital-buildup, q7-mass-driver-feasibility]
 
-- term: "WACC"
+- term: "weighted average cost of capital"
+  symbol: "WACC"
   category: economic
-  definition: "Weighted Average Cost of Capital. The blended cost of equity + debt financing for a project, expressed as annual percentage. High WACC (20%+) drives finance cost dominance in early-stage capital-intensive ventures. Public-private partnerships can lower effective WACC to 10-12%."
+  definition: "The blended cost of equity + debt financing for a project, expressed as annual percentage. High WACC (20%+) drives finance cost dominance in early-stage capital-intensive ventures. Public-private partnerships can lower effective WACC to 10-12%."
   used_in: [q4-gear-ratio, q5-capital-buildup]
 
 - term: "LEO / LLO / EML1 / GEO / GTO / DRO / LS"
