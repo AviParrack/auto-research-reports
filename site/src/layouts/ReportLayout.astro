@@ -12,6 +12,13 @@ interface Props {
 const { report, title, activeTab = 'overview' } = Astro.props;
 const buildTime = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 
+function fmtTs(v: unknown): string {
+  if (v instanceof Date) return v.toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
+  if (typeof v === 'string') return v.replace('T', ' ').replace(/Z$/, ' UTC').replace(/\.\d+/, '');
+  return String(v);
+}
+const reportUpdatedStr = fmtTs(report.meta.last_updated);
+
 const tabs = [
   { id: 'overview', label: 'Overview', href: `/${report.slug}/` },
   { id: 'tree', label: 'Tree', href: `/${report.slug}/tree/` },
@@ -29,12 +36,8 @@ const tabs = [
     <title>{title} — Auto-Research</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <script is:inline define:vars={{ BUILD_HASH }}>
-      (async () => {
+      async function checkAndReload() {
         try {
-          if ('serviceWorker' in navigator) {
-            const regs = await navigator.serviceWorker.getRegistrations();
-            for (const r of regs) { try { await r.unregister(); } catch {} }
-          }
           const resp = await fetch('/build-hash.txt', { cache: 'no-store' });
           if (!resp.ok) return;
           const live = (await resp.text()).trim();
@@ -44,7 +47,20 @@ const tabs = [
             location.replace(url.toString());
           }
         } catch { /* offline or blocked — ignore */ }
+      }
+      (async () => {
+        try {
+          if ('serviceWorker' in navigator) {
+            const regs = await navigator.serviceWorker.getRegistrations();
+            for (const r of regs) { try { await r.unregister(); } catch {} }
+          }
+        } catch {}
+        checkAndReload();
       })();
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') checkAndReload();
+      });
+      setInterval(checkAndReload, 60000);
     </script>
   </head>
   <body class="min-h-screen">
@@ -80,7 +96,7 @@ const tabs = [
       <slot />
     </main>
     <footer class="max-w-6xl mx-auto px-6 py-6 mt-12 border-t border-[var(--color-line)] text-xs text-[var(--color-ink-soft)] flex justify-between">
-      <div>report data updated {String(report.meta.last_updated).replace(/T/, ' ').replace(/\.\d+Z?$/, '').replace(/Z$/, ' UTC')}</div>
+      <div>report data updated {reportUpdatedStr}</div>
       <div>site built {buildTime}</div>
     </footer>
   </body>
