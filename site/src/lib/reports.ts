@@ -2,6 +2,34 @@ import fs from 'node:fs';
 import path from 'node:path';
 import yaml from 'js-yaml';
 import matter from 'gray-matter';
+import katex from 'katex';
+import { marked } from 'marked';
+
+/**
+ * Render mixed prose + LaTeX math.
+ *  - Pre-renders \(..\) as inline KaTeX HTML
+ *  - Pre-renders \[..\] as display KaTeX HTML
+ *  - $$..$$ also goes to display KaTeX
+ *  - Runs the rest through marked (inline by default)
+ * Used for glossary defs, source extracts, tooltip payloads. Server-side
+ * rendering avoids the marked-strips-\( problem.
+ */
+export function renderMath(text: string, opts: { inline?: boolean } = {}): string {
+  const inline = opts.inline ?? true;
+  // 1. Replace display delimiters first (\[..\] and $$..$$)
+  let s = text.replace(/\\\[([\s\S]+?)\\\]/g, (_, expr) =>
+    katex.renderToString(expr.trim(), { throwOnError: false, displayMode: true })
+  );
+  s = s.replace(/\$\$([\s\S]+?)\$\$/g, (_, expr) =>
+    katex.renderToString(expr.trim(), { throwOnError: false, displayMode: true })
+  );
+  // 2. Inline delimiter \(..\)
+  s = s.replace(/\\\(([\s\S]+?)\\\)/g, (_, expr) =>
+    katex.renderToString(expr.trim(), { throwOnError: false, displayMode: false })
+  );
+  // 3. Run remaining through marked
+  return inline ? marked.parseInline(s) as string : marked.parse(s) as string;
+}
 
 const REPORTS_DIR = path.resolve(process.cwd(), '../reports');
 
@@ -192,13 +220,15 @@ export function buildTooltipPayload(report: Report): {
   glossary: Array<{ term: string; symbol?: string; html: string }>;
   sources: Array<{ slug: string; title?: string; year?: any; authors?: string[]; url?: string; snippet: string }>;
 } {
-  const glossary = loadGlossary(report.slug).map((g) => ({
-    term: g.term,
-    symbol: g.symbol,
-    // Tooltips render plain text (KaTeX will run on display once injected);
-    // we use the symbol + definition.
-    html: (g.symbol ? `<strong>${g.symbol}</strong> &mdash; ` : '') + g.definition,
-  }));
+  const glossary = loadGlossary(report.slug).map((g) => {
+    const sym = g.symbol ? `<strong style="color:var(--color-accent-soft)">${g.symbol}</strong> &mdash; ` : '';
+    return {
+      term: g.term,
+      symbol: g.symbol,
+      // Pre-render math server-side so tooltip body doesn't need client KaTeX
+      html: sym + renderMath(g.definition, { inline: true }),
+    };
+  });
 
   const seenSources = new Map<string, any>();
   for (const leaf of report.leaves) {

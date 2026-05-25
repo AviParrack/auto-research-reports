@@ -1,10 +1,9 @@
 ---
 import ReportLayout from '../../../layouts/ReportLayout.astro';
-import { listReportSlugs, loadReport } from '../../../lib/reports';
+import { listReportSlugs, loadReport, renderMath } from '../../../lib/reports';
 import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
-import { marked } from 'marked';
 
 export function getStaticPaths() {
   const paths = [];
@@ -75,14 +74,14 @@ for (const leaf of report.leaves) {
   {reviewBody && (
     <section class="mb-8">
       <h3 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-3">Source review</h3>
-      <article class="prose-leaf" set:html={marked.parse(reviewBody)} />
+      <article class="prose-leaf" set:html={renderMath(reviewBody, { inline: false })} />
     </section>
   )}
 
   {extractBody && (
     <section class="mb-8">
       <h3 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-3">Extract</h3>
-      <article class="prose-leaf" set:html={marked.parse(extractBody)} />
+      <article class="prose-leaf" set:html={renderMath(extractBody, { inline: false })} />
     </section>
   )}
 

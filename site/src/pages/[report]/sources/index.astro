@@ -1,9 +1,8 @@
 ---
 import ReportLayout from '../../../layouts/ReportLayout.astro';
-import { listReportSlugs, loadReport } from '../../../lib/reports';
+import { listReportSlugs, loadReport, renderMath } from '../../../lib/reports';
 import fs from 'node:fs';
 import path from 'node:path';
-import { marked } from 'marked';
 
 export function getStaticPaths() {
   return listReportSlugs().map((slug) => ({ params: { report: slug } }));
@@ -70,7 +69,7 @@ function preview(body: string, max = 400): string {
               <a href={s.url} target="_blank" rel="noopener" class="text-[var(--color-accent)] hover:underline break-all">{s.url}</a>
             )}
           </div>
-          <div class="text-sm text-[var(--color-ink-soft)] leading-relaxed mb-2 prose-leaf" set:html={marked.parseInline(preview(s.body))} />
+          <div class="text-sm text-[var(--color-ink-soft)] leading-relaxed mb-2 prose-leaf" set:html={renderMath(preview(s.body), { inline: true })} />
           <div class="text-xs text-[var(--color-ink-soft)]">
             cited by: {s.usedBy.map((id) => (
               <a href={`/${slug}/leaves/${id}/`} class="font-mono mr-2 hover:text-[var(--color-accent)]">{id}</a>

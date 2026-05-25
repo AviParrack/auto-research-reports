@@ -1,8 +1,9 @@
 ---
 import ReportLayout from '../../layouts/ReportLayout.astro';
-import { listReportSlugs, loadReport } from '../../lib/reports';
+import { listReportSlugs, loadReport, renderMath } from '../../lib/reports';
 import fs from 'node:fs';
 import path from 'node:path';
+import { marked } from 'marked';
 
 export function getStaticPaths() {
   return listReportSlugs().map((slug) => ({ params: { report: slug } }));
@@ -85,7 +86,31 @@ function collectStatsForPass(passEntry: any): CritiqueStats | null {
   return stats.total > 0 ? stats : null;
 }
 
-const entriesWithStats = entries.map((e) => ({ entry: e, stats: collectStatsForPass(e) }));
+function collectArtifactsForPass(passEntry: any): Array<{ filename: string; body: string }> {
+  if (!passEntry.focus || !passEntry.focus.startsWith('leaf:')) return [];
+  const leafId = passEntry.focus.slice('leaf:'.length);
+  const passesDir = path.join(REPORTS_DIR, slug!, '02-leaves', leafId, 'passes');
+  if (!fs.existsSync(passesDir)) return [];
+
+  const kinds = passEntry.kinds || [];
+  const isFullPass = passEntry.pass_id?.endsWith('full');
+
+  return fs.readdirSync(passesDir)
+    .filter((f) => f.endsWith('.md'))
+    .filter((f) => {
+      if (isFullPass) return true; // rollup: show everything
+      // Match by sub-pass kind appearing in filename
+      return kinds.some((k: string) => f.includes(k));
+    })
+    .sort()
+    .map((f) => ({ filename: f, body: fs.readFileSync(path.join(passesDir, f), 'utf8') }));
+}
+
+const entriesWithStats = entries.map((e) => ({
+  entry: e,
+  stats: collectStatsForPass(e),
+  artifacts: collectArtifactsForPass(e),
+}));
 ---
 <ReportLayout report={report} title={`Pass Log — ${report.meta.root_question}`} activeTab="log">
   <div class="mb-6">
@@ -102,8 +127,9 @@ const entriesWithStats = entries.map((e) => ({ entry: e, stats: collectStatsForP
     </div>
   ) : (
     <ul class="space-y-2">
-      {entriesWithStats.map(({ entry: e, stats }: any) => (
-        <li class="border border-[var(--color-line)] rounded p-3">
+      {entriesWithStats.map(({ entry: e, stats, artifacts }: any) => (
+        <li class="border border-[var(--color-line)] rounded"><details><summary class="cursor-pointer hover:bg-[var(--color-paper-dim)]/30 p-3 list-none">
+        <div class="flex items-baseline gap-2"><span class="text-[var(--color-ink-soft)]">▸</span><div class="flex-1">
           <div class="flex items-baseline justify-between gap-3 mb-1">
             <div class="flex items-baseline gap-2 flex-wrap">
               <span class="font-mono text-xs text-[var(--color-ink-soft)]">{e.pass_id}</span>
@@ -140,7 +166,27 @@ const entriesWithStats = entries.map((e) => ({ entry: e, stats: collectStatsForP
             {e.models && <span>models: {e.models.join(', ')}</span>}
             {e.commit && <span>commit: {e.commit}</span>}
           </div>
-        </li>
+        </div></div></summary>
+        {artifacts.length > 0 && (
+          <div class="px-3 pb-3 pt-1 border-t border-[var(--color-line)]">
+            <div class="text-xs uppercase tracking-wider text-[var(--color-ink-soft)] mb-2 mt-3">Artifacts produced in this pass ({artifacts.length})</div>
+            <ul class="space-y-2">
+              {artifacts.map((a: any) => (
+                <li class="border border-[var(--color-line)] rounded">
+                  <details>
+                    <summary class="cursor-pointer p-2 hover:bg-[var(--color-paper-dim)]/30 text-sm">
+                      <span class="font-mono text-xs text-[var(--color-ink-soft)] mr-2">{a.filename}</span>
+                      {a.filename.includes('audit') && <span class="text-xs px-1.5 py-0.5 rounded bg-[var(--color-paper-dim)]">codex critique</span>}
+                      {a.filename.includes('response') && <span class="text-xs px-1.5 py-0.5 rounded bg-[var(--color-paper-dim)]">claude response</span>}
+                    </summary>
+                    <article class="prose-leaf p-3 text-sm" set:html={renderMath(a.body, { inline: false })} />
+                  </details>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        </details></li>
       ))}
     </ul>
   )}

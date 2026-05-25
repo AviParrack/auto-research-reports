@@ -1,9 +1,8 @@
 ---
 import ReportLayout from '../../layouts/ReportLayout.astro';
-import { listReportSlugs, loadReport, getNodeChildren } from '../../lib/reports';
+import { listReportSlugs, loadReport, getNodeChildren, renderMath } from '../../lib/reports';
 import fs from 'node:fs';
 import path from 'node:path';
-import { marked } from 'marked';
 
 export function getStaticPaths() {
   return listReportSlugs().map((slug) => ({ params: { report: slug } }));
@@ -34,7 +33,7 @@ if (fs.existsSync(synthPath)) {
       <div>
         <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-3">Report</h2>
         {synthBody ? (
-          <article class="prose-leaf" set:html={marked.parse(synthBody)} />
+          <article class="prose-leaf" set:html={renderMath(synthBody, { inline: false })} />
         ) : report.tree.root.answer ? (
           <div class="prose-leaf bg-[var(--color-paper-dim)] border-l-4 border-[var(--color-accent)] p-5 rounded-r">
             <p>{report.tree.root.answer}</p>

@@ -1,10 +1,9 @@
 ---
 import ReportLayout from '../../../layouts/ReportLayout.astro';
-import { listReportSlugs, loadReport } from '../../../lib/reports';
+import { listReportSlugs, loadReport, renderMath } from '../../../lib/reports';
 import fs from 'node:fs';
 import path from 'node:path';
 import yaml from 'js-yaml';
-import { marked } from 'marked';
 
 export function getStaticPaths() {
   return listReportSlugs().map((slug) => ({ params: { report: slug } }));
@@ -51,11 +50,11 @@ for (const arr of byCategory.values()) {
           <dl class="space-y-3">
             {list.map((e) => (
               <div class="border-l-2 border-[var(--color-line)] pl-4">
-                <dt class="font-medium">
-                  {e.symbol && <span class="font-mono text-[var(--color-accent)] mr-2">{e.symbol}</span>}
-                  <span>{e.term}</span>
+                <dt class="font-medium flex items-baseline gap-2 flex-wrap">
+                  {e.symbol && <span class="font-mono text-[var(--color-accent)]">{e.symbol}</span>}
+                  <span class="text-[var(--color-ink)]">{e.term}</span>
                 </dt>
-                <dd class="text-sm text-[var(--color-ink-soft)] mt-1 prose-leaf" set:html={marked.parseInline(e.definition)} />
+                <dd class="text-sm text-[var(--color-ink-soft)] mt-1 prose-leaf" set:html={renderMath(e.definition, { inline: true })} />
                 {e.used_in && e.used_in.length > 0 && (
                   <div class="text-xs text-[var(--color-ink-soft)] mt-1">
                     used in: {e.used_in.map((id) => (

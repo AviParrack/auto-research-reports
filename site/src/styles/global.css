@@ -44,7 +44,11 @@ body {
 .prose-leaf tbody tr:hover { background: var(--color-paper-dim); }
 
 /* Tooltip-styled inline markers */
-.glossary-term { border-bottom: 1px dotted var(--color-accent); cursor: help; }
+.glossary-term {
+  border-bottom: 1px dotted var(--color-accent);
+  cursor: default;
+}
+.glossary-term:hover { background: var(--color-paper-dim); }
 .source-cite {
   font-family: var(--font-mono);
   font-size: 0.85em;

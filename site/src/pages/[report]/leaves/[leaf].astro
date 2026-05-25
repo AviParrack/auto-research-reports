@@ -1,6 +1,6 @@
 ---
 import ReportLayout from '../../../layouts/ReportLayout.astro';
-import { listReportSlugs, loadReport, getLeafBySlug } from '../../../lib/reports';
+import { listReportSlugs, loadReport, getLeafBySlug, renderMath } from '../../../lib/reports';
 import { marked } from 'marked';
 
 export function getStaticPaths() {
@@ -18,7 +18,7 @@ const { report: slug, leaf: leafId } = Astro.params;
 const report = loadReport(slug!);
 const leaf = getLeafBySlug(report, leafId!);
 const node = report.tree.nodes.find((n) => n.id === leafId);
-const bodyHtml = leaf?.body ? marked.parse(leaf.body) : null;
+const bodyHtml = leaf?.body ? renderMath(leaf.body, { inline: false }) : null;
 ---
 <ReportLayout report={report} title={node?.question ?? leafId!} activeTab="leaves">
   <a href={`/${slug}/leaves/`} class="text-sm text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] mb-4 inline-block">← All leaves</a>
@@ -152,7 +152,7 @@ const bodyHtml = leaf?.body ? marked.parse(leaf.body) : null;
                 )}
                 <details class="mt-2">
                   <summary class="text-xs text-[var(--color-ink-soft)] cursor-pointer hover:text-[var(--color-ink)]">show extract ({Math.round(s.body.length / 100) / 10}k chars)</summary>
-                  <article class="prose-leaf mt-3 text-sm" set:html={marked.parse(s.body)} />
+                  <article class="prose-leaf mt-3 text-sm" set:html={renderMath(s.body, { inline: false })} />
                 </details>
               </li>
             ))}
@@ -175,7 +175,7 @@ const bodyHtml = leaf?.body ? marked.parse(leaf.body) : null;
                     <span class="text-sm font-medium">{p.kind}</span>
                     {p.kind.endsWith('audit') && <span class="ml-2 text-xs px-1.5 py-0.5 rounded bg-[var(--color-paper-dim)]">codex critique</span>}
                   </summary>
-                  <article class="prose-leaf mt-3 text-sm" set:html={marked.parse(p.body)} />
+                  <article class="prose-leaf mt-3 text-sm" set:html={renderMath(p.body, { inline: false })} />
                 </details>
               </li>
             ))}
