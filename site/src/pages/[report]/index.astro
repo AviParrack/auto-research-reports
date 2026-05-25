@@ -33,7 +33,12 @@ const progress = totalLeafCount === 0 ? 0 : Math.round((answeredCount / totalLea
       <div>
         <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-3">Top-Level Questions</h2>
         <ul class="space-y-3">
-          {topLevel.map((node) => (
+          {topLevel.map((node) => {
+            const leaf = report.leaves.find((l) => l.id === node.id);
+            const subPasses = leaf ? Object.entries(leaf.passes_status) : [];
+            const doneCount = subPasses.filter(([, v]) => v === 'done').length;
+            const totalCount = subPasses.length;
+            return (
             <li class="border border-[var(--color-line)] rounded p-4 hover:border-[var(--color-accent)]/50 transition-colors">
               <div class="flex items-baseline justify-between mb-1.5 gap-3">
                 <a href={`/${slug}/leaves/${node.id}/`} class="font-medium text-[var(--color-ink)] hover:text-[var(--color-accent)] flex-1">
@@ -42,15 +47,38 @@ const progress = totalLeafCount === 0 ? 0 : Math.round((answeredCount / totalLea
                 <span class:list={[
                   'text-xs px-2 py-0.5 rounded font-mono shrink-0',
                   node.status === 'answered' ? 'bg-[var(--color-leaf)]/15 text-[var(--color-leaf)]'
-                  : node.status === 'researching' ? 'bg-[var(--color-warn)]/15 text-[var(--color-warn)]'
+                  : doneCount > 0 ? 'bg-[var(--color-warn)]/15 text-[var(--color-warn)]'
                   : 'bg-[var(--color-paper-dim)] text-[var(--color-ink-soft)]'
                 ]}>
-                  {node.status}
+                  {node.status === 'answered' ? 'answered' : doneCount > 0 ? `${doneCount}/${totalCount} done` : 'open'}
                 </span>
               </div>
-              {node.answer && <p class="text-sm text-[var(--color-ink-soft)]">{node.answer}</p>}
+              {node.answer && <p class="text-sm text-[var(--color-ink-soft)] mb-2">{node.answer}</p>}
+              {subPasses.length > 0 && (
+                <div class="flex gap-3 text-xs font-mono text-[var(--color-ink-soft)] mt-1">
+                  {subPasses.map(([k, v]) => (
+                    <span class:list={[
+                      v === 'done' ? 'text-[var(--color-leaf)]'
+                      : v === 'in_progress' ? 'text-[var(--color-warn)]'
+                      : v === 'needs_rerun' ? 'text-[var(--color-flag)]'
+                      : 'text-[var(--color-unaudited)]'
+                    ]} title={`${k}: ${v.replace('_',' ')}`}>
+                      {v === 'done' ? '✓' : v === 'in_progress' ? '◐' : v === 'needs_rerun' ? '↻' : '○'} {k}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {leaf && leaf.sources && leaf.sources.length > 0 && (
+                <div class="text-xs text-[var(--color-ink-soft)] mt-1.5">
+                  {leaf.sources.length} source{leaf.sources.length === 1 ? '' : 's'} captured
+                  {leaf.claims && leaf.claims.length > 0 && (
+                    <span> · {leaf.claims.length} claim{leaf.claims.length === 1 ? '' : 's'}</span>
+                  )}
+                </div>
+              )}
             </li>
-          ))}
+            );
+          })}
         </ul>
       </div>
     </section>
