@@ -64,7 +64,7 @@ const tabs = [
         theme: 'base',
         themeVariables: {
           fontFamily: 'Inter, system-ui, sans-serif',
-          fontSize: '18px',
+          fontSize: '15px',
           primaryColor: '#fafaf7',
           primaryTextColor: '#1a1a1a',
           primaryBorderColor: '#4a4a4a',
@@ -72,19 +72,20 @@ const tabs = [
         },
         securityLevel: 'loose',
         flowchart: {
-          useMaxWidth: false,
+          useMaxWidth: true,    // fits container width
           htmlLabels: false,
           curve: 'basis',
-          nodeSpacing: 30,
-          rankSpacing: 60,
-          padding: 14,
+          nodeSpacing: 18,
+          rankSpacing: 50,
+          padding: 10,
         },
       });
     </script>
     <style>
-      .mermaid svg { max-width: 100%; height: auto; }
+      .mermaid { display: flex; justify-content: center; }
+      .mermaid svg { max-width: 100% !important; width: 100% !important; height: auto !important; }
       .mermaid .node rect, .mermaid .node circle, .mermaid .node ellipse, .mermaid .node polygon { rx: 6; ry: 6; }
-      .mermaid .nodeLabel { padding: 0.4em 0.6em; font-size: 18px !important; line-height: 1.3 !important; }
+      .mermaid .nodeLabel { font-weight: 700; font-size: 15px !important; line-height: 1.25 !important; }
     </style>
 
     {/* Tippy.js for hover tooltips on glossary terms + source citations */}

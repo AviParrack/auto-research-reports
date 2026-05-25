@@ -266,19 +266,36 @@ export function getNodeChildren(tree: Tree, parentId: string): TreeNode[] {
  * + completion. Clicking a node navigates to the leaf detail page (the
  * `click` directive is interpreted by Mermaid at render time).
  */
+/** Convert a slug like "q1-earth-launch-cost" → "Earth launch cost".
+ *  Known acronyms (matching glossary symbols) are upper-cased. */
+const ACRONYMS = new Set([
+  'isru', 'leo', 'llo', 'geo', 'gto', 'dro', 'eml1', 'ls', 'tai', 'trl',
+  'wacc', 'imf', 'sep', 'lox', 'lh2', 'tea', 'rll', 'otv',
+]);
+function naturalTitleFromSlug(slug: string): string {
+  const words = slug.replace(/^q\d+-/, '').split('-');
+  return words
+    .map((w, i) => {
+      if (ACRONYMS.has(w.toLowerCase())) return w.toUpperCase();
+      return i === 0 ? w.charAt(0).toUpperCase() + w.slice(1) : w;
+    })
+    .join(' ');
+}
+
 export function buildMermaidTree(report: Report, slug: string): string {
   const lines = ['graph TD'];
-  // Style class definitions
-  lines.push("  classDef root fill:#fafaf7,stroke:#c4622d,stroke-width:2.5px,color:#1a1a1a;");
-  lines.push("  classDef leaf fill:#fafaf7,stroke:#4a4a4a,stroke-width:1px,color:#1a1a1a;");
-  lines.push("  classDef leafDone fill:#e8f3ee,stroke:#2d6a4f,stroke-width:1.5px,color:#1a1a1a;");
-  lines.push("  classDef leafInProg fill:#fef3e3,stroke:#d97706,stroke-width:1.5px,color:#1a1a1a;");
-  lines.push("  classDef synthesis fill:#f0efe9,stroke:#4a4a4a,stroke-width:1px,color:#1a1a1a;");
-  lines.push("  classDef constraint fill:#fafaf7,stroke:#9ca3af,stroke-width:1px,stroke-dasharray:4 3,color:#1a1a1a;");
+  // Style class definitions — bold text, accent fills by status
+  lines.push("  classDef root fill:#fafaf7,stroke:#c4622d,stroke-width:2.5px,color:#1a1a1a,font-weight:bold;");
+  lines.push("  classDef leaf fill:#fafaf7,stroke:#4a4a4a,stroke-width:1px,color:#1a1a1a,font-weight:bold;");
+  lines.push("  classDef leafDone fill:#e8f3ee,stroke:#2d6a4f,stroke-width:1.5px,color:#1a1a1a,font-weight:bold;");
+  lines.push("  classDef leafInProg fill:#fef3e3,stroke:#d97706,stroke-width:1.5px,color:#1a1a1a,font-weight:bold;");
+  lines.push("  classDef synthesis fill:#f0efe9,stroke:#4a4a4a,stroke-width:1px,color:#1a1a1a,font-weight:bold;");
+  lines.push("  classDef constraint fill:#fafaf7,stroke:#9ca3af,stroke-width:1px,stroke-dasharray:4 3,color:#1a1a1a,font-weight:bold;");
 
   // Root node — short label only (full question lives in title attribute)
-  lines.push(`  root["${escapeMermaidLabel(report.tree.root.question, 60)}"]`);
-  lines.push(`  click root "/${slug}/" "Report"`);
+  lines.push(`  root["Root question"]`);
+  lines.push(`  click root "/${slug}/" "${escapeMermaid(report.tree.root.question)}"`);
+  lines.push(`  class root root;`);
 
   // Each top-level node
   for (const node of report.tree.nodes) {
@@ -288,10 +305,10 @@ export function buildMermaidTree(report: Report, slug: string): string {
     const totalCount = subPasses.length;
 
     const safeId = node.id.replace(/[^a-zA-Z0-9]/g, '_');
-    // Clean single-line label: id and progress on one line.
-    // Avoid <br/>, markdown ticks, special chars that confuse the Mermaid parser.
-    const progress = totalCount > 0 ? ` ${doneCount}/${totalCount}` : '';
-    const labelText = `"${escapeMermaidLabel(node.id + progress, 32)}"`;
+    // Natural-language title + done/total progress
+    const title = naturalTitleFromSlug(node.id);
+    const progress = totalCount > 0 ? `  (${doneCount}/${totalCount})` : '';
+    const labelText = `"${escapeMermaidLabel(title + progress, 32)}"`;
     lines.push(`  ${safeId}[${labelText}]`);
 
     // Edge from parent
