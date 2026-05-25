@@ -9,6 +9,15 @@
     - source: first-principles-calc
       ref: pass-02-calc.py
       verdict: supports
+    - source: wustl-lunar-soil
+      ref: bulk-composition
+      verdict: supports
+    - source: aerospace-america-propellant
+      ref: ubiquity
+      verdict: supports
+    - source: changee5-volatiles
+      ref: basalt-composition
+      verdict: partial
   confidence: high
   derivation_path: passes/pass-02-calc.md
   audit:
@@ -24,6 +33,15 @@
     - source: first-principles-calc
       ref: pass-02-calc.py
       verdict: supports
+    - source: schreiner-mre-model
+      ref: specific-energy
+      verdict: supports
+    - source: sierra-space-carbothermal-2024
+      ref: trl-6
+      verdict: supports
+    - source: nasa-sanders-2025
+      ref: oxygen-yield
+      verdict: supports
   confidence: high
   derivation_path: passes/pass-02-calc.md
   audit:
@@ -34,58 +52,88 @@
 
 - id: q3.c3
   text: "Carbothermal reduction is the highest-TRL lunar oxygen extraction process as of 2026 at TRL 6 (Sierra Space JSC demonstration Sept 2024). Molten regolith electrolysis sits at TRL 4-5 (Sadoway lab + Helios Project simulant work). Ilmenite hydrogen reduction sits at TRL 5-6 for equatorial mare sites. FFC Cambridge sits at TRL 3-4 in lunar configuration (Earth Metalysis is TRL 7+ but uses CaCl2 electrolyte not lunar-economic at scale)."
-  type: derived
+  type: factual
   evidence:
-    - source: first-principles-calc
-      ref: pass-02-calc.md
+    - source: sierra-space-carbothermal-2024
+      ref: trl-6
       verdict: supports
-  confidence: medium
-  derivation_path: passes/pass-02-calc.md
+    - source: lyon-industries-isru-2026
+      ref: oxygen-trl-summary
+      verdict: supports
+    - source: nasa-sanders-2025
+      ref: carbothermal-trl
+      verdict: supports
+    - source: helios-project
+      ref: technology
+      verdict: partial
+    - source: schreiner-mre-model
+      ref: trl
+      verdict: supports
+    - source: lunarpedia-ffc-cambridge
+      ref: trl
+      verdict: supports
+  confidence: medium-high
   audit:
     gpt:
-      status: pending
+      status: passed
       audit_file: passes/pass-02-audit.md
+      notes: "Codex notes the 5 vs 6 distinction for carbothermal is hardware-scope; both NASA TRL 5 and Sierra TRL 6 are consistent."
 
 - id: q3.c4
   text: "The only lunar-derivable rocket-fuel hydrogen route is polar-ice electrolysis. The H2O electrolyzer step is mature (OxEon TRL 5, separate work). The binding gate is geological: lunar polar ice resource characterization remains incomplete after PRIME-1 (limited data return on IM-2 Feb 2025) and pending VIPER (delayed to late 2027 under Blue Origin contract)."
-  type: derived
+  type: factual
   evidence:
-    - source: first-principles-calc
-      ref: pass-02-calc.md
+    - source: sanders-prime1-viper
+      ref: prime1-outcome
+      verdict: supports
+    - source: lyon-industries-isru-2026
+      ref: water-knowledge-gap
+      verdict: supports
+    - source: aerospace-america-propellant
+      ref: polar-ice-uncertainty
       verdict: supports
   confidence: high
-  derivation_path: passes/pass-02-calc.md
   audit:
     gpt:
-      status: pending
+      status: passed
+      audit_file: passes/pass-02-audit.md
 
 - id: q3.c5
-  text: "Lunar methane (LCH4) propellant has no native carbon source at bulk scale. Bulk regolith carbon is solar-wind-implanted at ppm levels and not minable for propellant. Polar PSR craters may hold trapped CO and CO2 ices at meaningful local scale, but the resource is prospecting-limited and exhaustible. LCH4 is therefore not a bulk lunar ISRU product under any acceleration regime; bulk carbon must come from Earth import, asteroid retrieval, or limited polar volatile mining. This is a compositional structural fact, not a TRL question."
+  text: "Lunar methane (LCH4) propellant has no native carbon source at bulk scale. Bulk regolith carbon is solar-wind-implanted at ppm levels and not minable for propellant. Polar PSR craters may hold trapped CO and CO2 ices at meaningful local scale, but the resource is prospecting-limited and exhaustible. LCH4 is therefore not a BULK lunar-native ISRU product under any acceleration regime; bulk carbon must come from Earth import or asteroid retrieval, both of which fall outside lunar surface ISRU. This is a compositional structural fact, not a TRL question."
   type: derived
   evidence:
     - source: first-principles-calc
       ref: pass-02-calc.md
       verdict: supports
+    - source: aerospace-america-propellant
+      ref: fuel-options
+      verdict: partial
+    - source: changee5-volatiles
+      ref: volatile-content
+      verdict: partial
   confidence: high
   derivation_path: passes/pass-02-calc.md
   audit:
     gpt:
       status: passed
-      audit_file: passes/pass-02-audit.md
-      notes: "Codex flagged 'impossible under any regime' as too absolute; softened to 'not a bulk product; polar volatiles may give low-rate local supply'."
+      audit_file: passes/pass-03-audit.md
+      notes: "Codex agreed softened version is defensible; added source evidence (aerospace-america + changee5-volatiles)."
 
 - id: q3.c6
   text: "FFC Cambridge molten-salt electrolysis offers the cleanest direct route to refined Al and Ti from anorthite and ilmenite respectively, but requires chlorine for the CaCl2 electrolyte. Chlorine is present only in trace amounts on the lunar surface (apatite, ppm). This makes FFC Cambridge a structurally Earth-import-bound process unless aggressive salt recycling is solved. MRE is preferred for lunar economics on whole-regolith Si + Fe production despite poorer metal separation."
-  type: derived
+  type: factual
   evidence:
     - source: first-principles-calc
       ref: pass-02-calc.md
       verdict: supports
+    - source: lunarpedia-ffc-cambridge
+      ref: earth-import
+      verdict: supports
   confidence: high
-  derivation_path: passes/pass-02-calc.md
   audit:
     gpt:
-      status: pending
+      status: passed
+      audit_file: passes/pass-02-audit.md
 
 - id: q3.c7
   text: "Sintering and vacuum-casting routes for structural blocks and habitat-scale elements operate at TRL 5 today (JPL Sinterator, extrusion 3D printing of simulant pellets). This is a distinct production pathway from refined metals: it accepts loose regolith and produces consolidated solid via heat, without metal separation. It closes the structural-mass loop for habitats, depots, and radiation shielding."
@@ -129,14 +177,103 @@
       status: pending
 
 - id: q3.c10
-  text: "Ilmenite hydrogen reduction yields ~1 wt% O2 per pass on ilmenite feedstock and only ~0.02 wt% on highland regolith. This makes ilmenite reduction a mare-region-specific high-yield route with high throughput requirements (kg regolith per gram O2 is roughly 50-100 for mare, 5000+ for highland — process becomes uncompetitive in highland regions where ilmenite is below 2 vol%). Whole-regolith processes (carbothermal, MRE) are required for highland/polar deployment."
-  type: derived
+  text: "Ilmenite hydrogen reduction yields ~1 wt% O2 per pass on ilmenite simulant feedstock and only ~0.02 wt% on highland regolith simulant (arxiv-simulant-2601 TPR measurements on LHS-2 / LSP-2). This makes ilmenite reduction a mare-region-specific high-yield route with high throughput requirements (kg regolith per gram O2 is roughly 50-100 for mare, 5000+ for highland — process becomes uncompetitive in highland regions where ilmenite is below 2 vol%). Whole-regolith processes (carbothermal, MRE) are required for highland/polar deployment. Lunar-actual yields may differ from simulant due to particle-size distribution and trace mineral effects."
+  type: factual
   evidence:
-    - source: first-principles-calc
-      ref: pass-02-calc.md
+    - source: arxiv-simulant-2601
+      ref: ilmenite-yield-h2-reduction
       verdict: supports
-  confidence: medium
-  derivation_path: passes/pass-02-calc.md
+    - source: arxiv-simulant-2601
+      ref: highland-yield-h2-reduction
+      verdict: supports
+    - source: lunarpedia-ilmenite
+      ref: lunar-siting-constraint
+      verdict: supports
+  confidence: medium-high
   audit:
     gpt:
-      status: pending
+      status: passed
+      audit_file: passes/pass-03-audit.md
+      notes: "Codex flagged confidence bump from medium to high as unjustified by simulant-only TPR measurement; held at medium-high with explicit simulant caveat."
+
+- id: q3.c11
+  text: "FFC Cambridge electrolysis on PROCESSED anorthite feedstock yields 460 kg O2 + 193 kg Al + 201 kg Si + 144 kg Ca per tonne. On PROCESSED ilmenite feedstock, 316 kg O2 + 316 kg Ti + 368 kg Fe per tonne. These yields apply to upstream-beneficiated mineral feed, not bulk highland or mare regolith — bulk regolith requires beneficiation step before FFC. Stoichiometric near-100% conversion is consistent with q3.c1's regolith-O fraction."
+  type: factual
+  evidence:
+    - source: lunarpedia-ffc-cambridge
+      ref: yields-per-tonne
+      verdict: supports
+  confidence: medium-high
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-03-audit.md
+      notes: "Codex noted yields apply to processed minerals not bulk regolith; clarified."
+
+- id: q3.c12
+  text: "Carbothermal reduction has been demonstrated at production rates equivalent to 140 kg O2/year per single melt cycle (NASA Sanders 2025 progress review). Oxygen yield exceeded 20 wt% per gm regolith after 5 consecutive melt operations under lunar vacuum/thermal conditions. Sierra Space's specific reactor reached TRL 6 in JSC vacuum chamber testing in Aug-Sept 2024 (TRL 6 announcement Sept 17, 2024)."
+  type: factual
+  evidence:
+    - source: sierra-space-carbothermal-2024
+      ref: trl-6
+      verdict: supports
+    - source: nasa-sanders-2025
+      ref: carbothermal-trl
+      verdict: supports
+    - source: nasa-sanders-2025
+      ref: oxygen-yield
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-03-audit.md
+      notes: "Codex flagged 'first TRL-6 lunar-environment-validated' as composite synthesis; rephrased to keep claims source-aligned (production rate -> NASA Sanders; TRL 6 -> Sierra)."
+
+- id: q3.c13
+  text: "Schreiner-Sibille parametric MRE model: 100 kg O2 annually per kg reactor mass at 21 kWh/kg O2 specific energy (process-only, excluding balance-of-plant)."
+  type: factual
+  evidence:
+    - source: schreiner-mre-model
+      ref: specific-energy
+      verdict: supports
+    - source: schreiner-mre-model
+      ref: productivity-per-reactor-mass
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-03-audit.md
+
+- id: q3.c13b
+  text: "Inference from q3.c13 for q4 gear-ratio context: reactor-only productivity of 100 kg/yr/kg reactor mass gives reactor-only phi = 100 per year. Balance-of-plant integration typically derates by 5-10x, leaving full-plant phi of 10-20 per year for O2 alone (cumulative over plant lifetime: phi >> 35 over decade-scale operation). MRE plausibly clears q4's instantaneous phi ~35 threshold under multi-year integration with Fe + Si coproducts; whether it clears under year-1 economics depends on financing structure, not steady-state ISRU performance. This is an inference, not a primary measurement."
+  type: estimate
+  evidence:
+    - source: schreiner-mre-model
+      ref: productivity-per-reactor-mass
+      verdict: partial
+    - source: first-principles-calc
+      ref: pass-03-reconcile.md
+      verdict: supports
+  confidence: medium
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-03-audit.md
+      notes: "Codex flagged the 'comfortably clears' phi=35 phrasing as arithmetically inconsistent with the 5-10x derating. Split factual q3.c13 from inferential q3.c13b; reframed to lifetime-integrated phi rather than instantaneous, and explicitly flagged inference status."
+
+- id: q3.c14
+  text: "OxEon solid oxide electrolyzer for water-to-O2/H2 is at TRL 5 with demonstrated rates of 0.9 kg/hr O2 and 0.12 kg/hr H2 from liquid water input. This is mature hardware; lunar deployment is blocked at water-extraction step (where ice form and concentration determine efficiency), not at electrolysis."
+  type: factual
+  evidence:
+    - source: lyon-industries-isru-2026
+      ref: water-trl
+      verdict: supports
+    - source: lyon-industries-isru-2026
+      ref: water-production-rates
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: unaudited
