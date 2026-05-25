@@ -68,17 +68,19 @@
       status: pending
 
 - id: q6.c6
-  text: "Under TAI-compression, SDC mass demand (~2.7 Mt/yr) alone exceeds plausible Earth-launch throughput by approximately one order of magnitude. This is the q1-q6 demand-elasticity-cost coupling: cheap launch enables TAI-C demand, but TAI-C demand structurally requires lunar-sourced mass supply for orbital build-out at all-conceivable Earth-launch capacities. Lunar manufacturing becomes architecturally necessary under TAI-C, not merely competitive."
+  text: "Under TAI-compression, SDC mass demand (~2.7 Mt/yr) alone exceeds plausible Earth-launch throughput by approximately an order of magnitude (Earth-launch capacity at ~200 active reusable Starships × 10 flights/yr × 200 t = ~400,000 t/yr). The q1-q6 demand-elasticity-cost coupling implies that lunar-sourced BULK MASS (structure, radiators, silicon for panels, sintered regolith) covers roughly half the SDC mass budget; the other half — compute hardware (GPUs, memory, networking, PSUs) — remains Earth-launch-bound regardless. Lunar manufacturing is therefore architecturally necessary but not sufficient under TAI-C."
   type: derived
   evidence:
     - source: first-principles-calc
       ref: pass-02-calc.py
       verdict: supports
-  confidence: medium-high
+  confidence: medium
   derivation_path: passes/pass-02-calc.md
   audit:
     gpt:
-      status: pending
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged the original 'lunar-sourced mass is necessary' framing as too strong because ~50% of SDC mass is Earth-launch-only compute hardware. Accepted; reframed to bulk-mass-half / compute-half split."
 
 - id: q6.c7
   text: "Under stall regime, cumulative 2026-2040 cislunar / LEO mass demand (~20,000 t total, ~1,400 t/yr average) is small enough that Earth-launch alone trivially fulfills it. The lunar-manufacturing thesis fails for lack of demand, not for lack of supply, in this regime. Q6 demand is the cross-leaf veto for synthesis under stall."

@@ -3,12 +3,12 @@ question: "What is the projected demand for structural mass and propellant in LE
 status: researching
 passes_status:
   research: done
-  calc: pending
+  calc: done
   reconcile: pending
   source-review: pending
   consistency: pending
   write: pending
-last_pass: 1
+last_pass: 2
 sources_gathered:
   - marcy-2026-arxiv
   - nasa-otps-sbsp-2024

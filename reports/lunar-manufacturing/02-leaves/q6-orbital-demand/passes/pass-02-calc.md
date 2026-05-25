@@ -20,19 +20,40 @@ takes the regime as input and outputs total-mass-to-orbit (t over 15
 years) and annual-average rates (t/yr).
 
 Sources sealed: I did not consult `sources/*/extract.md` while
-constructing assumptions. Pass 3 reconciles.
+constructing assumptions. Codex audit notes that the engineering
+inputs draw on remembered prior context (Musk Mars cadence, NASA M2M,
+Mankins NIAC, SpaceX/xAI FCC filings) — this is acceptable as
+background knowledge but the regime GW targets are scenario inputs,
+not first-principles derivations. They function as adoption-rate
+hypotheses to be tested against the cross-leaf demand-elasticity-cost
+mechanism. Pass 3 reconciles against the source extracts proper.
 
 ## Assumptions per use case
 
-### SDC — orbital data centers
+### SDC — orbital data centers (revised post-Codex audit)
 
-| Parameter | Value | Justification |
+Codex audit (May 2026) flagged two arithmetic / unit errors in the
+original SDC mass breakdown. Both accepted; corrected derivation
+below. The 40 t/MW total is preserved as a midpoint engineering-
+unit estimate because it is cross-corroborated by independent
+analyses (peraspera 30-50 t/MW; luminix 42 t/MW). The flagged
+derivations were the line items, not the total.
+
+| Parameter | Value | Justification (corrected) |
 |---|---:|---|
-| Compute hardware | 20 t/MW | GPU rack density ~10 GPU/kW; ~1 kg/GPU server-grade; plus PSU, networking, cooling plate |
-| Solar panels | 8 t/MW | 1 MW continuous in LEO needs ~3 MW peak panel; 6-8 kg/kW peak panel mature SOA, ~5 kg/kW with TFSCs |
-| Radiators | 8 t/MW | 100-200 m² per 100 kW; deployable ~5 kg/m² → 5-10 t/MW; midpoint 7-8 t |
-| Structure + station-keep | 4 t/MW | Booms, attitude control, drag-comp propellant tankage |
-| **Total** | **40 t/MW** | Range 30-50 t/MW depending on architecture maturity |
+| Compute hardware | 5-10 t/MW | Modern AI accelerators are ~0.7-1.2 kW each (not 10 GPUs/kW). A 1 MW compute draw is ~1000 high-end GPUs; at ~2-4 kg/GPU including servers, racks, PSUs, networking, the compute hardware mass alone is 2-4 t. With cooling plate, in-rack memory, and shielding, total 5-10 t/MW. |
+| Solar panels | 15-25 t/MW | Codex caught the error: at 5-8 kg/kW peak panel and 3× peak-to-continuous ratio (LEO eclipse + Sun-angle inefficiency), 1 MW continuous needs ~3 MW peak ≈ 15-24 t/MW panel mass. The earlier 8 t/MW figure understated this. |
+| Radiators | 5-10 t/MW | 100-200 m² per 100 kW (depends on radiator temperature, allowable coolant, eclipse rejection assumptions); ~5 kg/m² deployable structures |
+| Structure + station-keep | 5-10 t/MW | Booms, attitude control, drag-compensation propellant tankage |
+| **Total** | **30-55 t/MW** | Revised range; midpoint ~40 t/MW retained because the total is the cross-corroborated number from independent analyses. |
+
+**The 40 t/MW midpoint is partly source-anchored** (peraspera +
+luminix concurrence); the line-item decomposition is now consistent
+with the engineering literature. The line items were wrong in
+the original derivation; the total was within range by happy
+accident. Flag carries into pass 3 reconcile — the rough
+agreement with peraspera/luminix at the total level is itself
+load-bearing evidence rather than a coincidence.
 
 ### SBSP — space-based solar power
 
@@ -58,7 +79,7 @@ identity, not the calendar year, determines feasibility.
 
 ### Stall
 
-- **SDC:** 0.5 GW deployed by 2040 (Starcloud + Axiom + Kepler stay operational at demonstration scale; no scale-up). Implies a few hundred t LEO mass total.
+- **SDC:** 0.5 GW deployed by 2040 (Starcloud + Axiom + Kepler stay operational at demonstration scale; no scale-up). At 40 t/MW × 500 MW = 20,000 t total over 15 years, ≈ 1,333 t/yr. (Codex audit caught earlier "few hundred t" misstatement — corrected.)
 - **SBSP:** 0 GW. NASA OTPS conditions never met.
 - **Depots:** 0 ships/yr refueled. No orbital refueling architecture.
 - **Lunar cargo:** 0 t/yr by 2040. Artemis slips out indefinitely.
@@ -98,11 +119,28 @@ mass-intensity assumption.
 with industrial-explosion launch cadence.
 
 **SDC TAI-C 2.67 Mt/yr** — at architectural limit of any conceivable
-Earth-launch program. If Starship achieves 1,000 ships/year × 200 t =
-200,000 t/yr LEO capacity, SDC alone exceeds full Earth-launch
-capacity by 13×. **This is the lunar-manufacturing thesis**:
-under TAI-C, orbital demand exceeds Earth-launch supply, making
-lunar-sourced structural mass the binding architectural component.
+Earth-launch program. Codex correctly flagged that Earth launch
+capacity depends on fleet size × turnaround rate × pad cadence, not
+on annual ship production alone. A reusable Starship at 10 flights/yr
+amortized across 200 active ships would give ~400,000 t/yr LEO
+capacity. Under that more defensible benchmark, SDC TAI-C demand
+(2.67 Mt/yr) still exceeds Earth-launch supply by ~7×. The
+exact multiplier is sensitive to fleet/reuse assumptions; the
+qualitative conclusion — TAI-C SDC demand exceeds plausible
+Earth-launch capacity — is robust to all reasonable parameterisations.
+
+Codex also caught a stronger overclaim in the original draft: the
+phrase "lunar-sourced structural mass becomes the necessary supply-
+side response" is too strong because ~50% of orbital DC mass under
+the corrected breakdown is compute hardware (GPUs, memory, networking,
+PSUs) that lunar manufacturing cannot supply. The correct framing:
+**lunar-sourced bulk mass (structure, radiators, sintered shielding,
+silicon for solar panels) covers approximately half the SDC mass
+budget**. The other half — compute hardware — still requires Earth
+launch. The lunar-manufacturing thesis is necessary but not sufficient:
+it relaxes a binding supply-side constraint on the bulk-mass half
+of SDC, but the high-value compute half remains Earth-launch-bound
+regardless. This is a more precise statement of the q1-q6 coupling.
 
 ## Headline answers
 
@@ -122,12 +160,18 @@ by factor of >10× over all other sectors combined.
 
 **Cross-leaf-critical observation.** Under stall and BAU, the demand
 total is comfortably within plausible Earth-launch capacity (Starship
-delivering ~100,000 t/yr to LEO at 500 launches/yr is plausible by
-2030 even at partial utilization). Under TAI-C, SDC alone exceeds
-any Earth-launch architecture — lunar-sourced structural mass becomes
-the necessary supply-side response. This is the q1↔q6 coupling Avi
-asked us to surface: launch cost determines which regime obtains,
-and the demand response is highly non-linear.
+delivering ~100,000-400,000 t/yr to LEO at 500-2,000 flight-cycles/yr
+across an active fleet is plausible by 2030 under reasonable
+reuse assumptions). Under TAI-C, SDC alone exceeds plausible
+Earth-launch architecture supply by roughly an order of magnitude —
+lunar-sourced bulk mass (structure, radiators, silicon for panels,
+sintered regolith for shielding) becomes a necessary supplement
+for roughly half the SDC mass budget. Compute hardware (~50%) still
+requires Earth launch. This is the q1↔q6 coupling Avi asked us to
+surface: launch cost determines which regime obtains, the demand
+response is highly non-linear, and the supply-side architecture
+splits into Earth-launched compute + lunar-sourced bulk mass under
+TAI-C.
 
 ## Derived claims for claims.yaml
 
