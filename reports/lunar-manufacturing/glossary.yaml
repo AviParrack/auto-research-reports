@@ -7,36 +7,36 @@
 - term: "gear ratio on cost"
   symbol: "G"
   category: economic
-  definition: "Cost-weighted gear ratio for delivering capital to the lunar surface: $G = L_K G_{K,\\text{LEO-LS}} / L_p$ where $L_K$ is launch cost per kg of capital, $G_{K,\\text{LEO-LS}}$ is the Tsiolkovsky mass gear ratio for capital transport, and $L_p$ is launch cost per kg of competing terrestrial propellant. Reduces to ordinary mass gear ratio when capital and propellant use the same launcher."
+  definition: "Cost-weighted gear ratio for delivering capital to the lunar surface: \\(G = L_K G_{K,\\text{LEO-LS}} / L_p\\) where \\(L_K\\) is launch cost per kg of capital, \\(G_{K,\\text{LEO-LS}}\\) is the Tsiolkovsky mass gear ratio for capital transport, and \\(L_p\\) is launch cost per kg of competing terrestrial propellant. Reduces to ordinary mass gear ratio when capital and propellant use the same launcher."
   used_in: [q4-gear-ratio]
 
 - term: "propellant use ratio"
   symbol: "Γ_X"
   category: economic
-  definition: "Ratio of cislunar transport gear ratios: $\\Gamma_X = G_{\\text{LS} \\to X} / G_{\\text{LEO} \\to X}$. Captures how much harder it is to deliver lunar product versus terrestrial product to destination X. Γ < 1 means lunar product has a delivery advantage at X."
+  definition: "Ratio of cislunar transport gear ratios: \\(\\Gamma_X = G_{\\text{LS} \\to X} / G_{\\text{LEO} \\to X}\\). Captures how much harder it is to deliver lunar product versus terrestrial product to destination X. Γ < 1 means lunar product has a delivery advantage at X."
   used_in: [q4-gear-ratio]
 
 - term: "launch-normalized equipment cost"
   symbol: "x"
   category: economic
-  definition: "$x = \\zeta / L_p$ where ζ is capital development+fabrication cost per kg of capital and $L_p$ is launch cost per kg of competing propellant. Dimensionless ratio measuring how expensive ISRU hardware is relative to launching propellant from Earth."
+  definition: "\\(x = \\zeta / L_p\\) where ζ is capital development+fabrication cost per kg of capital and \\(L_p\\) is launch cost per kg of competing propellant. Dimensionless ratio measuring how expensive ISRU hardware is relative to launching propellant from Earth."
   used_in: [q4-gear-ratio]
 
 - term: "launch-normalized finance cost"
   symbol: "ξ"
   category: economic
-  definition: "$\\xi = f / L_p$ where $f$ is finance cost per kg of product delivered. Captures the burden of capital amortization, WACC, and buildup-period interest."
+  definition: "\\(\\xi = f / L_p\\) where \\(f\\) is finance cost per kg of product delivered. Captures the burden of capital amortization, WACC, and buildup-period interest."
   used_in: [q4-gear-ratio]
 
 - term: "launch-normalized operations cost"
   symbol: "ω"
   category: economic
-  definition: "$\\omega = \\lambda / L_p$ where λ is per-product-kg labor and telerobotic operations cost. Generally small (~5-10% of launch cost per kg) for mature operations."
+  definition: "\\(\\omega = \\lambda / L_p\\) where λ is per-product-kg labor and telerobotic operations cost. Generally small (~5-10% of launch cost per kg) for mature operations."
   used_in: [q4-gear-ratio]
 
 - term: "competitiveness condition"
   category: economic
-  definition: "Necessary and sufficient inequality for lunar-derived product to have absolute advantage at destination X: $[(x + G)\\phi^{-1} + \\omega + \\xi] \\cdot \\Gamma_X < 1$. Per Metzger 2023 Eq. 8."
+  definition: "Necessary and sufficient inequality for lunar-derived product to have absolute advantage at destination X: \\([(x + G)\\phi^{-1} + \\omega + \\xi] \\cdot \\Gamma_X < 1\\). Per Metzger 2023 Eq. 8."
   used_in: [q4-gear-ratio]
 
 - term: "tent sublimation"
@@ -57,7 +57,7 @@
 - term: "solar electric propulsion"
   symbol: "SEP"
   category: technology
-  definition: "Spacecraft propulsion using solar-powered electric thrusters, typically Hall-effect or ion engines. Specific impulse $I_{\\text{sp}} \\approx 1000$-$4000$ s (vs ~450 s for LOX/LH2 chemical). Trades thrust for efficiency; transit times measured in months. Key enabler for lunar→LEO product delivery."
+  definition: "Spacecraft propulsion using solar-powered electric thrusters, typically Hall-effect or ion engines. Specific impulse \\(I_{\\text{sp}} \\approx 1000\\)-\\(4000\\) s (vs ~450 s for LOX/LH2 chemical). Trades thrust for efficiency; transit times measured in months. Key enabler for lunar→LEO product delivery."
   used_in: [q4-gear-ratio]
 
 - term: "inert mass fraction"
@@ -69,12 +69,12 @@
 - term: "specific impulse"
   symbol: "I_sp"
   category: physics
-  definition: "Engine efficiency measure: thrust per unit propellant mass flow rate, expressed in seconds. Higher $I_{\\text{sp}}$ gives exponentially better mass ratios per Tsiolkovsky. LOX/LH2: 450 s. Solar electric: 2000-4000 s. Nuclear thermal: ~900 s."
+  definition: "Engine efficiency measure: thrust per unit propellant mass flow rate, expressed in seconds. Higher \\(I_{\\text{sp}}\\) gives exponentially better mass ratios per Tsiolkovsky. LOX/LH2: 450 s. Solar electric: 2000-4000 s. Nuclear thermal: ~900 s."
   used_in: [q4-gear-ratio]
 
 - term: "Tsiolkovsky rocket equation"
   category: physics
-  definition: "Relates change in velocity to exhaust velocity and mass ratio: $\\Delta v = I_{\\text{sp}} g_0 \\ln(m_0/m_f)$. The exponential dependence is why rocket payload fractions are small for high-Δv missions, and why lunar gravity well (low Δv) gives a 24× physics advantage for launch."
+  definition: "Relates change in velocity to exhaust velocity and mass ratio: \\(\\Delta v = I_{\\text{sp}} g_0 \\ln(m_0/m_f)\\). The exponential dependence is why rocket payload fractions are small for high-Δv missions, and why lunar gravity well (low Δv) gives a 24× physics advantage for launch."
   used_in: [q4-gear-ratio]
 
 - term: "ISRU"

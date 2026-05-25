@@ -6,7 +6,7 @@ import { BUILD_HASH } from '../lib/build-hash';
 interface Props {
   report: Report;
   title: string;
-  activeTab?: 'report' | 'analysis' | 'source-reviews' | 'sources' | 'glossary' | 'log';
+  activeTab?: 'report' | 'analysis' | 'sources' | 'glossary' | 'log';
 }
 
 const { report, title, activeTab = 'report' } = Astro.props;
@@ -22,7 +22,6 @@ const reportUpdatedStr = fmtTs(report.meta.last_updated);
 const tabs = [
   { id: 'report', label: 'Report', href: `/${report.slug}/` },
   { id: 'analysis', label: 'Analysis', href: `/${report.slug}/analysis/` },
-  { id: 'source-reviews', label: 'Source Reviews', href: `/${report.slug}/source-reviews/` },
   { id: 'sources', label: 'Sources', href: `/${report.slug}/sources/` },
   { id: 'glossary', label: 'Glossary', href: `/${report.slug}/glossary/` },
   { id: 'log', label: 'Pass Log', href: `/${report.slug}/log/` },
@@ -39,7 +38,7 @@ const tabs = [
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous" />
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']});"></script>
     <script is:inline define:vars={{ BUILD_HASH }}>
       const LOG_PREFIX = '[live-reload]';
       console.log(LOG_PREFIX, 'embedded BUILD_HASH:', BUILD_HASH);

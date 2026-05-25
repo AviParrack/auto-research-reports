@@ -138,7 +138,7 @@ const bodyHtml = leaf?.body ? marked.parse(leaf.body) : null;
               <li class="border border-[var(--color-line)] rounded p-3">
                 <div class="flex items-baseline justify-between gap-3 mb-1">
                   <div>
-                    <a href={`/${slug}/source-reviews/${s.slug}/`} class="font-mono text-xs text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] mr-2">{s.slug}</a>
+                    <a href={`/${slug}/sources/${s.slug}/`} class="font-mono text-xs text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] mr-2">{s.slug}</a>
                     {s.title && <span class="font-medium">{s.title}</span>}
                   </div>
                   <div class="text-xs text-[var(--color-ink-soft)] font-mono shrink-0">

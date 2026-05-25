@@ -1,6 +1,9 @@
 ---
 import ReportLayout from '../../../layouts/ReportLayout.astro';
 import { listReportSlugs, loadReport } from '../../../lib/reports';
+import fs from 'node:fs';
+import path from 'node:path';
+import { marked } from 'marked';
 
 export function getStaticPaths() {
   return listReportSlugs().map((slug) => ({ params: { report: slug } }));
@@ -9,37 +12,51 @@ export function getStaticPaths() {
 const { report: slug } = Astro.params;
 const report = loadReport(slug!);
 
-// Flatten all sources across leaves into a deduplicated, sorted bibliography
-const sourceMap = new Map<string, { slug: string; title?: string; url?: string; year?: any; authors?: string[]; type?: string; usedBy: string[] }>();
+// Build deduplicated source list with hasReview flag
+const REPORTS_DIR = path.resolve(process.cwd(), '../reports');
+const sourceMap = new Map<string, { slug: string; title?: string; url?: string; year?: any; authors?: string[]; type?: string; body: string; usedBy: string[]; hasReview: boolean }>();
 for (const leaf of report.leaves) {
   for (const s of leaf.sources) {
     if (!sourceMap.has(s.slug)) {
-      sourceMap.set(s.slug, { ...s, usedBy: [leaf.id] });
+      const reviewPath = path.join(REPORTS_DIR, slug!, '02-leaves', leaf.id, 'sources', s.slug, 'review.md');
+      sourceMap.set(s.slug, { ...s, usedBy: [leaf.id], hasReview: fs.existsSync(reviewPath) });
     } else {
       sourceMap.get(s.slug)!.usedBy.push(leaf.id);
     }
   }
 }
 const sources = [...sourceMap.values()].sort((a, b) => a.slug.localeCompare(b.slug));
+
+function preview(body: string, max = 400): string {
+  // strip frontmatter-like leading hashes/title, keep first abstract paragraph
+  const stripped = body.replace(/^#\s+[^\n]+\n+/, '').trim();
+  if (stripped.length <= max) return stripped;
+  // cut at last whitespace before max
+  const cut = stripped.slice(0, max);
+  const lastSpace = cut.lastIndexOf(' ');
+  return cut.slice(0, lastSpace > 0 ? lastSpace : max) + '…';
+}
 ---
 <ReportLayout report={report} title={`Sources — ${report.meta.root_question}`} activeTab="sources">
   <div class="mb-6">
     <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-2">Sources ({sources.length})</h2>
     <p class="text-sm text-[var(--color-ink-soft)] max-w-3xl">
-      All cited sources across the report. Each source has been fetched and extracted; many have a corresponding point-by-point Source Review.
+      All cited sources across the report. Click a source to see its full extract + Source Review (point-by-point with verdict tags).
     </p>
   </div>
 
   {sources.length === 0 ? (
     <div class="border border-[var(--color-line)] rounded p-6 text-[var(--color-ink-soft)]">No sources captured yet.</div>
   ) : (
-    <ul class="space-y-3">
+    <ul class="space-y-4">
       {sources.map((s) => (
         <li class="border border-[var(--color-line)] rounded p-4">
-          <div class="flex items-baseline justify-between gap-3 mb-1.5">
-            <div class="flex-1">
-              <a href={`/${slug}/source-reviews/${s.slug}/`} class="font-mono text-xs text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] mr-2">{s.slug}</a>
-              {s.title && <span class="font-medium">{s.title}</span>}
+          <div class="flex items-baseline justify-between gap-3 mb-2">
+            <div class="flex-1 min-w-0">
+              <a href={`/${slug}/sources/${s.slug}/`} class="font-medium hover:text-[var(--color-accent)]">
+                {s.title || s.slug}
+              </a>
+              {s.hasReview && <span class="ml-2 text-xs px-1.5 py-0.5 rounded bg-[var(--color-leaf)]/15 text-[var(--color-leaf)]">reviewed</span>}
             </div>
             <div class="text-xs text-[var(--color-ink-soft)] font-mono shrink-0 flex items-center gap-2">
               {s.authors && s.authors.length > 0 && <span>{s.authors.join(', ')}</span>}
@@ -47,10 +64,14 @@ const sources = [...sourceMap.values()].sort((a, b) => a.slug.localeCompare(b.sl
               {s.type && <span class="px-1.5 py-0.5 bg-[var(--color-paper-dim)] rounded">{s.type}</span>}
             </div>
           </div>
-          {s.url && (
-            <a href={s.url} target="_blank" rel="noopener" class="text-xs text-[var(--color-accent)] hover:underline break-all">{s.url}</a>
-          )}
-          <div class="text-xs text-[var(--color-ink-soft)] mt-2">
+          <div class="text-xs text-[var(--color-ink-soft)] mb-2 font-mono flex items-center gap-3 flex-wrap">
+            <a href={`/${slug}/sources/${s.slug}/`} class="hover:text-[var(--color-accent)]">{s.slug}</a>
+            {s.url && (
+              <a href={s.url} target="_blank" rel="noopener" class="text-[var(--color-accent)] hover:underline break-all">{s.url}</a>
+            )}
+          </div>
+          <div class="text-sm text-[var(--color-ink-soft)] leading-relaxed mb-2 prose-leaf" set:html={marked.parseInline(preview(s.body))} />
+          <div class="text-xs text-[var(--color-ink-soft)]">
             cited by: {s.usedBy.map((id) => (
               <a href={`/${slug}/leaves/${id}/`} class="font-mono mr-2 hover:text-[var(--color-accent)]">{id}</a>
             ))}
