@@ -6,6 +6,6 @@ passes_status:
   calc: done
   reconcile: done
   source-review: done
-  consistency: pending
+  consistency: done
   write: pending
-last_pass: 4
+last_pass: 5
