@@ -1,0 +1,91 @@
+# Claims for q4-gear-ratio.
+# Each claim must trace to a derivation (calc) or a cited source (reconcile/source-review).
+# Claims added during the calc pass (sources sealed).
+
+- id: q4.c1
+  text: "Propellant use ratio Γ_LEO ≈ 14 under chemical LOX/LH2 reusable round-trip from lunar surface. This makes LEO the hardest cislunar destination for lunar-product delivery."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex confirmed Tsiolkovsky math + necessary condition. Γ_LEO upper bound from reusable RT model."
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q4.c2
+  text: "For closer-to-Moon destinations (LLO Γ≈0.9, EML1 Γ≈1.3, GEO Γ≈1.4), propellant use ratio is O(1), making them structurally easier markets for lunar product than LEO."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-02-audit.md
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q4.c3
+  text: "Lunar propellant competitiveness at destination X requires (ω + ξ) · Γ_X < 1 as a necessary condition. For LEO with Γ≈14, this forces (ω + ξ) < 0.07, i.e. fixed labor + finance costs per kg of product must be less than 7% of terrestrial launch cost. This is binding under realistic first-of-kind financing."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-02-audit.md
+      notes: "Algebra correct; binding nature at LEO confirmed by Codex."
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q4.c4
+  text: "The φ threshold (minimum production mass ratio for lunar competitiveness at X) scales as φ_threshold ≈ (x + G) · Γ_X / [1 − (ω + ξ) · Γ_X] in the launch-normalized cost framework."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.md
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-02-audit.md
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q4.c5
+  text: "Under conservative parameter ranges (x ∈ [10, 200], ξ ∈ [1, 5], ω = 0.1), the calc cannot produce a finite threshold for closer destinations (LLO, EML1, GEO, GTO) — the (ω+ξ)·Γ_X < 1 floor is violated. This indicates the parameter ranges are too pessimistic OR the framework requires careful unit reasoning beyond the first-principles guesses."
+  type: estimate
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc-output.txt
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged: this suggests my x and ξ baselines are wrong. Reconcile pass should derive proper ξ from WACC × buildup × amortization, not guess."
+    human:
+      status: unnoted
+      comment_file: null
