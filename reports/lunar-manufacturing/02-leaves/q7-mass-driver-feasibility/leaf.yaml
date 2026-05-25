@@ -1,5 +1,5 @@
 id: q7-mass-driver-feasibility
-question: "Is a lunar mass driver realistically deployable before 2040, and how much does the answer to the root question depend on its availability vs. chemical-rocket-only delivery?"
+question: "What engineering and capital work remains before a lunar mass driver is operational, how compressible is each step under industrial-explosion or TAI-level automation, and how much does the root answer depend on its availability vs. chemical-rocket-only delivery?"
 status: open
 passes_status:
   research: pending

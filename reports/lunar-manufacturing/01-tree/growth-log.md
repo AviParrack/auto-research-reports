@@ -20,7 +20,7 @@ Append-only record of who added/removed/restructured tree nodes, in what pass, a
 - `q3-isru-feasibility` — added explicit material list (Al/Fe/Si/Ti/glass/O2/propellant) and TRL-by-2040 framing.
 - `q4-capital-buildup` → `q5-capital-buildup`. Renumbered; question now demands realistic-earliest-deployment date.
 - `q5-orbital-demand` → `q6-orbital-demand`. Renumbered; question now requires split by use case (data centers, solar power, depots, deep-space).
-- `q6-mass-driver-vs-rocket` → `q7-mass-driver-feasibility`. Reframed from binary choice to deployment-feasibility-before-2040 question, which is the actual literature gap. AIAA 2025 paper exists; first-gen estimates are 2040+.
+- `q6-mass-driver-vs-rocket` → `q7-mass-driver-feasibility`. Reframed from binary choice to a feasibility question that explicitly enumerates the engineering work remaining and asks how much that work compresses under acceleration. AIAA 2025 paper exists; the leaf pass should map the steps (electromagnetic linear motor at lunar-relevant scale, regolith handling, energy supply, regulatory clearance) and opine on which are physics-bottlenecked vs which collapse under industrial-explosion-style automation.
 - `q7-synthesis-crossover` → `q8-synthesis-crossover`. Renumbered.
 
 ### Removed
@@ -33,4 +33,4 @@ None this pass.
 
 ### Why this shape
 
-Intake web search identified that the literature decomposes this economic question along the gear-ratio axis (capital efficiency) more than along the raw $/kg axis. The tree now has the gear-ratio leaf as its centerpiece, with the cost leaves (q1, q2) feeding into it and the buildup/demand leaves (q5, q6) framing when the gear ratio actually pays off. Mass driver question demoted to a constraint node because its 2040+ feasibility timeline puts it outside the synthesis window for most scenarios.
+Intake web search identified that the literature decomposes this economic question along the gear-ratio axis (capital efficiency) more than along the raw $/kg axis. The tree now has the gear-ratio leaf as its centerpiece, with the cost leaves (q1, q2) feeding into it and the buildup/demand leaves (q5, q6) framing when the gear ratio actually pays off. Mass driver question demoted to a constraint node because the engineering work-remaining is large enough that it sits at the speed-up-sensitive end of the question set: under business-as-usual progress it's a long road, but under sustained industrial-explosion-grade automation the constraint largely collapses to capital + lead-times for hardware. Synthesis must explicitly carry this conditionality.

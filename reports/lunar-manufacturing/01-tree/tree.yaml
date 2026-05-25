@@ -65,7 +65,7 @@ nodes:
     parent: root
     depth: 1
     type: leaf
-    question: "What upfront capex and calendar time are required to establish a lunar manufacturing base capable of net-positive export, and what's the realistic earliest-deployment date?"
+    question: "What upfront capex and what discrete engineering milestones are required to establish a lunar manufacturing base capable of net-positive export, and how compressible is each milestone under industrial-explosion or TAI-grade automation?"
     status: open
     answer: null
     confidence: null
@@ -93,7 +93,7 @@ nodes:
     parent: root
     depth: 1
     type: constraint
-    question: "Is a lunar mass driver realistically deployable before 2040, and how much does the answer to the root question depend on its availability vs. chemical-rocket-only delivery?"
+    question: "What engineering and capital work remains before a lunar mass driver is operational, how compressible is each step under industrial-explosion or TAI-level automation, and how much does the root answer depend on its availability vs. chemical-rocket-only delivery?"
     status: open
     answer: null
     confidence: null
