@@ -3,9 +3,9 @@ question: "What is the projected cost per kg from lunar surface to LEO over 2026
 status: researching
 passes_status:
   research: done
-  calc: pending
+  calc: done
   reconcile: pending
   source-review: pending
   consistency: pending
   write: pending
-last_pass: 1
+last_pass: 2

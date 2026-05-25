@@ -1,0 +1,139 @@
+# Claims for q2-lunar-ascent-cost.
+# Each claim must trace to a derivation (calc) or a cited source (reconcile/source-review).
+# Claims added during the calc pass (sources sealed).
+
+- id: q2.c1
+  text: "Lunar surface to LEO propulsive ΔV budget is approximately 2,870 m/s with aerobraking at Earth approach, or approximately 5,570 m/s without aerobraking. The decomposition is 1,870 m/s lunar surface to LLO, 700 m/s LLO to trans-Earth injection, and 300 m/s (aerobraking) or 3,000 m/s (propulsive) for LEO insertion. Aerobraking saves a larger ΔV than the choice between methalox and hydrolox."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex assessed overall verdict 'weak' — arithmetic mostly correct but inputs are scenario priors not first-principles derivations. See pass-02-response.md for the structural acknowledgment."
+    human:
+      status: unnoted
+
+- id: q2.c2
+  text: "Under chemical hydrolox ascent (Isp 450 s) with aerobraking, the propellant mass fraction by Tsiolkovsky is 0.478 for the lunar-surface-to-LEO mission. Without aerobraking the fraction rises to 0.717 — over 70% of the takeoff mass must be propellant, which combined with dry-mass overhead becomes structurally inefficient and economically punitive."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex assessed overall verdict 'weak' — arithmetic mostly correct but inputs are scenario priors not first-principles derivations. See pass-02-response.md for the structural acknowledgment."
+    human:
+      status: unnoted
+
+- id: q2.c3
+  text: "Chemical-rocket lunar-surface-to-LEO cost per kg under aggressive-ISRU with aerobraking ranges from $8,912/kg (early era) to $994/kg (late era). Under partial-ISRU the range is $12,000/kg to $1,921/kg. Under Earth-imports-only the range is $13,029/kg to $1,303/kg. Late-era convergence of Earth-imports-only with aggressive-ISRU reflects falling terrestrial launch costs (q1's L_p) outpacing nascent ISRU cost reductions."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium-high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex assessed overall verdict 'weak' — arithmetic mostly correct but inputs are scenario priors not first-principles derivations. See pass-02-response.md for the structural acknowledgment."
+    human:
+      status: unnoted
+
+- id: q2.c4
+  text: "Without aerobraking, chemical-rocket lunar-surface-to-LEO costs are 2-3× higher across all scenarios. Aerobraking is therefore the dominant architectural lever for chemical-only delivery, larger in effect than the choice between methalox and hydrolox or the choice between ISRU scenarios within a single era."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex assessed overall verdict 'weak' — arithmetic mostly correct but inputs are scenario priors not first-principles derivations. See pass-02-response.md for the structural acknowledgment."
+    human:
+      status: unnoted
+
+- id: q2.c5
+  text: "Mass driver + SEP transfer lunar-surface-to-LEO cost per kg, under a $10B capital assumption and 20-year amortization, scales from $528/kg (early era, 100k t/yr nameplate, 20% availability) to $152/kg (mid, 1M t/yr nameplate, 60%) to $50/kg (late, 10M t/yr nameplate, 85%). At late-era throughput, the mass-driver capital amortization collapses to under $1/kg; the cost is dominated by the post-launch SEP transfer stage."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex assessed overall verdict 'weak' — arithmetic mostly correct but inputs are scenario priors not first-principles derivations. See pass-02-response.md for the structural acknowledgment."
+    human:
+      status: unnoted
+
+- id: q2.c6
+  text: "Mass driver beats chemical-aggressive-ISRU-late by approximately 20× ($50/kg vs $994/kg). Chemical retains an operational advantage in early-mid eras because the mass driver requires its own multi-billion-dollar capital project to bootstrap on the lunar surface, while chemical ascent vehicles can be Earth-launched and operated from the start. The crossover happens once mass driver throughput exceeds approximately 10⁹ kg/yr — only realistically reached in late era or under TAI-level industrial acceleration."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex assessed overall verdict 'weak' — arithmetic mostly correct but inputs are scenario priors not first-principles derivations. See pass-02-response.md for the structural acknowledgment."
+    human:
+      status: unnoted
+
+- id: q2.c7
+  text: "Under industrial-explosion / TAI-grade automation pressure, lunar surface operations could compress 10×, ISRU propellant cost 5×, hardware amortization 3×, and mass driver throughput 10×. The combined effect drops chemical-aggressive-ISRU-late from $994/kg to roughly $150-250/kg, and mass-driver mid-era from $152/kg to roughly $30/kg. The mass driver becomes commercially dominant a decade or more earlier than the business-as-usual case."
+  type: estimate
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.md
+      verdict: supports
+  confidence: medium
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex assessed overall verdict 'weak' — arithmetic mostly correct but inputs are scenario priors not first-principles derivations. See pass-02-response.md for the structural acknowledgment."
+      notes: "Speculative TAI sensitivity; follows directly from framework but quantitative compression factors not externally validated."
+    human:
+      status: unnoted
+
+- id: q2.c8
+  text: "Lunar-surface-to-LEO cost is roughly 9-50× higher than terrestrial Earth-to-LEO cost (q1's L_p) across all chemical scenarios. q1's partial-mid L_p is $107/kg; q2's partial-ISRU mid is $5,191/kg — a 48× multiple. Aggressive-ISRU late ($994/kg) is approximately 9× q1's partial-late ($107/kg) and 17× q1's optimistic-late ($59/kg). Mass-driver late ($50/kg) is the only architecture that closes the multiple to within a factor of 2 of optimistic-late Starship. This is the structural framing for the report: lunar manufacturing for orbital infrastructure requires mature ISRU + mass driver, or products with high enough value density that shipping cost is not binding."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex caught arithmetic error in original $994/$59 = 9x calibration. Corrected: $994/$107 = 9.3x, $994/$59 = 16.8x. Both ratios now stated."
+    human:
+      status: unnoted

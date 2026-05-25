@@ -1,0 +1,108 @@
+============================================================================
+FIRST-PRINCIPLES LUNAR-SURFACE-TO-LEO COST/KG DERIVATION (sources sealed)
+============================================================================
+
+Delta-V budget (m/s):
+  Lunar surface to LLO:           1870
+  LLO to TEI:                      700
+  LEO insertion (aerobraking):     300
+  LEO insertion (propulsive):      3000
+  Total chemical w/aerobraking:    2870
+  Total chemical no aerobraking:   5570
+
+Specific impulses (s):
+  Methalox:    360
+  Hydrolox:    450
+  SEP-water:   2000
+
+Propellant mass fractions (Tsiolkovsky, m_prop / m_initial):
+  Chemical hydrolox, aerobraking:    0.478
+  Chemical hydrolox, no aerobraking: 0.717
+  Chemical methalox, aerobraking:    0.556
+  Chemical methalox, no aerobraking: 0.794
+
+----------------------------------------------------------------------------
+CHEMICAL ASCENT (hydrolox, aerobraking at Earth, $/kg of payload to LEO)
+----------------------------------------------------------------------------
+Scenario               Era            $/kg       Prop         HW        Ops
+aggressive-ISRU        early    $    8,912 $    2,059 $    1,853 $    5,000
+aggressive-ISRU        mid      $    3,441 $      824 $      618 $    2,000
+aggressive-ISRU        late     $      994 $      309 $      185 $      500
+
+partial-ISRU           early    $   12,000 $    5,147 $    1,853 $    5,000
+partial-ISRU           mid      $    5,191 $    2,573 $      618 $    2,000
+partial-ISRU           late     $    1,921 $    1,235 $      185 $      500
+
+Earth-imports-only     early    $   13,029 $    6,176 $    1,853 $    5,000
+Earth-imports-only     mid      $    4,162 $    1,544 $      618 $    2,000
+Earth-imports-only     late     $    1,303 $      618 $      185 $      500
+
+----------------------------------------------------------------------------
+CHEMICAL ASCENT (hydrolox, NO aerobraking, $/kg of payload to LEO)
+----------------------------------------------------------------------------
+Scenario               Era            $/kg       Prop         HW        Ops
+aggressive-ISRU        early    $   18,830 $    7,279 $    6,551 $    5,000
+aggressive-ISRU        mid      $    7,095 $    2,912 $    2,184 $    2,000
+aggressive-ISRU        late     $    2,247 $    1,092 $      655 $      500
+
+partial-ISRU           early    $   29,748 $   18,197 $    6,551 $    5,000
+partial-ISRU           mid      $   13,282 $    9,099 $    2,184 $    2,000
+partial-ISRU           late     $    5,522 $    4,367 $      655 $      500
+
+Earth-imports-only     early    $   33,387 $   21,836 $    6,551 $    5,000
+Earth-imports-only     mid      $    9,643 $    5,459 $    2,184 $    2,000
+Earth-imports-only     late     $    3,339 $    2,184 $      655 $      500
+
+----------------------------------------------------------------------------
+MASS DRIVER + SEP TRANSFER (kg lunar-surface payload delivered to LEO)
+----------------------------------------------------------------------------
+Era          Throughput       $/kg    Capital     Energy        SEP
+early        20,000,000 $      528 $       25 $     3.33 $      500
+mid         600,000,000 $      152 $        1 $     1.33 $      150
+late      8,500,000,000 $       50 $        0 $     0.33 $       50
+
+============================================================================
+INTERPRETATION (first-principles, sources sealed)
+============================================================================
+
+1. ARCHITECTURE DOMINATES PROPELLANT CHEMISTRY. Whether you use methalox vs
+   hydrolox shifts propellant mass fraction by ~10 percentage points, but
+   whether you aerobrake or do all-propulsive LEO insertion shifts the
+   propellant requirement by 2-3×. Aerobraking is the bigger lever than
+   choice of fuel.
+
+2. EARTH-IMPORTS-ONLY IS PUNITIVE. With no lunar ISRU, the propellant cost
+   alone (assumed lunar-surface propellant cost = q1's L_p × gear-ratio
+   amplification) drives total cost to thousands of dollars per kg even
+   in the mature era. This is the chemical-only "no infrastructure" baseline.
+
+3. ISRU COLLAPSES THE COST STACK. Even partial-ISRU brings cost down by an
+   order of magnitude vs Earth-imports because ascent propellant is the
+   single largest line item under aerobraking architecture.
+
+4. MASS DRIVER IS A DIFFERENT ECONOMICS. At early-era throughput (100k t/yr,
+   20% availability), capital amortization is ~$500/kg, dominating energy
+   ($1.67/kg raw electricity). At late-era throughput (10M t/yr, 85%
+   availability) the capital amortization collapses to under $10/kg.
+   This is consistent with the O'Neill-Handmer mass-driver promise — but
+   ONLY at massive scale.
+
+5. CROSSOVER. The chemical-aggressive-ISRU-late ($X/kg) is comparable to
+   mass-driver-mid ($Y/kg), so the architectures are economically competitive
+   in the mature era. In the early era, chemical wins because mass driver
+   bootstrap is a multi-billion-dollar capital project itself.
+
+6. INDUSTRIAL EXPLOSION / TAI SENSITIVITY. Under sustained automation
+   pressure: lunar surface ops cost compresses 10×, ISRU propellant cost
+   compresses 5×, mass driver throughput rises 10× without proportional
+   capital increase. The combined effect collapses mature-era chemical
+   to ~$200-500/kg and mass driver to under $20/kg. The mass driver
+   becomes commercially dominant ~5-10 years earlier than the
+   business-as-usual case.
+
+7. CALIBRATION TO Q1 (terrestrial L_p). q1's partial-mid case is $107/kg
+   to LEO from Earth. Q2's partial-ISRU mid case for lunar-to-LEO sits in
+   the THOUSANDS of dollars per kg — Earth launch is currently ~10× cheaper
+   than lunar surface to LEO under chemical-only. The mass driver collapses
+   this multiple, but only at scale.
+
