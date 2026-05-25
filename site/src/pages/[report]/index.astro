@@ -12,8 +12,15 @@ const { report: slug } = Astro.params;
 const report = loadReport(slug!);
 
 const topLevel = getNodeChildren(report.tree, 'root');
-const answeredCount = report.tree.nodes.filter((n) => n.status === 'answered').length;
-const leafCount = report.tree.nodes.filter((n) => n.type === 'leaf').length;
+const leafNodes = report.tree.nodes.filter((n) => n.type === 'leaf');
+const leafCount = leafNodes.length;
+// Count "answered" by the leaf.yaml status (source of truth for completion),
+// not tree.yaml node.status (which is only updated by synthesis pass).
+const answeredCount = leafNodes.filter((n) => {
+  const leaf = report.leaves.find((l) => l.id === n.id);
+  if (!leaf) return false;
+  return leaf.status === 'reviewed' || leaf.status === 'done';
+}).length;
 const totalSubPasses = report.leaves.reduce((acc, l) => acc + Object.keys(l.passes_status).length, 0);
 const doneSubPasses = report.leaves.reduce((acc, l) =>
   acc + Object.values(l.passes_status).filter((v) => v === 'done').length, 0);

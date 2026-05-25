@@ -4,7 +4,7 @@ status: open
 passes_status:
   research: done
   calc: done
-  reconcile: pending
+  reconcile: done
   source-review: pending
   consistency: pending
   write: pending
