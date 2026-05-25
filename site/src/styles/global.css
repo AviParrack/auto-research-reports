@@ -51,8 +51,17 @@ body {
 [data-theme="dark"] .mermaid .edgeLabel,
 [data-theme="dark"] .mermaid .nodeLabel * { color: var(--color-ink) !important; fill: var(--color-ink) !important; }
 [data-theme="dark"] .mermaid .edgeLabel { background: var(--color-paper) !important; }
+/* Edge paths and arrowheads — broader selectors because mermaid v10 paints
+   the arrow markers with separate fill attrs and an inline <style> per render
+   that we need to out-specificity. */
 [data-theme="dark"] .mermaid .edgePath path,
-[data-theme="dark"] .mermaid .flowchart-link { stroke: var(--color-ink-soft) !important; }
+[data-theme="dark"] .mermaid .edgePath .path,
+[data-theme="dark"] .mermaid path.flowchart-link,
+[data-theme="dark"] .mermaid .flowchart-link { stroke: var(--color-ink-soft) !important; fill: none !important; }
+[data-theme="dark"] .mermaid marker,
+[data-theme="dark"] .mermaid marker *,
+[data-theme="dark"] .mermaid .marker,
+[data-theme="dark"] .mermaid .marker * { fill: var(--color-ink-soft) !important; stroke: var(--color-ink-soft) !important; }
 /* Re-tint status-coloured leaves in dark mode (these had light pastel fills) */
 [data-theme="dark"] .mermaid g.classGroup-leafDone rect,
 [data-theme="dark"] .mermaid g[class*="leafDone"] rect { fill: color-mix(in srgb, var(--color-leaf) 22%, var(--color-paper-dim)) !important; stroke: var(--color-leaf) !important; }
@@ -99,14 +108,27 @@ body {
 }
 .source-cite:hover { background: var(--color-accent); color: white; }
 
-/* Tippy customization */
+/* Tippy customization — light mode: dark popover (ink bg, paper text).
+   Dark mode: stay dark (paper-dim raised surface, ink text) so the popover
+   reads naturally against the dark page instead of flashing inverted. */
 .tippy-box[data-theme~='auto-research'] {
   background: var(--color-ink);
   color: var(--color-paper);
   font-size: 0.875rem;
-  line-height: 1.45;
+  line-height: 1.5;
   max-width: 360px;
+  border: 1px solid transparent;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
 }
 .tippy-box[data-theme~='auto-research'] .tippy-arrow { color: var(--color-ink); }
 .tippy-box[data-theme~='auto-research'] strong { color: var(--color-accent-soft); }
-.tippy-box[data-theme~='auto-research'] .tippy-content { padding: 0.65rem 0.85rem; }
+.tippy-box[data-theme~='auto-research'] .tippy-content { padding: 0.7rem 0.9rem; }
+
+[data-theme="dark"] .tippy-box[data-theme~='auto-research'] {
+  background: var(--color-paper-dim);
+  color: var(--color-ink);
+  border-color: var(--color-line);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+}
+[data-theme="dark"] .tippy-box[data-theme~='auto-research'] .tippy-arrow { color: var(--color-paper-dim); }
+[data-theme="dark"] .tippy-box[data-theme~='auto-research'] strong { color: var(--color-accent); }

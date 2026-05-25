@@ -39,14 +39,39 @@ const tabs = [
     <title>{title} — Auto-Research</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     {/* Pre-paint theme resolution — must run before any rendered DOM to avoid FOUC.
-        Order: explicit user choice in localStorage > system preference. */}
+        Default behaviour follows the system colour-scheme live (no localStorage).
+        Explicit toggles save 'light' or 'dark' which then override the system. */}
     <script is:inline>
       (function () {
+        function resolveTheme() {
+          try {
+            var saved = localStorage.getItem('ar-theme');
+            if (saved === 'light' || saved === 'dark') return saved;
+          } catch (e) {}
+          // No explicit preference — follow system, defaulting to light when undetermined
+          try {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
+          } catch (e) {}
+          return 'light';
+        }
+        document.documentElement.dataset.theme = resolveTheme();
+        // Live-track system changes when there's no explicit user preference
         try {
-          var saved = localStorage.getItem('ar-theme');
-          var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-          document.documentElement.dataset.theme = theme;
-        } catch (e) { document.documentElement.dataset.theme = 'light'; }
+          var mq = window.matchMedia('(prefers-color-scheme: dark)');
+          var onSysChange = function (e) {
+            var saved = null;
+            try { saved = localStorage.getItem('ar-theme'); } catch (_) {}
+            if (saved === 'light' || saved === 'dark') return;     // explicit choice wins
+            var next = e.matches ? 'dark' : 'light';
+            if (document.documentElement.dataset.theme === next) return;
+            document.documentElement.dataset.theme = next;
+            if (window.__mermaidInit && window.__mermaidRender) {
+              window.__mermaidInit(next); window.__mermaidRender();
+            }
+          };
+          if (mq.addEventListener) mq.addEventListener('change', onSysChange);
+          else if (mq.addListener) mq.addListener(onSysChange);
+        } catch (e) {}
       })();
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous" />
