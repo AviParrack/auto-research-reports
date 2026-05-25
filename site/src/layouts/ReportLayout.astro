@@ -9,6 +9,7 @@ interface Props {
 }
 
 const { report, title, activeTab = 'overview' } = Astro.props;
+const buildTime = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 
 const tabs = [
   { id: 'overview', label: 'Overview', href: `/${report.slug}/` },
@@ -60,7 +61,7 @@ const tabs = [
     </main>
     <footer class="max-w-6xl mx-auto px-6 py-6 mt-12 border-t border-[var(--color-line)] text-xs text-[var(--color-ink-soft)] flex justify-between">
       <div>last updated {report.meta.last_updated}</div>
-      <div>auto-research engine · multi-pass</div>
+      <div>built {buildTime} · auto-research engine</div>
     </footer>
   </body>
 </html>
