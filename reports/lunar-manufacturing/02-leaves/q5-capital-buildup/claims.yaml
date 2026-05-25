@@ -1,0 +1,183 @@
+# Claims for q5-capital-buildup.
+# Each claim must trace to a derivation (calc) or a cited source (reconcile/source-review).
+# Claims added during the calc pass (sources sealed). Reconcile pass adds source evidence.
+
+- id: q5.c1
+  text: "A minimum net-positive-export lunar manufacturing base has a first-principles one-set capital mass in the range approximately 311-500 t. The lower bound is the calc-baseline composition (habitat 25 t + 500 kWe fission power 125 t + ISRU plant 75 t + mobility 31.5 t + manufacturing complement 40 t + infrastructure 15 t). The upper bound reflects Codex-accepted adjustments to ISRU/mobility/mfg/infra mass budgets (ISRU ~140 kg/(t/yr) pre-redundancy per NIA benchmarks; industrial-scale haulers larger than scout-class; infrastructure not fully counting power distribution, cryogenic storage, thermal control)."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged several sub-components as weak (ISRU high severity; mobility/mfg/infra medium). Amended claim to a 311-500 t range reflecting the criticisms; sub-component breakdown remains as the lower-bound composition."
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q5.c2
+  text: "Operating the base over a 20-year horizon requires approximately 722 t of total Earth-launched mass to the lunar surface (initial 311 t set + replacements driven by 5-15 year component lifetimes), or roughly 36 t/yr amortized."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+      audit_file: passes/pass-02-audit.md
+      notes: null
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q5.c3
+  text: "Earth-side hardware build cost dominates total program capex by 1-2 orders of magnitude over launch cost across all automation regimes. Under business-as-usual ($100,000/kg aerospace flight-hardware), hardware capex over 20 yr is approximately $72B vs $1.7B in launch capex."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+      audit_file: passes/pass-02-audit.md
+      notes: null
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q5.c4
+  text: "Total program capex (launch + hardware + development) under business-as-usual is approximately $167B over 20 years (sensitive to the assumed $100,000/kg aerospace hardware-cost figure)."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: low
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+      audit_file: passes/pass-02-audit.md
+      notes: "Confidence is low because the hardware-cost-per-kg knob is heuristic — reconcile pass will check vs Falcon 9 / Starlink commercial benchmarks."
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q5.c5
+  text: "Under sustained industrial-explosion automation (10× mass compression, 5× time compression, $59/kg LEO launch, $10,000/kg commodity-electronics hardware), total program capex falls to approximately $1.2B over an approximately 5-year buildup. This is a roughly 140× compression versus BAU and matches the rough scale of Gwynne Shotwell's 'ideally five years' framing under Starship-cadence assumptions."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: low
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+      audit_file: passes/pass-02-audit.md
+      notes: null
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q5.c6
+  text: "Under TAI-grade automation (100× mass, 30× time, $15/kg LEO, $1,000/kg material-cost hardware), the calc converges on a degenerate near-zero capex over <1 year buildup. The honest reading is not literal-zero cost but that capital allocation stops being the binding constraint and physical lead-time on hardware assembly becomes the only limit."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: speculative
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+      audit_file: passes/pass-02-audit.md
+      notes: "Degenerate calc at the TAI extreme is expected; write-pass will frame the right way (lead-time-bound, not cost-bound)."
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q5.c7
+  text: "The buildup decomposes into 8 discrete engineering milestones: M1 robotic precursor, M2 cargo lander demonstration, M3 uncrewed habitat deployment, M4 fission surface power installation, M5 ISRU pilot plant, M6 first crewed sustained occupation, M7 manufacturing complement operational, M8 net-positive export reached. Under business-as-usual the cumulative timeline is approximately 25 years; under industrial explosion 5 years; under TAI under one year."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+      audit_file: passes/pass-02-audit.md
+      notes: null
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q5.c8
+  text: "The required continuous lunar surface power for the manufacturing base is approximately 500 kWe (ISRU plant ~150 kW + mobility ~75 kW + manufacturing complement ~150 kW + habitat ECLSS ~50 kW + margin ~75 kW). This is 10-12 times the NASA Fission Surface Power demonstrator class (40 kWe) and requires either a single 350 kWth class microreactor (Duchek 2024) or a cluster of NASA-FSP-class units."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+      audit_file: passes/pass-02-audit.md
+      notes: null
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q5.c9
+  text: "Replacement schedule is a load-bearing variable in the long-run total program cost. With component lifetimes ranging from 5 yr (mobility) to 15 yr (habitat), over a 20-year operating horizon the average component must be replaced approximately 1.3 times. If actual on-Moon reliability proves to be 2-3x worse than baseline (as Jones 2020 cautions in the propellant-only context), business-as-usual total capex approximately doubles."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+      audit_file: passes/pass-02-audit.md
+      notes: null
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q5.c10
+  text: "Compressibility is regime-conditional and non-linear. Sustained automation pressure on mass (better robot designs, AI-optimized hardware), time (parallel-execution of milestones), launch cost (Starship cadence), and hardware build cost (commodity-electronics economics) all compound multiplicatively. A 10×/5×/$59/$10k industrial-explosion regime delivers an approximately 140× total compression versus BAU; a 100×/30×/$15/$1k TAI-grade regime makes the framework degenerate."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+      audit_file: passes/pass-02-audit.md
+      notes: null
+    human:
+      status: unnoted
+      comment_file: null
