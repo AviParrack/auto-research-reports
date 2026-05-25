@@ -17,12 +17,49 @@
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
+/* Dark theme — warm dark palette tuned for the paper aesthetic.
+   Applied when <html data-theme="dark"> is set by the pre-paint script. */
+[data-theme="dark"] {
+  --color-ink: #e5e2d8;
+  --color-ink-soft: #9c9789;
+  --color-paper: #1a1816;
+  --color-paper-dim: #25221e;
+  --color-accent: #e89060;
+  --color-accent-soft: #f0b58e;
+  --color-line: #3a352f;
+  --color-leaf: #6cc193;
+  --color-warn: #f0a04a;
+  --color-flag: #e87070;
+  --color-unaudited: #6a6862;
+}
+
 body {
   background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-sans);
   font-feature-settings: "ss01", "cv11";
+  transition: background-color 0.18s ease, color 0.18s ease;
 }
+
+/* Dark-mode Mermaid override — the generated SVG has hardcoded fills/strokes
+   from the classDef directives, so we cascade over them via attribute selectors. */
+[data-theme="dark"] .mermaid .node rect,
+[data-theme="dark"] .mermaid .node polygon,
+[data-theme="dark"] .mermaid .node circle,
+[data-theme="dark"] .mermaid .node ellipse { fill: var(--color-paper-dim) !important; stroke: var(--color-ink-soft) !important; }
+[data-theme="dark"] .mermaid .nodeLabel,
+[data-theme="dark"] .mermaid .edgeLabel,
+[data-theme="dark"] .mermaid .nodeLabel * { color: var(--color-ink) !important; fill: var(--color-ink) !important; }
+[data-theme="dark"] .mermaid .edgeLabel { background: var(--color-paper) !important; }
+[data-theme="dark"] .mermaid .edgePath path,
+[data-theme="dark"] .mermaid .flowchart-link { stroke: var(--color-ink-soft) !important; }
+/* Re-tint status-coloured leaves in dark mode (these had light pastel fills) */
+[data-theme="dark"] .mermaid g.classGroup-leafDone rect,
+[data-theme="dark"] .mermaid g[class*="leafDone"] rect { fill: color-mix(in srgb, var(--color-leaf) 22%, var(--color-paper-dim)) !important; stroke: var(--color-leaf) !important; }
+[data-theme="dark"] .mermaid g.classGroup-leafInProg rect,
+[data-theme="dark"] .mermaid g[class*="leafInProg"] rect { fill: color-mix(in srgb, var(--color-warn) 22%, var(--color-paper-dim)) !important; stroke: var(--color-warn) !important; }
+[data-theme="dark"] .mermaid g.classGroup-root rect,
+[data-theme="dark"] .mermaid g[class*="root"] rect { stroke: var(--color-accent) !important; }
 
 .prose-leaf h1, .prose-leaf h2, .prose-leaf h3 {
   font-family: var(--font-serif);

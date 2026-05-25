@@ -4,6 +4,7 @@ import { listReportSlugs, loadReport, renderMath } from '../../lib/reports';
 import fs from 'node:fs';
 import path from 'node:path';
 import { marked } from 'marked';
+import yaml from 'js-yaml';
 
 export function getStaticPaths() {
   return listReportSlugs().map((slug) => ({ params: { report: slug } }));
@@ -38,52 +39,74 @@ interface CritiqueStats {
   source?: string;
 }
 
+/** Count accept/dispute findings as bullets inside `## Accepted` / `## Disputed`
+ *  sections. Convention documented in SPEC.md — one bullet per finding. */
+function countAcceptDisputeBullets(body: string): { accepted: number; disputed: number } {
+  const lines = body.split('\n');
+  let accepted = 0, disputed = 0;
+  let mode: 'accept' | 'dispute' | null = null;
+  for (const line of lines) {
+    const m = line.match(/^##\s+(Accepted|Disputed|Rejected|Conceded|Rebutted)\b/i);
+    if (m) {
+      const word = m[1].toLowerCase();
+      mode = (word === 'accepted' || word === 'conceded') ? 'accept' : 'dispute';
+      continue;
+    }
+    // Any other heading resets mode
+    if (/^#{1,6}\s+/.test(line)) { mode = null; continue; }
+    if (mode && /^[-*]\s+/.test(line)) {
+      if (mode === 'accept') accepted++; else disputed++;
+    }
+  }
+  return { accepted, disputed };
+}
+
 function collectStatsForPass(passEntry: any): CritiqueStats | null {
-  // Heuristic: focus is like "leaf:q4-gear-ratio". Look at all audit files in that leaf
-  // and tally verdicts that match the kinds in the pass entry.
   if (!passEntry.focus || !passEntry.focus.startsWith('leaf:')) return null;
   const leafId = passEntry.focus.slice('leaf:'.length);
   const passesDir = path.join(REPORTS_DIR, slug!, '02-leaves', leafId, 'passes');
   if (!fs.existsSync(passesDir)) return null;
 
-  const auditFiles = fs.readdirSync(passesDir).filter((f) => f.includes('-audit.md'));
-  if (auditFiles.length === 0) return null;
+  const allFiles = fs.readdirSync(passesDir);
+  const kinds = passEntry.kinds || [];
+  const isFullPass = passEntry.pass_id?.endsWith('full');
+  const kindsToCount: string[] = isFullPass
+    ? ['research', 'calc', 'reconcile', 'source-review', 'consistency', 'write']
+    : kinds;
 
   const stats: CritiqueStats = {
     supports: 0, weak: 0, unsupported: 0, contradicted: 0,
     accepted: 0, disputed: 0, total: 0,
   };
 
-  for (const f of auditFiles) {
-    // Only count audits matching the kinds in this pass entry
-    const kindsOnFile = passEntry.kinds || [];
-    const isRelevant = kindsOnFile.length === 0 || kindsOnFile.some((k: string) => f.includes(k)) || kindsOnFile.includes('research');
-    if (!isRelevant && passEntry.pass_id !== 'p002.full') continue;
+  for (const kind of kindsToCount) {
+    // Same prefix-derivation as collectConversationsForPass — find primary, then audit/response siblings
+    const primaryRe = new RegExp(`^pass-(?:\\d+-)?${kind}\\.md$`);
+    const primary = allFiles.find((f) => primaryRe.test(f));
+    if (!primary) continue;
+    let prefix = primary.replace(new RegExp(`-?${kind}\\.md$`), '');
+    if (!/^pass-(\d+|[a-z-]+)$/.test(prefix)) prefix = primary.replace(/\.md$/, '');
 
-    const body = fs.readFileSync(path.join(passesDir, f), 'utf8');
-    // Crude verdict count via regex on the YAML-ish bodies Codex produces
-    const supports = (body.match(/verdict:\s*supports/gi) || []).length;
-    const weak = (body.match(/verdict:\s*weak/gi) || []).length;
-    const unsupported = (body.match(/verdict:\s*unsupported/gi) || []).length;
-    const contradicted = (body.match(/verdict:\s*contradicted/gi) || []).length;
-    stats.supports += supports;
-    stats.weak += weak;
-    stats.unsupported += unsupported;
-    stats.contradicted += contradicted;
-  }
+    const auditFile = `${prefix}-audit.md`;
+    if (allFiles.includes(auditFile)) {
+      const body = fs.readFileSync(path.join(passesDir, auditFile), 'utf8');
+      stats.supports += (body.match(/verdict:\s*['"]?(supports?|pass(_with[_-][a-z_]+)?|mostly_pass)\b/gi) || []).length;
+      stats.weak += (body.match(/verdict:\s*['"]?(weak|partial|mixed|minor)\b/gi) || []).length;
+      stats.unsupported += (body.match(/verdict:\s*['"]?unsupported\b/gi) || []).length;
+      stats.contradicted += (body.match(/verdict:\s*['"]?(contradicted?|fail)\b/gi) || []).length;
+    }
 
-  // Response files mark accept/dispute (heuristic: count "Accepted" headings vs "Disputed")
-  const responseFiles = fs.readdirSync(passesDir).filter((f) => f.includes('-response.md'));
-  for (const f of responseFiles) {
-    const body = fs.readFileSync(path.join(passesDir, f), 'utf8');
-    const accepted = (body.match(/^##\s*Accepted/gim) || []).length;
-    const disputed = (body.match(/^##\s*Disputed/gim) || []).length;
-    stats.accepted += accepted;
-    stats.disputed += disputed;
+    const responseFile = `${prefix}-response.md`;
+    if (allFiles.includes(responseFile)) {
+      const body = fs.readFileSync(path.join(passesDir, responseFile), 'utf8');
+      const r = countAcceptDisputeBullets(body);
+      stats.accepted += r.accepted;
+      stats.disputed += r.disputed;
+    }
   }
 
   stats.total = stats.supports + stats.weak + stats.unsupported + stats.contradicted;
-  return stats.total > 0 ? stats : null;
+  return (stats.total > 0 || stats.accepted > 0 || stats.disputed > 0) ? stats : null;
 }
 
 /** A single Claude→Codex→Claude conversation thread for one sub-pass kind. */
@@ -113,14 +136,29 @@ function collectConversationsForPass(passEntry: any): ConversationThread[] {
   const threads: ConversationThread[] = [];
   for (const kind of kindsToShow) {
     const thread: ConversationThread = { kind };
-    // Match files for this kind, distinguishing claude/audit/response
-    for (const f of allFiles) {
-      if (!f.includes(kind)) continue;
-      const fp = path.join(passesDir, f);
-      const body = fs.readFileSync(fp, 'utf8');
-      if (f.includes('-audit.md')) thread.codexAudit = { filename: f, body };
-      else if (f.includes('-response.md')) thread.claudeResponse = { filename: f, body };
-      else thread.claude = { filename: f, body };
+    // Find the primary file for this kind. Two naming conventions in use:
+    //   numbered: pass-NN-{kind}.md  (audit sibling = pass-NN-audit.md)
+    //   named:    pass-{kind}.md     (audit sibling = pass-{kind}-audit.md)
+    const primaryRe = new RegExp(`^pass-(?:\\d+-)?${kind}\\.md$`);
+    const primary = allFiles.find((f) => primaryRe.test(f));
+    let prefix: string | null = null;
+    if (primary) {
+      const body = fs.readFileSync(path.join(passesDir, primary), 'utf8');
+      thread.claude = { filename: primary, body };
+      // Strip trailing -{kind}.md (or .md if filename already ends with the kind via above regex)
+      prefix = primary.replace(new RegExp(`-?${kind}\\.md$`), '');
+      // For pass-{kind}.md the prefix stripping above yields 'pass' — fall back to including the kind
+      if (!/^pass-(\d+|[a-z-]+)$/.test(prefix)) prefix = primary.replace(/\.md$/, '');
+    }
+    if (prefix) {
+      const auditFile = `${prefix}-audit.md`;
+      if (allFiles.includes(auditFile)) {
+        thread.codexAudit = { filename: auditFile, body: fs.readFileSync(path.join(passesDir, auditFile), 'utf8') };
+      }
+      const responseFile = `${prefix}-response.md`;
+      if (allFiles.includes(responseFile)) {
+        thread.claudeResponse = { filename: responseFile, body: fs.readFileSync(path.join(passesDir, responseFile), 'utf8') };
+      }
     }
     if (thread.claude || thread.codexAudit || thread.claudeResponse) {
       threads.push(thread);
@@ -136,67 +174,181 @@ const entriesWithStats = entries.map((e) => ({
 }));
 
 /**
- * Parse a Codex audit body (YAML-style) and pull out claim verdicts so we can
- * render them as coloured cards rather than raw YAML text.
- * Format Codex produces: ` - id: c1\n   quote: "..."\n   verdict: supports\n   reason: "..."`
+ * Parse a Codex audit body and extract findings. Handles the four shapes
+ * documented in SPEC.md (forward `findings:` array + legacy A/B/C/D).
+ * Parses via js-yaml then walks the tree generically.
  */
-interface AuditClaim { id: string; quote?: string; verdict: string; reason?: string; }
-function parseAuditClaims(body: string): { intro: string; claims: AuditClaim[]; tail: string } {
-  const lines = body.split('\n');
-  const claims: AuditClaim[] = [];
-  let intro: string[] = [];
-  let tail: string[] = [];
-  let inClaimsBlock = false;
-  let current: Partial<AuditClaim> | null = null;
-  let postClaims = false;
+interface AuditFinding {
+  target: string;
+  targetKind: 'claim' | 'section' | 'topic';
+  verdict: string;
+  quote?: string;
+  reason?: string;
+  notes?: string[];
+  severity?: string;
+}
+interface AuditNote { issue: string; severity?: string; }
+interface ParsedAudit {
+  overall?: { verdict?: string; summary?: string };
+  findings: AuditFinding[];
+  notes: AuditNote[];
+  bullets: { label: string; items: string[] }[];  // top-level array-of-strings (Shape D)
+  raw?: string;                                    // set if YAML parse failed
+}
 
-  for (const line of lines) {
-    if (!inClaimsBlock && /^(claims|sources|per_claim):/i.test(line.trim())) {
-      inClaimsBlock = true;
-      continue;
-    }
-    if (inClaimsBlock && !postClaims) {
-      // Claim start: "- id: ..." or "  - id: ..."
-      const idMatch = line.match(/^\s*-\s*id:\s*(.+?)\s*$/);
-      if (idMatch) {
-        if (current && current.id) claims.push(current as AuditClaim);
-        current = { id: idMatch[1].replace(/['"]/g, ''), verdict: 'unknown' };
-        continue;
+function stripAuditChrome(body: string): string {
+  return body
+    .replace(/^\s*\[codex cli ok\]\s*\n?/i, '')
+    .replace(/^\s*```ya?ml\s*\n/i, '')
+    .replace(/\n```\s*$/i, '')
+    .trim();
+}
+
+function coerceOverall(v: any): { verdict?: string; summary?: string } | undefined {
+  if (v == null) return undefined;
+  if (typeof v === 'string') return { verdict: v };
+  if (typeof v === 'object') {
+    return {
+      verdict: v.verdict != null ? String(v.verdict) : undefined,
+      summary: v.summary != null ? String(v.summary) : (v.notes && !Array.isArray(v.notes) ? String(v.notes) : undefined),
+    };
+  }
+  return undefined;
+}
+
+function coerceNotesArray(v: any): string[] | undefined {
+  if (!Array.isArray(v)) return undefined;
+  return v.map((n) => {
+    if (typeof n === 'string') return n;
+    if (n && typeof n === 'object') return n.issue ?? n.note ?? JSON.stringify(n);
+    return String(n);
+  });
+}
+
+function parseAuditArtifact(body: string): ParsedAudit {
+  const clean = stripAuditChrome(body);
+  let data: any;
+  try { data = yaml.load(clean); } catch { data = null; }
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    return { findings: [], notes: [], bullets: [], raw: body };
+  }
+
+  const findings: AuditFinding[] = [];
+  const bullets: { label: string; items: string[] }[] = [];
+  let overall = coerceOverall(data.overall);
+  let topNotes: AuditNote[] = [];
+
+  // Top-level `notes:` as a flat issue bag (Shape B)
+  if (Array.isArray(data.notes)) {
+    for (const n of data.notes) {
+      if (n && typeof n === 'object' && n.issue) {
+        topNotes.push({ issue: String(n.issue), severity: n.severity ? String(n.severity) : undefined });
+      } else if (typeof n === 'string') {
+        topNotes.push({ issue: n });
       }
-      if (current) {
-        const quoteMatch = line.match(/^\s+quote:\s*['"]?(.+?)['"]?\s*$/);
-        if (quoteMatch) { current.quote = quoteMatch[1]; continue; }
-        const verdictMatch = line.match(/^\s+verdict:\s*(.+?)\s*$/);
-        if (verdictMatch) { current.verdict = verdictMatch[1].trim().replace(/['"]/g, ''); continue; }
-        const reasonMatch = line.match(/^\s+reason:\s*['"]?(.+?)['"]?\s*$/);
-        if (reasonMatch) { current.reason = reasonMatch[1]; continue; }
-        const notesMatch = line.match(/^\s+notes?:\s*['"]?(.+?)['"]?\s*$/);
-        if (notesMatch && !current.reason) { current.reason = notesMatch[1]; continue; }
-      }
-      // Stop on a clearly-out-of-claims-block top-level key
-      if (/^(overall|notes|sources):/i.test(line) && claims.length > 0) {
-        if (current && current.id) claims.push(current as AuditClaim);
-        current = null;
-        postClaims = true;
-        tail.push(line);
-        continue;
-      }
-    } else if (postClaims) {
-      tail.push(line);
-    } else {
-      intro.push(line);
     }
   }
-  if (current && current.id) claims.push(current as AuditClaim);
-  return { intro: intro.join('\n'), claims, tail: tail.join('\n') };
+
+  // Shape A: data.claims is an Array of claim records
+  if (Array.isArray(data.claims)) {
+    for (const c of data.claims) {
+      if (!c || typeof c !== 'object') continue;
+      findings.push({
+        target: c.id != null ? String(c.id) : '?',
+        targetKind: 'claim',
+        verdict: c.verdict != null ? String(c.verdict) : 'unknown',
+        quote: c.quote != null ? String(c.quote) : undefined,
+        reason: c.reason != null ? String(c.reason) : (c.notes && !Array.isArray(c.notes) ? String(c.notes) : undefined),
+        notes: coerceNotesArray(c.notes),
+        severity: c.severity != null ? String(c.severity) : undefined,
+      });
+    }
+  } else if (data.claims && typeof data.claims === 'object') {
+    // Shape C: data.claims is a topic-keyed map
+    for (const [topic, val] of Object.entries(data.claims)) {
+      if (val && typeof val === 'object') {
+        const v = val as any;
+        findings.push({
+          target: topic,
+          targetKind: 'topic',
+          verdict: v.verdict != null ? String(v.verdict) : 'unknown',
+          reason: v.summary != null ? String(v.summary) : undefined,
+          notes: coerceNotesArray(v.notes),
+          severity: v.severity != null ? String(v.severity) : undefined,
+        });
+      } else if (typeof val === 'string') {
+        findings.push({ target: topic, targetKind: 'topic', verdict: val });
+      }
+    }
+  }
+
+  // Forward: data.findings is the canonical findings array
+  if (Array.isArray(data.findings)) {
+    for (const f of data.findings) {
+      if (!f || typeof f !== 'object') continue;
+      findings.push({
+        target: f.target != null ? String(f.target) : '?',
+        targetKind: (f.target_kind === 'claim' || f.target_kind === 'section' || f.target_kind === 'topic') ? f.target_kind : 'section',
+        verdict: f.verdict != null ? String(f.verdict) : 'unknown',
+        quote: f.quote != null ? String(f.quote) : undefined,
+        reason: f.reason != null ? String(f.reason) : undefined,
+        notes: coerceNotesArray(f.notes),
+        severity: f.severity != null ? String(f.severity) : undefined,
+      });
+    }
+  }
+
+  // Other top-level keys: sections (string verdict, Shape B), section-objects
+  // with verdict+notes (Shape C sibling), or array-of-strings (Shape D bullets).
+  // A short token-like string (no whitespace, ≤30 chars) is a verdict label;
+  // anything longer is descriptive prose and renders as reason text.
+  const isVerdictToken = (s: string) => s.length <= 30 && !/\s/.test(s);
+  const RESERVED = new Set(['overall', 'notes', 'claims', 'findings', 'sources']);
+  for (const [key, val] of Object.entries(data)) {
+    if (RESERVED.has(key)) continue;
+    if (typeof val === 'string') {
+      if (isVerdictToken(val)) {
+        findings.push({ target: key, targetKind: 'section', verdict: val });
+      } else {
+        findings.push({ target: key, targetKind: 'section', verdict: 'note', reason: val });
+      }
+    } else if (Array.isArray(val)) {
+      const items = val.map((v) => typeof v === 'string' ? v : (v?.issue ?? JSON.stringify(v))).filter(Boolean) as string[];
+      if (items.length > 0) bullets.push({ label: key, items });
+    } else if (val && typeof val === 'object') {
+      const v = val as any;
+      findings.push({
+        target: key,
+        targetKind: 'section',
+        verdict: v.verdict != null ? String(v.verdict) : 'unknown',
+        reason: v.summary != null ? String(v.summary) : undefined,
+        notes: coerceNotesArray(v.notes),
+        severity: v.severity != null ? String(v.severity) : undefined,
+      });
+    }
+  }
+
+  if (findings.length === 0 && topNotes.length === 0 && bullets.length === 0 && !overall) {
+    return { findings: [], notes: [], bullets: [], raw: body };
+  }
+  return { overall, findings, notes: topNotes, bullets };
 }
 
 function verdictColor(v: string): { bg: string; fg: string } {
-  const x = v.toLowerCase();
-  if (x.startsWith('support') || x === 'pass') return { bg: 'rgba(45,106,79,0.15)', fg: 'var(--color-leaf)' };
-  if (x === 'weak' || x === 'mixed' || x === 'partial') return { bg: 'rgba(217,119,6,0.15)', fg: 'var(--color-warn)' };
-  if (x === 'unsupported' || x === 'contradicted' || x === 'reject') return { bg: 'rgba(185,28,28,0.15)', fg: 'var(--color-flag)' };
+  const x = (v || '').toLowerCase();
+  if (x.startsWith('support') || x === 'pass' || x === 'mostly_pass' || x === 'pass_with_caveat' || x === 'pass_with_minor_fixes') return { bg: 'rgba(45,106,79,0.15)', fg: 'var(--color-leaf)' };
+  if (x === 'weak' || x === 'mixed' || x === 'partial' || x === 'minor') return { bg: 'rgba(217,119,6,0.15)', fg: 'var(--color-warn)' };
+  if (x === 'unsupported' || x === 'contradicted' || x === 'reject' || x === 'fail' || x.startsWith('contradict')) return { bg: 'rgba(185,28,28,0.15)', fg: 'var(--color-flag)' };
   return { bg: 'var(--color-paper-dim)', fg: 'var(--color-ink-soft)' };
+}
+
+function severityColor(s?: string): string {
+  if (!s) return 'var(--color-ink-soft)';
+  const x = s.toLowerCase();
+  if (x === 'high') return 'var(--color-flag)';
+  if (x === 'medium') return 'var(--color-warn)';
+  if (x === 'low' || x === 'none') return 'var(--color-leaf)';
+  return 'var(--color-ink-soft)';
 }
 ---
 <ReportLayout report={report} title={`Pass Log — ${report.meta.root_question}`} activeTab="log">
@@ -230,21 +382,44 @@ function verdictColor(v: string): { bg: string; fg: string } {
             <div class="text-xs font-mono text-[var(--color-ink-soft)]">{e.started}</div>
           </div>
           <div class="text-sm text-[var(--color-ink-soft)] mb-1">{e.outcome}</div>
-          {stats && stats.total > 0 && (
+          {stats && (stats.total > 0 || stats.accepted > 0 || stats.disputed > 0) && (
             <div class="my-2">
-              <div class="flex h-2 rounded overflow-hidden border border-[var(--color-line)]" title={`${stats.supports} supports · ${stats.weak} weak · ${stats.unsupported} unsupported · ${stats.contradicted} contradicted`}>
-                {stats.supports > 0 && <div style={`width: ${(stats.supports / stats.total) * 100}%; background: var(--color-leaf);`} title={`${stats.supports} supports`}></div>}
-                {stats.weak > 0 && <div style={`width: ${(stats.weak / stats.total) * 100}%; background: var(--color-warn);`} title={`${stats.weak} weak`}></div>}
-                {stats.unsupported > 0 && <div style={`width: ${(stats.unsupported / stats.total) * 100}%; background: var(--color-flag); opacity: 0.7;`} title={`${stats.unsupported} unsupported`}></div>}
-                {stats.contradicted > 0 && <div style={`width: ${(stats.contradicted / stats.total) * 100}%; background: var(--color-flag);`} title={`${stats.contradicted} contradicted`}></div>}
-              </div>
-              <div class="text-xs font-mono text-[var(--color-ink-soft)] mt-1 flex gap-3 flex-wrap">
-                <span class="text-[var(--color-leaf)]">✓ {stats.supports} supports</span>
-                {stats.weak > 0 && <span class="text-[var(--color-warn)]">~ {stats.weak} weak</span>}
-                {stats.unsupported > 0 && <span class="text-[var(--color-flag)]">✗ {stats.unsupported} unsupported</span>}
-                {stats.contradicted > 0 && <span class="text-[var(--color-flag)]">✗ {stats.contradicted} contradicted</span>}
-                {(stats.accepted > 0 || stats.disputed > 0) && (
-                  <span>· {stats.accepted} accepted / {stats.disputed} disputed</span>
+              {stats.total > 0 && (
+                <div class="flex h-2 overflow-hidden border border-[var(--color-line)] rounded-t" title={`Codex critique: ${stats.supports} supports · ${stats.weak} weak · ${stats.unsupported} unsupported · ${stats.contradicted} contradicted`}>
+                  {stats.supports > 0 && <div style={`width: ${(stats.supports / stats.total) * 100}%; background: var(--color-leaf);`} title={`${stats.supports} supports`}></div>}
+                  {stats.weak > 0 && <div style={`width: ${(stats.weak / stats.total) * 100}%; background: var(--color-warn);`} title={`${stats.weak} weak`}></div>}
+                  {stats.unsupported > 0 && <div style={`width: ${(stats.unsupported / stats.total) * 100}%; background: var(--color-flag); opacity: 0.7;`} title={`${stats.unsupported} unsupported`}></div>}
+                  {stats.contradicted > 0 && <div style={`width: ${(stats.contradicted / stats.total) * 100}%; background: var(--color-flag);`} title={`${stats.contradicted} contradicted`}></div>}
+                </div>
+              )}
+              {(stats.accepted + stats.disputed) > 0 && (() => {
+                const respTotal = stats.accepted + stats.disputed;
+                return (
+                  <div class:list={[
+                    'flex h-1.5 overflow-hidden border border-[var(--color-line)]',
+                    stats.total > 0 ? 'border-t-0 rounded-b' : 'rounded',
+                  ]} title={`Claude response: ${stats.accepted} accepted · ${stats.disputed} disputed`}>
+                    {stats.accepted > 0 && <div style={`width: ${(stats.accepted / respTotal) * 100}%; background: var(--color-accent); opacity: 0.65;`} title={`${stats.accepted} accepted`}></div>}
+                    {stats.disputed > 0 && <div style={`width: ${(stats.disputed / respTotal) * 100}%; background: var(--color-ink-soft); opacity: 0.45;`} title={`${stats.disputed} disputed`}></div>}
+                  </div>
+                );
+              })()}
+              <div class="text-xs font-mono text-[var(--color-ink-soft)] mt-1 flex gap-x-3 gap-y-1 flex-wrap">
+                {stats.total > 0 && (
+                  <>
+                    <span class="text-[var(--color-ink-soft)]">codex:</span>
+                    {stats.supports > 0 && <span class="text-[var(--color-leaf)]">✓ {stats.supports}</span>}
+                    {stats.weak > 0 && <span class="text-[var(--color-warn)]">~ {stats.weak}</span>}
+                    {stats.unsupported > 0 && <span class="text-[var(--color-flag)]">✗ {stats.unsupported} unsup.</span>}
+                    {stats.contradicted > 0 && <span class="text-[var(--color-flag)]">✗ {stats.contradicted} contra.</span>}
+                  </>
+                )}
+                {(stats.accepted + stats.disputed) > 0 && (
+                  <>
+                    <span class="text-[var(--color-ink-soft)] ml-2">claude:</span>
+                    {stats.accepted > 0 && <span style="color: var(--color-accent)">↻ {stats.accepted} acc.</span>}
+                    {stats.disputed > 0 && <span class="text-[var(--color-ink-soft)]">⇄ {stats.disputed} disp.</span>}
+                  </>
                 )}
               </div>
             </div>
@@ -259,7 +434,13 @@ function verdictColor(v: string): { bg: string; fg: string } {
             <div class="text-xs uppercase tracking-wider text-[var(--color-ink-soft)] mb-3 mt-3">Conversation</div>
             <ul class="space-y-3">
               {threads.map((t: any) => {
-                const parsed = t.codexAudit ? parseAuditClaims(t.codexAudit.body) : null;
+                const parsed: any = t.codexAudit ? parseAuditArtifact(t.codexAudit.body) : null;
+                const findingCount = parsed ? parsed.findings.length : 0;
+                const isConsistency = t.kind === 'consistency';
+                const claudePillCls = isConsistency
+                  ? 'bg-[var(--color-paper-dim)] text-[var(--color-ink-soft)]'
+                  : 'bg-[var(--color-accent)]/10 text-[var(--color-accent)]';
+                const claudeLabel = isConsistency ? `Claude · ${t.kind} check` : `Claude · ${t.kind}`;
                 return (
                 <li class="border border-[var(--color-line)] rounded">
                   <details>
@@ -268,7 +449,7 @@ function verdictColor(v: string): { bg: string; fg: string } {
                       <span class="font-medium">{t.kind}</span>
                       <span class="text-xs text-[var(--color-ink-soft)] ml-2">
                         {t.claude && <span>Claude</span>}
-                        {t.codexAudit && <span> → Codex audit{parsed && parsed.claims.length > 0 && <span> ({parsed.claims.length})</span>}</span>}
+                        {t.codexAudit && <span> → Codex audit{findingCount > 0 && <span> ({findingCount})</span>}</span>}
                         {t.claudeResponse && <span> → Claude response</span>}
                       </span>
                     </summary>
@@ -276,7 +457,7 @@ function verdictColor(v: string): { bg: string; fg: string } {
                     {t.claude && (
                       <div class="border-t border-[var(--color-line)]">
                         <div class="px-3 pt-3 pb-1 flex items-center gap-2">
-                          <span class="text-xs uppercase tracking-wider font-mono px-2 py-0.5 rounded bg-[var(--color-accent)]/10 text-[var(--color-accent)]">Claude · {t.kind}</span>
+                          <span class:list={['text-xs uppercase tracking-wider font-mono px-2 py-0.5 rounded', claudePillCls]}>{claudeLabel}</span>
                           <span class="text-xs font-mono text-[var(--color-ink-soft)]">{t.claude.filename}</span>
                         </div>
                         <article class="prose-leaf p-3 text-sm" set:html={renderMath(t.claude.body, { inline: false })} />
@@ -289,27 +470,67 @@ function verdictColor(v: string): { bg: string; fg: string } {
                           <span class="text-xs uppercase tracking-wider font-mono px-2 py-0.5 rounded bg-[var(--color-ink)]/10 text-[var(--color-ink-soft)]">Codex · critique</span>
                           <span class="text-xs font-mono text-[var(--color-ink-soft)]">{t.codexAudit.filename}</span>
                         </div>
-                        {parsed && parsed.claims.length > 0 ? (
-                          <div class="px-3 py-3 space-y-2">
-                            {parsed.intro && parsed.intro.trim() && (
-                              <article class="prose-leaf text-sm" set:html={renderMath(parsed.intro, { inline: false })} />
-                            )}
-                            <ul class="space-y-1.5">
-                              {parsed.claims.map((c: any) => {
-                                const color = verdictColor(c.verdict);
-                                return (
-                                <li class="text-sm border-l-2 pl-3" style={`border-color: ${color.fg};`}>
-                                  <div class="flex items-baseline gap-2">
-                                    <span class="font-mono text-xs text-[var(--color-ink-soft)]">{c.id}</span>
-                                    <span class="text-xs px-1.5 py-0.5 rounded font-mono" style={`background: ${color.bg}; color: ${color.fg};`}>{c.verdict}</span>
+                        {parsed && !parsed.raw && (parsed.overall || findingCount > 0 || parsed.notes.length > 0 || parsed.bullets.length > 0) ? (
+                          <div class="px-3 py-3 space-y-3">
+                            {parsed.overall && (parsed.overall.verdict || parsed.overall.summary) && (() => {
+                              const color = verdictColor(parsed.overall.verdict || '');
+                              return (
+                                <div class="text-sm border-l-2 pl-3" style={`border-color: ${color.fg};`}>
+                                  <div class="flex items-baseline gap-2 mb-0.5">
+                                    <span class="text-xs uppercase tracking-wider text-[var(--color-ink-soft)] font-mono">overall</span>
+                                    {parsed.overall.verdict && (
+                                      <span class="text-xs px-1.5 py-0.5 rounded font-mono" style={`background: ${color.bg}; color: ${color.fg};`}>{parsed.overall.verdict}</span>
+                                    )}
                                   </div>
-                                  {c.quote && <div class="text-xs italic text-[var(--color-ink-soft)] mt-0.5">"{c.quote}"</div>}
-                                  {c.reason && <div class="text-sm mt-0.5">{c.reason}</div>}
-                                </li>);
-                              })}
-                            </ul>
-                            {parsed.tail && parsed.tail.trim() && (
-                              <article class="prose-leaf text-sm mt-2 pt-2 border-t border-[var(--color-line)]" set:html={renderMath(parsed.tail, { inline: false })} />
+                                  {parsed.overall.summary && <div class="text-sm">{parsed.overall.summary}</div>}
+                                </div>
+                              );
+                            })()}
+
+                            {findingCount > 0 && (
+                              <ul class="space-y-1.5">
+                                {parsed.findings.map((f: any) => {
+                                  const color = verdictColor(f.verdict);
+                                  return (
+                                  <li class="text-sm border-l-2 pl-3" style={`border-color: ${color.fg};`}>
+                                    <div class="flex items-baseline gap-2 flex-wrap">
+                                      <span class="font-mono text-xs text-[var(--color-ink-soft)]">{f.target}</span>
+                                      <span class="text-xs px-1.5 py-0.5 rounded font-mono" style={`background: ${color.bg}; color: ${color.fg};`}>{f.verdict}</span>
+                                      {f.severity && <span class="text-[10px] font-mono uppercase tracking-wider" style={`color: ${severityColor(f.severity)};`}>{f.severity}</span>}
+                                    </div>
+                                    {f.quote && <div class="text-xs italic text-[var(--color-ink-soft)] mt-0.5">"{f.quote}"</div>}
+                                    {f.reason && <div class="text-sm mt-0.5">{f.reason}</div>}
+                                    {f.notes && f.notes.length > 0 && (
+                                      <ul class="text-sm mt-1 list-disc pl-5 space-y-0.5 text-[var(--color-ink-soft)]">
+                                        {f.notes.map((n: string) => <li>{n}</li>)}
+                                      </ul>
+                                    )}
+                                  </li>);
+                                })}
+                              </ul>
+                            )}
+
+                            {parsed.bullets.length > 0 && parsed.bullets.map((b: any) => (
+                              <div>
+                                <div class="text-xs uppercase tracking-wider text-[var(--color-ink-soft)] font-mono mb-1">{b.label.replace(/_/g, ' ')}</div>
+                                <ul class="text-sm list-disc pl-5 space-y-0.5">
+                                  {b.items.map((item: string) => <li>{item}</li>)}
+                                </ul>
+                              </div>
+                            ))}
+
+                            {parsed.notes.length > 0 && (
+                              <div class="border-t border-[var(--color-line)] pt-2">
+                                <div class="text-xs uppercase tracking-wider text-[var(--color-ink-soft)] font-mono mb-1">notes</div>
+                                <ul class="space-y-1">
+                                  {parsed.notes.map((n: any) => (
+                                    <li class="text-sm flex items-baseline gap-2">
+                                      {n.severity && <span class="text-[10px] font-mono uppercase tracking-wider shrink-0" style={`color: ${severityColor(n.severity)};`}>{n.severity}</span>}
+                                      <span>{n.issue}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
                             )}
                           </div>
                         ) : (

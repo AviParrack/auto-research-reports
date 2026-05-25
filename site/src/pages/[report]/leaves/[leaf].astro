@@ -57,9 +57,9 @@ const bodyHtml = leaf?.body ? renderMath(leaf.body, { inline: false }) : null;
               <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-sm" style="background: var(--color-unaudited)"></span>none</span>
             </div>
           </div>
-          <ul class="space-y-1.5">
+          <ul class="divide-y divide-[var(--color-line)]">
             {leaf.claims.map((claim) => {
-              // Compute supports/partial/contradicts/none counts
+              // Compute supports/partial/contradicts counts
               const counts = { supports: 0, partial: 0, contradicts: 0 };
               for (const ev of claim.evidence || []) {
                 const v = ev.verdict || '';
@@ -68,22 +68,35 @@ const bodyHtml = leaf?.body ? renderMath(leaf.body, { inline: false }) : null;
                 else if (v === 'contradicts' || v === 'contradicted' || v === 'unsupported') counts.contradicts++;
               }
               const evCount = claim.evidence?.length || 0;
+              const tallyTitle = `${counts.supports} supports · ${counts.partial} partial · ${counts.contradicts} contradicts`;
+              // Short label = first hyphen-segment of source slug (e.g. metzger-2023 → metzger)
+              const shortLabel = (slug: string) => (slug || '').split('-')[0];
               return (
-              <li class="flex items-center gap-3">
-                <span class="font-mono text-xs text-[var(--color-ink-soft)] w-12 shrink-0">{claim.id}</span>
-                <div class="flex gap-0.5 shrink-0" title={`${counts.supports} supports · ${counts.partial} partial · ${counts.contradicts} contradicts`}>
+              <li class="grid grid-cols-[3rem_1fr] gap-x-3 gap-y-2 py-2.5 first:pt-0 last:pb-0">
+                {/* Row 1: claim id + full text, no truncation */}
+                <span class="font-mono text-xs text-[var(--color-ink-soft)] pt-0.5">{claim.id}</span>
+                <span class="text-sm">{claim.text}</span>
+                {/* Row 2: labeled tile strip aligned under claim text */}
+                <div class="col-start-2 flex flex-wrap gap-2" title={tallyTitle}>
                   {evCount === 0 ? (
-                    <span class="inline-block w-4 h-4 rounded-sm" style="background: var(--color-unaudited); opacity: 0.4"></span>
+                    <div class="flex flex-col items-center gap-0.5">
+                      <span class="inline-block w-4 h-4 rounded-sm" style="background: var(--color-unaudited); opacity: 0.4"></span>
+                      <span class="text-[10px] font-mono text-[var(--color-ink-soft)] leading-none">no ev.</span>
+                    </div>
                   ) : (claim.evidence || []).map((ev) => {
                     const v = ev.verdict || '';
                     let bg = 'var(--color-unaudited)';
                     if (v === 'supports') bg = 'var(--color-leaf)';
                     else if (v === 'partial' || v === 'weak') bg = 'var(--color-warn)';
                     else if (v === 'contradicts' || v === 'contradicted' || v === 'unsupported') bg = 'var(--color-flag)';
-                    return <span class="inline-block w-4 h-4 rounded-sm" style={`background: ${bg}`} title={`${ev.source}: ${v}`}></span>;
+                    return (
+                      <div class="flex flex-col items-center gap-0.5" title={`${ev.source}: ${v}`}>
+                        <span class="inline-block w-4 h-4 rounded-sm" style={`background: ${bg}`}></span>
+                        <span class="text-[10px] font-mono text-[var(--color-ink-soft)] leading-none">{shortLabel(ev.source)}</span>
+                      </div>
+                    );
                   })}
                 </div>
-                <span class="text-sm text-[var(--color-ink-soft)] truncate flex-1" title={claim.text}>{claim.text}</span>
               </li>);
             })}
           </ul>

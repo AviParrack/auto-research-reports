@@ -16,18 +16,25 @@ import { marked } from 'marked';
  */
 export function renderMath(text: string, opts: { inline?: boolean } = {}): string {
   const inline = opts.inline ?? true;
-  // 1. Replace display delimiters first (\[..\] and $$..$$)
-  let s = text.replace(/\\\[([\s\S]+?)\\\]/g, (_, expr) =>
-    katex.renderToString(expr.trim(), { throwOnError: false, displayMode: true })
+  // Source `.md` files arrive with either single-backslash (`\[`, `\(`, `\frac`)
+  // or double-backslash (`\\[`, `\\(`, `\\frac`) delimiters and commands —
+  // depending on how the upstream writer escaped them. Accept both shapes
+  // and collapse `\\` → `\` inside the captured expression before handing
+  // it to KaTeX.
+  const normalize = (expr: string) => expr.replace(/\\\\/g, '\\').trim();
+  // 1. Display delimiters \[..\] / \\[..\\]
+  let s = text.replace(/\\{1,2}\[([\s\S]+?)\\{1,2}\]/g, (_, expr) =>
+    katex.renderToString(normalize(expr), { throwOnError: false, displayMode: true })
   );
+  // 2. $$..$$ (still normalize body for embedded \\frac etc.)
   s = s.replace(/\$\$([\s\S]+?)\$\$/g, (_, expr) =>
-    katex.renderToString(expr.trim(), { throwOnError: false, displayMode: true })
+    katex.renderToString(normalize(expr), { throwOnError: false, displayMode: true })
   );
-  // 2. Inline delimiter \(..\)
-  s = s.replace(/\\\(([\s\S]+?)\\\)/g, (_, expr) =>
-    katex.renderToString(expr.trim(), { throwOnError: false, displayMode: false })
+  // 3. Inline delimiters \(..\) / \\(..\\)
+  s = s.replace(/\\{1,2}\(([\s\S]+?)\\{1,2}\)/g, (_, expr) =>
+    katex.renderToString(normalize(expr), { throwOnError: false, displayMode: false })
   );
-  // 3. Run remaining through marked
+  // 4. Run remaining through marked
   return inline ? marked.parseInline(s) as string : marked.parse(s) as string;
 }
 
