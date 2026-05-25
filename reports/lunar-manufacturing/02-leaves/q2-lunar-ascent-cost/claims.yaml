@@ -9,6 +9,9 @@
     - source: first-principles-calc
       ref: pass-02-calc.py
       verdict: supports
+    - source: wiki-delta-v
+      ref: high-thrust-earth-moon-table
+      verdict: supports
   confidence: high
   derivation_path: passes/pass-02-calc.md
   audit:
@@ -43,6 +46,12 @@
     - source: first-principles-calc
       ref: pass-02-calc.py
       verdict: supports
+    - source: orbital-refueling-newspaceeconomy
+      ref: per-mission-cost
+      verdict: supports
+    - source: coutts-sowers-2025
+      ref: starship-cost-anchors
+      verdict: supports
   confidence: medium-high
   derivation_path: passes/pass-02-calc.md
   audit:
@@ -71,12 +80,21 @@
       status: unnoted
 
 - id: q2.c5
-  text: "Mass driver + SEP transfer lunar-surface-to-LEO cost per kg, under a $10B capital assumption and 20-year amortization, scales from $528/kg (early era, 100k t/yr nameplate, 20% availability) to $152/kg (mid, 1M t/yr nameplate, 60%) to $50/kg (late, 10M t/yr nameplate, 85%). At late-era throughput, the mass-driver capital amortization collapses to under $1/kg; the cost is dominated by the post-launch SEP transfer stage."
+  text: "Mass driver + SEP transfer lunar-surface-to-LEO cost per kg, under a $10B capital assumption and 20-year amortization, scales from $528/kg (early era, 100k t/yr nameplate, 20% availability) to $152/kg (mid, 1M t/yr nameplate, 60%) to $50/kg (late, 10M t/yr nameplate, 85%). At late-era throughput, the mass-driver capital amortization collapses to under $1/kg; the cost is dominated by the post-launch SEP transfer stage. Handmer's headline $10/kg figure measures a different output state ('rocks in lunar orbit') and excludes the SEP transfer to LEO; the two numbers nest consistently."
   type: derived
   evidence:
     - source: first-principles-calc
       ref: pass-02-calc.py
       verdict: supports
+    - source: handmer-mass-driver-2026
+      ref: economics-section
+      verdict: partial
+    - source: lunarpedia-mass-driver
+      ref: energy-2.4-MJ-per-kg
+      verdict: supports
+    - source: sciencearray-mass-drivers
+      ref: target-price-range
+      verdict: partial
   confidence: medium
   derivation_path: passes/pass-02-calc.md
   audit:
@@ -116,8 +134,7 @@
     gpt:
       status: flagged
       audit_file: passes/pass-02-audit.md
-      notes: "Codex assessed overall verdict 'weak' — arithmetic mostly correct but inputs are scenario priors not first-principles derivations. See pass-02-response.md for the structural acknowledgment."
-      notes: "Speculative TAI sensitivity; follows directly from framework but quantitative compression factors not externally validated."
+      notes: "Codex 'weak' verdict (inputs are priors not derived) + the original calc-pass concern: speculative TAI sensitivity claim about compression factors, not externally validated."
     human:
       status: unnoted
 
@@ -135,5 +152,71 @@
       status: flagged
       audit_file: passes/pass-02-audit.md
       notes: "Codex caught arithmetic error in original $994/$59 = 9x calibration. Corrected: $994/$107 = 9.3x, $994/$59 = 16.8x. Both ratios now stated."
+    human:
+      status: unnoted
+
+# Claims added in reconcile pass (pass 3) from source extracts
+
+- id: q2.c9
+  text: "The trade-press operating assumption for lunar lander reuse is roughly 8-10 uses per vehicle (newspaceeconomy.ca cites '$400M per run over 10 uses' for HLS). My calc's three-era reuse counts (5/15/50) bracket this. Refurbishment-on-the-Moon cost is non-trivial and is the largest uncertainty in the calc's hardware $/kg/reuse figures; the actual return-to-Moon leg propellant + cycle-time cost is not separately modeled in my calc."
+  type: factual
+  evidence:
+    - source: orbital-refueling-newspaceeconomy
+      ref: per-mission-cost-claim
+      verdict: supports
+    - source: starship-hls-wiki
+      ref: contract-cost
+      verdict: partial
+  confidence: medium
+  audit:
+    gpt:
+      status: unaudited
+      notes: "Added in reconcile pass to acknowledge a Codex-flagged gap from pass 2. Reuse count not directly derived; trade-press assumption."
+    human:
+      status: unnoted
+
+- id: q2.c10
+  text: "The 2016 Sowers/ULA lunar-surface propellant market clearing price target was $500/kg (in 2016 dollars), carried forward as a baseline assumption in Coutts-Sowers 2025. This is a price ULA was willing to pay, not a production cost. The figure is consistent with a maturity-era ISRU production cost in the $300/kg range plus reasonable margin and risk premium."
+  type: factual
+  evidence:
+    - source: coutts-sowers-2025
+      ref: sowers-price-target
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: unaudited
+    human:
+      status: unnoted
+
+- id: q2.c11
+  text: "Casey Handmer's May 2026 lunar mass driver design specifies 200 kg per shot, 1-tonne-per-3-seconds cadence, 128 m main acceleration track, and 10 million t/year nameplate throughput. The reactor alone is estimated at $2-4B Earth-built; total mass-driver capital is not enumerated in the extract — my calc's $10B aggregate is an extrapolation from the reactor figure plus track + landing infrastructure, not a Handmer figure. Energy is 2.4 MJ/kg (matching the canonical Lunarpedia figure) at an assumed $2.50/kWh lunar power rate. The headline $10/kg price is for 'rocks in lunar orbit' — output state is at lunar orbit, not LEO."
+  type: factual
+  evidence:
+    - source: handmer-mass-driver-2026
+      ref: headline-numbers
+      verdict: supports
+  confidence: medium-high
+  audit:
+    gpt:
+      status: unaudited
+      notes: "Single-source blog reference; could not be triangulated against the AIAA 2025-4123 paper (paywalled)."
+    human:
+      status: unnoted
+
+- id: q2.c12
+  text: "Chemical-only Earth-imports lunar surface delivery cost in the mid-era is approximately $4,000/kg of payload delivered to lunar surface, based on trade-press estimates of $400M per HLS mission with ~100 t payload (newspaceeconomy.ca, December 2025). This matches the first-principles calc's Earth-imports-only mid-era figure of $4,162/kg to within 5%. Strong agreement between bottom-up derivation and trade-press cost reporting."
+  type: factual
+  evidence:
+    - source: orbital-refueling-newspaceeconomy
+      ref: per-mission-cost-claim
+      verdict: supports
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: unaudited
     human:
       status: unnoted
