@@ -1,0 +1,75 @@
+==============================================================================
+q3-isru-feasibility — Pass 2 calc
+Sources sealed. First-principles only.
+==============================================================================
+
+--- Regolith composition (oxygen mass fraction) ---
+  Mare basalt              O wt fraction (from oxide phases): 42.3%
+  Highland anorthosite     O wt fraction (from oxide phases): 43.8%
+  Polar (PSR) regolith     O wt fraction (from oxide phases): 43.2%
+
+--- Thermodynamic energy floors per kg O2 (per oxide) ---
+  SiO2    →    6.08 kWh/kg O2 (Gibbs floor at ~1600 K)
+  Al2O3   →    7.52 kWh/kg O2 (Gibbs floor at ~1600 K)
+  FeO     →    3.12 kWh/kg O2 (Gibbs floor at ~1600 K)
+  MgO     →    8.68 kWh/kg O2 (Gibbs floor at ~1600 K)
+  CaO     →    9.55 kWh/kg O2 (Gibbs floor at ~1600 K)
+  TiO2    →    6.51 kWh/kg O2 (Gibbs floor at ~1600 K)
+
+--- Whole-regolith MRE thermo floor (mare basalt input) ---
+  Mass-weighted MRE thermo floor: 6.5 kWh/kg O2
+  Total O liberated from 1 kg mare regolith: 423 g
+
+--- Process × material × TRL feasibility matrix ---
+Process                        Region     T_C   kWh/kg O2 wall   TRL26  TRL30c  TRL30s 
+Ilmenite H2 reduction          mare        1050               15      5       8       5
+Carbothermal reduction         any         1700               50      6       8       6
+Molten Regolith Electrolysis (MRE) any         1600               60      4       7       4
+FFC Cambridge electrolysis     any (best with sintered pellets)   900               40      4       6       4
+Vapor-phase pyrolysis (solar-thermal) any         2500              150      3       5       3
+Polar ice extraction + electrolysis polar (PSR craters)   200               80      4       7       4
+Sintering / vacuum casting     any         1100                0      5       8       5
+
+--- Materials × best process pairing ---
+Material               Best route                               TRL26  Earth imports
+Oxygen (O2)            Carbothermal (TRL 6)                            high
+Iron (Fe)              MRE coproduct / ilmenite reduction              low
+Silicon (Si)           MRE coproduct / carbothermal                    low
+Aluminum (Al)          FFC Cambridge on anorthite                      Cl bath (high)
+Titanium (Ti)          FFC Cambridge on ilmenite                       Cl bath (high)
+Magnesium (Mg)         MRE coproduct (minor)                           low
+Glass (SiO2)           Vacuum sintering / vapor pyrolysis              low
+Structural blocks      JPL Sinterator / 3D print sintered              low
+LOX propellant         Any O2 process (carbothermal lead)              low (just makeup gases)
+LH2 propellant         Polar ice electrolysis ONLY                     low if VIPER closes question
+LCH4 propellant        No lunar-derivable route at scale               ALL CARBON imported
+
+--- Acceleration-regime TRL decomposition (anti-pattern #11) ---
+
+  Under TAI-grade automation compression (TAI-C):
+    * Demonstration cadence rises ~10×: each MRE/carbothermal lab
+      iteration that took 18 months drops to ~6-10 weeks
+    * Earth-feedback loop tightens via robotic CLPS demos
+      → 2-3 CLPS demos per year vs 1 every 2 years today
+    * Capital-mass compression in plant designs (q4 lever)
+    * Result: carbothermal + MRE reach TRL 8 (flight-demo'd, returning
+      product) by 2028-2030; structural-mass loops by 2032-2035.
+
+  Under business-as-usual (BAU):
+    * NASA budget remains constrained; Artemis schedule slips ~1y/yr
+    * CLPS missions deliver O2 ISRU demos but no product flow
+    * Carbothermal reaches TRL 7 by 2030, TRL 8 by 2035-2040
+    * MRE reaches TRL 6-7 by 2030, TRL 8 by 2035-2040
+
+  Under stall (50-year-Apollo-drought analog):
+    * Political will collapses; CLPS programme winds down
+    * Carbothermal stays at TRL 6 indefinitely (Sierra demo
+      becomes a museum piece)
+    * MRE remains TRL 4 (Sadoway lab + Helios sim chamber)
+    * No lunar product flow at any horizon
+
+  The TRL trajectory depends on regime, not calendar year. This
+  decomposition is the q3 deliverable for q4/q8 synthesis: q4's
+  cost numerator is meaningless if regime = stall, because no
+  product exists to ship; q4's framework is binding only under
+  BAU or TAI-C.

@@ -1,0 +1,142 @@
+# Claims for q3-isru-feasibility.
+# Each claim must trace to a derivation (calc) or a cited source (reconcile/source-review).
+# Claims added during the calc pass (sources sealed).
+
+- id: q3.c1
+  text: "Lunar regolith contains 41-44% oxygen by mass across mare, highland, and polar regions (derived mare 42.3%, highland 43.8%, polar 43.2% from canonical oxide-phase compositions). Oxygen abundance is regionally consistent; process choice varies with feedstock chemistry (ilmenite content, melt properties, anorthite fraction), so whole-regolith O2 processes are geographically robust but not literally agnostic."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex confirmed stoichiometry. Tightened from 'geographically agnostic' to 'regionally consistent abundance, process choice varies'."
+
+- id: q3.c2
+  text: "The pure-oxide lower bound for whole-regolith molten electrolysis on mare basalt is 6.5 kWh per kg O2, mass-weighted across the dominant oxides (SiO2, Al2O3, FeO, MgO, CaO, TiO2) using Gibbs free energies at 1600 K. This is a thermodynamic floor under ideal Gibbs dissociation; real MRE reactors operate at 5-10x this floor due to melt activities, alloy formation, anode overpotentials, Joule losses, heat-to-melt, and balance-of-plant ancillaries. Wall-plug ranges per process: ilmenite H2 reduction 15-30, carbothermal 50, MRE 60, FFC Cambridge 40, vapor pyrolysis 100-200, polar ice 30-100 kWh/kg O2."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.py
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex confirmed thermo floor arithmetic; widened ilmenite range from 15 to 15-30 per PNAS 2025 model (24.3 +/- 5.8 kWh/kg LOX)."
+
+- id: q3.c3
+  text: "Carbothermal reduction is the highest-TRL lunar oxygen extraction process as of 2026 at TRL 6 (Sierra Space JSC demonstration Sept 2024). Molten regolith electrolysis sits at TRL 4-5 (Sadoway lab + Helios Project simulant work). Ilmenite hydrogen reduction sits at TRL 5-6 for equatorial mare sites. FFC Cambridge sits at TRL 3-4 in lunar configuration (Earth Metalysis is TRL 7+ but uses CaCl2 electrolyte not lunar-economic at scale)."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.md
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+      audit_file: passes/pass-02-audit.md
+
+- id: q3.c4
+  text: "The only lunar-derivable rocket-fuel hydrogen route is polar-ice electrolysis. The H2O electrolyzer step is mature (OxEon TRL 5, separate work). The binding gate is geological: lunar polar ice resource characterization remains incomplete after PRIME-1 (limited data return on IM-2 Feb 2025) and pending VIPER (delayed to late 2027 under Blue Origin contract)."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.md
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+
+- id: q3.c5
+  text: "Lunar methane (LCH4) propellant has no native carbon source at bulk scale. Bulk regolith carbon is solar-wind-implanted at ppm levels and not minable for propellant. Polar PSR craters may hold trapped CO and CO2 ices at meaningful local scale, but the resource is prospecting-limited and exhaustible. LCH4 is therefore not a bulk lunar ISRU product under any acceleration regime; bulk carbon must come from Earth import, asteroid retrieval, or limited polar volatile mining. This is a compositional structural fact, not a TRL question."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.md
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged 'impossible under any regime' as too absolute; softened to 'not a bulk product; polar volatiles may give low-rate local supply'."
+
+- id: q3.c6
+  text: "FFC Cambridge molten-salt electrolysis offers the cleanest direct route to refined Al and Ti from anorthite and ilmenite respectively, but requires chlorine for the CaCl2 electrolyte. Chlorine is present only in trace amounts on the lunar surface (apatite, ppm). This makes FFC Cambridge a structurally Earth-import-bound process unless aggressive salt recycling is solved. MRE is preferred for lunar economics on whole-regolith Si + Fe production despite poorer metal separation."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.md
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+
+- id: q3.c7
+  text: "Sintering and vacuum-casting routes for structural blocks and habitat-scale elements operate at TRL 5 today (JPL Sinterator, extrusion 3D printing of simulant pellets). This is a distinct production pathway from refined metals: it accepts loose regolith and produces consolidated solid via heat, without metal separation. It closes the structural-mass loop for habitats, depots, and radiation shielding."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.md
+      verdict: supports
+  confidence: medium-high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+
+- id: q3.c8
+  text: "TRL trajectory for every ISRU process is acceleration-regime dependent, not calendar-year dependent. Under TAI-compression (compressed demonstration cadence, tight robotic CLPS feedback loop, capital-mass compression), carbothermal and MRE plausibly reach TRL 8 (flight-demo with product return) within a few years of present. Under business-as-usual, the same milestones land roughly a decade later. Under a 50-year-Apollo-drought stall, processes remain at their 2024-2026 baselines indefinitely and no lunar product flow exists. The specific regime rates are illustrative, not derived; the framework is the deliverable for q4/q8 synthesis."
+  type: estimate
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.md
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged the regime trajectory as scenario, not first-principles. Accepted; reframed as 'framework for q4/q8 synthesis' with rates marked illustrative."
+
+- id: q3.c9
+  text: "Materials feasibility by 2030 under BAU: O2 (high — carbothermal); Fe + Si (high — MRE coproducts); Al (medium — FFC Cambridge contingent on Cl recycling, or MRE Ca/Al fractional separation); Ti (medium — FFC on ilmenite OR coproduct of ilmenite reduction's TiO2 leftover); Mg (low-medium — MRE byproduct, no dedicated route at scale); glass and structural blocks (high — sintering routes). LOX as propellant is high feasibility; LH2 is medium (resource-prospecting-blocked); LCH4 is no-go."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.md
+      verdict: supports
+  confidence: medium-high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending
+
+- id: q3.c10
+  text: "Ilmenite hydrogen reduction yields ~1 wt% O2 per pass on ilmenite feedstock and only ~0.02 wt% on highland regolith. This makes ilmenite reduction a mare-region-specific high-yield route with high throughput requirements (kg regolith per gram O2 is roughly 50-100 for mare, 5000+ for highland — process becomes uncompetitive in highland regions where ilmenite is below 2 vol%). Whole-regolith processes (carbothermal, MRE) are required for highland/polar deployment."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-02-calc.md
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: pending

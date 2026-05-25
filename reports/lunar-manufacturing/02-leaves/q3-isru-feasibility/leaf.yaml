@@ -3,10 +3,10 @@ question: "Which orbital-infrastructure materials (structural Al/Fe/Si/Ti, glass
 status: researching
 passes_status:
   research: done
-  calc: pending
+  calc: done
   reconcile: pending
   source-review: pending
   consistency: pending
   write: pending
-last_pass: 1
+last_pass: 2
 contradictions_with: []
