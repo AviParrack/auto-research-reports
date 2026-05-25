@@ -1,11 +1,52 @@
 id: q6-orbital-demand
 question: "What is the projected demand for structural mass and propellant in LEO and cislunar space 2026-2040, split by use case (data centers, solar power, depots, deep-space missions)?"
-status: open
+status: researching
 passes_status:
-  research: pending
+  research: done
   calc: pending
   reconcile: pending
   source-review: pending
   consistency: pending
   write: pending
-last_pass: 0
+last_pass: 1
+sources_gathered:
+  - marcy-2026-arxiv
+  - nasa-otps-sbsp-2024
+  - metzger-2023-economics
+  - kornuta-2019-clpa
+  - ida-demand-drivers
+  - crawford-2014-lunar-review
+  - nasa-m2m-cargo-2024
+  - nasa-m2m-logistics-2025
+  - caltech-sspd-mankins-niac
+  - handmer-2026-dc-orbit
+  - handmer-2025-propellant-stability
+  - peraspera-2025-orbital-compute
+  - luminix-2026-sdc
+  - introl-2026-orbital-dc
+  - starcloud-factories-2026
+  - nvidia-2026-space-compute
+  - cote-2026-orbital-dc
+  - spaceambition-2026-sbsp
+  - pickard-2026-orbital-dc
+  - spacenews-2026-governance
+  - scientificamerican-2026-sdc
+  - tomshardware-2026-mccalip
+  - fortune-2026-bezos-musk
+  - orbysa-2026-sbsp
+  - bisnow-2026-bluemoon-sunrise
+  - marketsandmarkets-2026-osam
+  - orbital-propellant-newspaceeconomy
+  - musk-mars-1m-tons
+  - bezos-orbital-dc-statement
+  - metzger-quote-orbital-dc
+  - handmer-quote-gpus-orbit
+  - mccalip-quote-fomo
+sources_by_tier:
+  S: 7
+  A: 2
+  B: 5
+  C: 9
+  D: 7
+  E: 5
+contradictions_with: []

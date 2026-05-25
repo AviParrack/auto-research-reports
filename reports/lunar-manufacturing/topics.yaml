@@ -80,3 +80,32 @@ topics:
   alternative-architectures-elevator:
     description: "Lunar space elevator (Pearson NIAC 2005, M5 ribbon) as the canonical non-mass-driver alternative for cis-lunar bulk transport."
     leaves: [q7-mass-driver-feasibility, q5-capital-buildup]
+
+  # q6-orbital-demand additions
+  sdc-demand:
+    description: "Orbital / space-based data center demand — GW, mass per MW, market sizing through 2040."
+    leaves: [q6-orbital-demand]
+  sbsp-demand:
+    description: "Space-based solar power mass demand — kg/kW, GW-scale deployments, NASA OTPS / ESA SOLARIS / SPS-ALPHA reference designs."
+    leaves: [q6-orbital-demand]
+  propellant-depot-demand:
+    description: "Orbital propellant depot demand — tonnage of LOX/LH2/LCH4 per year; Kornuta 2019 450 t/yr baseline."
+    leaves: [q6-orbital-demand, q2-lunar-ascent-cost]
+  artemis-mass-budget:
+    description: "NASA Artemis-era cargo / mass requirements 2028-2040 — lander capacity gap, Gateway logistics, surface habitat."
+    leaves: [q6-orbital-demand, q5-capital-buildup]
+  mars-architecture-mass:
+    description: "Mars architecture cargo mass — Starship cadence per launch window, total tonnage, refueling architecture."
+    leaves: [q6-orbital-demand]
+  satellite-servicing:
+    description: "On-orbit satellite servicing market size and mass requirements (refueling, ADR, robotic, assembly)."
+    leaves: [q6-orbital-demand]
+  debris-mitigation-mass:
+    description: "Active debris removal and orbital congestion mass implications; ESA Zero Debris by 2030."
+    leaves: [q6-orbital-demand]
+  demand-elasticity-cost:
+    description: "Demand elasticity vs launch cost — supply-side feedback to orbital demand. Couples q6 to q1."
+    leaves: [q6-orbital-demand, q1-earth-launch-cost]
+  ai-compute-orbit-coupling:
+    description: "Coupling between exponential AI compute growth and orbital data center demand."
+    leaves: [q6-orbital-demand]
