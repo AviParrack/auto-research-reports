@@ -1,0 +1,115 @@
+---
+import ReportLayout from '../../../layouts/ReportLayout.astro';
+import { listReportSlugs, loadReport, getLeafBySlug } from '../../../lib/reports';
+import { marked } from 'marked';
+
+export function getStaticPaths() {
+  const paths = [];
+  for (const slug of listReportSlugs()) {
+    const report = loadReport(slug);
+    for (const node of report.tree.nodes) {
+      paths.push({ params: { report: slug, leaf: node.id } });
+    }
+  }
+  return paths;
+}
+
+const { report: slug, leaf: leafId } = Astro.params;
+const report = loadReport(slug!);
+const leaf = getLeafBySlug(report, leafId!);
+const node = report.tree.nodes.find((n) => n.id === leafId);
+const bodyHtml = leaf?.body ? marked.parse(leaf.body) : null;
+---
+<ReportLayout report={report} title={node?.question ?? leafId!} activeTab="leaves">
+  <a href={`/${slug}/leaves/`} class="text-sm text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] mb-4 inline-block">← All leaves</a>
+
+  <div class="mb-6">
+    <div class="text-xs font-mono text-[var(--color-ink-soft)] mb-1">{leafId}</div>
+    <h2 class="text-2xl font-serif font-semibold mb-2">{node?.question ?? leafId}</h2>
+    {node?.answer && (
+      <div class="prose-leaf bg-[var(--color-paper-dim)] border-l-4 border-[var(--color-accent)] p-4 rounded-r">
+        <p>{node.answer}</p>
+        {node.confidence && (
+          <div class="text-xs text-[var(--color-ink-soft)] mt-2">
+            Confidence: <span class="font-mono">{node.confidence}</span>
+          </div>
+        )}
+      </div>
+    )}
+  </div>
+
+  {leaf ? (
+    <>
+      {bodyHtml && (
+        <article class="prose-leaf mb-8" set:html={bodyHtml} />
+      )}
+
+      {leaf.claims.length > 0 && (
+        <section class="mb-8">
+          <h3 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-3">Claims</h3>
+          <ul class="space-y-2">
+            {leaf.claims.map((claim) => (
+              <li class="border border-[var(--color-line)] rounded p-3">
+                <div class="flex items-start justify-between gap-3 mb-1">
+                  <div class="flex-1">
+                    <span class="text-xs font-mono text-[var(--color-ink-soft)] mr-2">{claim.id}</span>
+                    <span>{claim.text}</span>
+                  </div>
+                  <div class="flex items-center gap-1 shrink-0">
+                    <span class="text-xs font-mono text-[var(--color-ink-soft)]">{claim.confidence}</span>
+                    <span title={`GPT audit: ${claim.audit.gpt.status}`} class:list={[
+                      'text-xs',
+                      claim.audit.gpt.status === 'passed' ? 'text-[var(--color-leaf)]'
+                      : claim.audit.gpt.status === 'flagged' ? 'text-[var(--color-flag)]'
+                      : 'text-[var(--color-unaudited)]'
+                    ]}>
+                      {claim.audit.gpt.status === 'passed' ? '✓' : claim.audit.gpt.status === 'flagged' ? '⚠' : '○'}
+                    </span>
+                    {claim.audit.human.status === 'noted' && <span title="Has human comment" class="text-xs text-[var(--color-accent)]">💬</span>}
+                  </div>
+                </div>
+                {claim.evidence && claim.evidence.length > 0 && (
+                  <div class="text-xs text-[var(--color-ink-soft)] mt-2 flex flex-wrap gap-2">
+                    {claim.evidence.map((e) => (
+                      <span class="font-mono px-2 py-0.5 bg-[var(--color-paper-dim)] rounded">
+                        {e.source}
+                        {e.verdict === 'contradicts' && <span class="text-[var(--color-flag)]"> ✗</span>}
+                        {e.verdict === 'supports' && <span class="text-[var(--color-leaf)]"> ✓</span>}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <section>
+        <h3 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-3">Pass Status</h3>
+        <ul class="text-sm font-mono space-y-1">
+          {Object.entries(leaf.passes_status).map(([k, v]) => (
+            <li class="flex items-center gap-2">
+              <span class:list={[
+                v === 'done' ? 'text-[var(--color-leaf)]'
+                : v === 'in_progress' ? 'text-[var(--color-warn)]'
+                : v === 'needs_rerun' ? 'text-[var(--color-flag)]'
+                : 'text-[var(--color-unaudited)]'
+              ]}>
+                {v === 'done' ? '✓' : v === 'in_progress' ? '◐' : v === 'needs_rerun' ? '↻' : '○'}
+              </span>
+              <span>{k}: {v.replace('_', ' ')}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </>
+  ) : (
+    <div class="border border-[var(--color-line)] rounded p-6 text-[var(--color-ink-soft)]">
+      No content yet for this leaf. The leaf pipeline hasn't been run.
+      {node?.created_by === 'agent' && (
+        <div class="mt-2 text-xs">This node was added by an agent in pass #{node.created_pass}.</div>
+      )}
+    </div>
+  )}
+</ReportLayout>

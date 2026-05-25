@@ -1,0 +1,62 @@
+---
+import ReportLayout from '../../layouts/ReportLayout.astro';
+import { listReportSlugs, loadReport } from '../../lib/reports';
+import fs from 'node:fs';
+import path from 'node:path';
+
+export function getStaticPaths() {
+  return listReportSlugs().map((slug) => ({ params: { report: slug } }));
+}
+
+const { report: slug } = Astro.params;
+const report = loadReport(slug!);
+
+const logPath = path.resolve(process.cwd(), '../reports', slug!, 'pass-log.jsonl');
+let entries: any[] = [];
+if (fs.existsSync(logPath)) {
+  entries = fs.readFileSync(logPath, 'utf8')
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => {
+      try { return JSON.parse(line); } catch { return null; }
+    })
+    .filter(Boolean)
+    .reverse();
+}
+---
+<ReportLayout report={report} title={`Pass Log — ${report.meta.root_question}`} activeTab="log">
+  <div class="mb-6">
+    <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-2">Pass Log</h2>
+    <p class="text-sm text-[var(--color-ink-soft)]">One line per pass. Most recent first.</p>
+  </div>
+
+  {entries.length === 0 ? (
+    <div class="border border-[var(--color-line)] rounded p-6 text-[var(--color-ink-soft)]">
+      No passes logged yet.
+    </div>
+  ) : (
+    <ul class="space-y-2">
+      {entries.map((e: any) => (
+        <li class="border border-[var(--color-line)] rounded p-3">
+          <div class="flex items-baseline justify-between gap-3 mb-1">
+            <div class="flex items-baseline gap-2">
+              <span class="font-mono text-xs text-[var(--color-ink-soft)]">{e.pass_id}</span>
+              <span class="font-medium">{e.focus}</span>
+              {e.kinds && (
+                <span class="text-xs text-[var(--color-ink-soft)]">
+                  ({e.kinds.join(' → ')})
+                </span>
+              )}
+            </div>
+            <div class="text-xs font-mono text-[var(--color-ink-soft)]">{e.started}</div>
+          </div>
+          <div class="text-sm text-[var(--color-ink-soft)]">{e.outcome}</div>
+          <div class="text-xs font-mono text-[var(--color-ink-soft)] mt-1 flex gap-3">
+            {e.models && <span>models: {e.models.join(', ')}</span>}
+            {e.commit && <span>commit: {e.commit}</span>}
+          </div>
+        </li>
+      ))}
+    </ul>
+  )}
+</ReportLayout>

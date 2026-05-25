@@ -1,0 +1,65 @@
+---
+import '../styles/global.css';
+import { loadAllReports } from '../lib/reports';
+
+const reports = loadAllReports();
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Auto-Research</title>
+  </head>
+  <body class="min-h-screen">
+    <header class="border-b border-[var(--color-line)]">
+      <div class="max-w-4xl mx-auto px-6 py-8">
+        <h1 class="text-3xl font-serif font-semibold mb-2">Auto-Research</h1>
+        <p class="text-[var(--color-ink-soft)] max-w-2xl">
+          Living research reports built by multi-pass agentic engines. Each report is a question
+          tree of cited claims, point-by-point source reviews, and dual-model synthesis — updated
+          across passes as new evidence arrives or new questions surface.
+        </p>
+      </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-6 py-8">
+      <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-4">Reports</h2>
+
+      {reports.length === 0 ? (
+        <div class="text-[var(--color-ink-soft)]">No reports yet.</div>
+      ) : (
+        <ul class="space-y-4">
+          {reports.map((report) => (
+            <li class="border border-[var(--color-line)] rounded p-5 hover:border-[var(--color-accent)] transition-colors">
+              <a href={`/${report.slug}/`} class="block">
+                <div class="flex items-baseline justify-between mb-2">
+                  <h3 class="text-xl font-serif font-semibold">{report.meta.root_question}</h3>
+                  <span class="text-xs font-mono text-[var(--color-ink-soft)]">
+                    pass #{report.meta.current_pass}
+                  </span>
+                </div>
+                <div class="flex gap-4 text-xs text-[var(--color-ink-soft)]">
+                  <span>{report.tree.nodes.length} questions</span>
+                  <span>{report.leaves.length} leaves</span>
+                  <span class:list={[
+                    'px-2 py-0.5 rounded',
+                    report.meta.status === 'done'
+                      ? 'bg-[var(--color-leaf)] text-white'
+                      : 'bg-[var(--color-paper-dim)]',
+                  ]}>
+                    {report.meta.status.replace('_', ' ')}
+                  </span>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </main>
+
+    <footer class="max-w-4xl mx-auto px-6 py-6 mt-12 border-t border-[var(--color-line)] text-xs text-[var(--color-ink-soft)]">
+      <a href="https://github.com/AviParrack/auto-research-reports" class="hover:text-[var(--color-accent)]">github</a>
+    </footer>
+  </body>
+</html>

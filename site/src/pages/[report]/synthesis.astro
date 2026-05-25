@@ -1,0 +1,24 @@
+---
+import ReportLayout from '../../layouts/ReportLayout.astro';
+import { listReportSlugs, loadReport } from '../../lib/reports';
+
+export function getStaticPaths() {
+  return listReportSlugs().map((slug) => ({ params: { report: slug } }));
+}
+
+const { report: slug } = Astro.params;
+const report = loadReport(slug!);
+---
+<ReportLayout report={report} title={`Synthesis — ${report.meta.root_question}`} activeTab="synthesis">
+  <div class="mb-6">
+    <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-2">Synthesis</h2>
+    <p class="text-sm text-[var(--color-ink-soft)] max-w-2xl">
+      Two writers (Claude and GPT) independently synthesise the report. If they disagree on substance, they debate and produce v2s from consensus. Tab between perspectives.
+    </p>
+  </div>
+
+  <div class="border border-[var(--color-line)] rounded p-8 text-center text-[var(--color-ink-soft)]">
+    <div class="text-sm">Synthesis hasn't run yet.</div>
+    <div class="text-xs mt-2">Triggered after every leaf has at least one full pass.</div>
+  </div>
+</ReportLayout>

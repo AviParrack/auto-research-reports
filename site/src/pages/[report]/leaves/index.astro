@@ -1,0 +1,60 @@
+---
+import ReportLayout from '../../../layouts/ReportLayout.astro';
+import { listReportSlugs, loadReport } from '../../../lib/reports';
+
+export function getStaticPaths() {
+  return listReportSlugs().map((slug) => ({ params: { report: slug } }));
+}
+
+const { report: slug } = Astro.params;
+const report = loadReport(slug!);
+---
+<ReportLayout report={report} title={`Leaves — ${report.meta.root_question}`} activeTab="leaves">
+  <div class="mb-6">
+    <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-2">Leaves</h2>
+    <p class="text-sm text-[var(--color-ink-soft)]">
+      Each leaf is a self-contained atomic question with research, first-principles calculation, source reviews, and consistency checks.
+    </p>
+  </div>
+
+  {report.leaves.length === 0 ? (
+    <div class="border border-[var(--color-line)] rounded p-6 text-[var(--color-ink-soft)]">
+      No leaves have been written yet. The tree exists but the leaf pipeline hasn't run.
+    </div>
+  ) : (
+    <ul class="space-y-3">
+      {report.leaves.map((leaf) => (
+        <li>
+          <a href={`/${slug}/leaves/${leaf.id}/`} class="block border border-[var(--color-line)] rounded p-4 hover:border-[var(--color-accent)] hover:bg-[var(--color-paper-dim)]/30 transition-colors">
+            <div class="flex items-baseline justify-between mb-2 gap-3">
+              <h3 class="font-medium flex-1">{leaf.question}</h3>
+              <span class:list={[
+                'text-xs px-2 py-0.5 rounded font-mono shrink-0',
+                leaf.status === 'done' ? 'bg-[var(--color-leaf)]/15 text-[var(--color-leaf)]'
+                : leaf.status === 'reviewed' ? 'bg-[var(--color-leaf)]/10 text-[var(--color-leaf)]'
+                : leaf.status === 'drafting' ? 'bg-[var(--color-warn)]/15 text-[var(--color-warn)]'
+                : 'bg-[var(--color-paper-dim)] text-[var(--color-ink-soft)]'
+              ]}>
+                {leaf.status}
+              </span>
+            </div>
+            <div class="flex gap-4 text-xs text-[var(--color-ink-soft)] font-mono">
+              <span>{leaf.claims.length} claims</span>
+              <span>pass #{leaf.last_pass}</span>
+              {Object.entries(leaf.passes_status).map(([k, v]) => (
+                <span class:list={[
+                  v === 'done' ? 'text-[var(--color-leaf)]'
+                  : v === 'in_progress' ? 'text-[var(--color-warn)]'
+                  : v === 'needs_rerun' ? 'text-[var(--color-flag)]'
+                  : 'text-[var(--color-unaudited)]'
+                ]}>
+                  {k}:{v.replace('_', ' ')}
+                </span>
+              ))}
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</ReportLayout>

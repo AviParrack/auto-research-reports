@@ -1,0 +1,97 @@
+---
+import ReportLayout from '../../layouts/ReportLayout.astro';
+import { listReportSlugs, loadReport, getNodeChildren } from '../../lib/reports';
+
+export function getStaticPaths() {
+  return listReportSlugs().map((slug) => ({ params: { report: slug } }));
+}
+
+const { report: slug } = Astro.params;
+const report = loadReport(slug!);
+
+const topLevel = getNodeChildren(report.tree, 'root');
+const answeredCount = report.tree.nodes.filter((n) => n.status === 'answered').length;
+const totalLeafCount = report.tree.nodes.filter((n) => n.type === 'leaf').length;
+const progress = totalLeafCount === 0 ? 0 : Math.round((answeredCount / totalLeafCount) * 100);
+---
+<ReportLayout report={report} title={report.meta.root_question} activeTab="overview">
+  <div class="grid md:grid-cols-3 gap-8">
+    <section class="md:col-span-2 space-y-6">
+      <div>
+        <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-3">Current Answer</h2>
+        {report.tree.root.answer ? (
+          <div class="prose-leaf bg-[var(--color-paper-dim)] border-l-4 border-[var(--color-accent)] p-5 rounded-r">
+            <p>{report.tree.root.answer}</p>
+          </div>
+        ) : (
+          <div class="text-[var(--color-ink-soft)] italic">
+            No synthesis yet. The engine is still gathering evidence across the question tree.
+          </div>
+        )}
+      </div>
+
+      <div>
+        <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-3">Top-Level Questions</h2>
+        <ul class="space-y-3">
+          {topLevel.map((node) => (
+            <li class="border border-[var(--color-line)] rounded p-4 hover:border-[var(--color-accent)]/50 transition-colors">
+              <div class="flex items-baseline justify-between mb-1.5 gap-3">
+                <a href={`/${slug}/leaves/${node.id}/`} class="font-medium text-[var(--color-ink)] hover:text-[var(--color-accent)] flex-1">
+                  {node.question}
+                </a>
+                <span class:list={[
+                  'text-xs px-2 py-0.5 rounded font-mono shrink-0',
+                  node.status === 'answered' ? 'bg-[var(--color-leaf)]/15 text-[var(--color-leaf)]'
+                  : node.status === 'researching' ? 'bg-[var(--color-warn)]/15 text-[var(--color-warn)]'
+                  : 'bg-[var(--color-paper-dim)] text-[var(--color-ink-soft)]'
+                ]}>
+                  {node.status}
+                </span>
+              </div>
+              {node.answer && <p class="text-sm text-[var(--color-ink-soft)]">{node.answer}</p>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <aside class="space-y-6">
+      <div>
+        <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-3">Progress</h2>
+        <div class="text-4xl font-mono">{progress}%</div>
+        <div class="text-xs text-[var(--color-ink-soft)] mt-1">
+          {answeredCount} / {totalLeafCount} leaves answered
+        </div>
+        <div class="h-2 bg-[var(--color-paper-dim)] rounded mt-3 overflow-hidden">
+          <div class="h-full bg-[var(--color-accent)]" style={`width: ${progress}%`}></div>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-3">Termination</h2>
+        <ul class="text-sm space-y-1">
+          <li class="flex items-center gap-2">
+            <span class={report.meta.termination.root_answered ? 'text-[var(--color-leaf)]' : 'text-[var(--color-unaudited)]'}>
+              {report.meta.termination.root_answered ? '✓' : '○'}
+            </span>
+            <span>Root answered</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <span class={report.meta.termination.all_figures_reviewed ? 'text-[var(--color-leaf)]' : 'text-[var(--color-unaudited)]'}>
+              {report.meta.termination.all_figures_reviewed ? '✓' : '○'}
+            </span>
+            <span>All major figures reviewed</span>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-3">Models</h2>
+        <ul class="text-sm font-mono space-y-1 text-[var(--color-ink-soft)]">
+          <li>primary: {report.meta.models.primary}</li>
+          <li>critic: {report.meta.models.critic}</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</ReportLayout>

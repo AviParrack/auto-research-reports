@@ -1,0 +1,66 @@
+---
+import '../styles/global.css';
+import type { Report } from '../lib/reports';
+
+interface Props {
+  report: Report;
+  title: string;
+  activeTab?: 'overview' | 'tree' | 'leaves' | 'synthesis' | 'log';
+}
+
+const { report, title, activeTab = 'overview' } = Astro.props;
+
+const tabs = [
+  { id: 'overview', label: 'Overview', href: `/${report.slug}/` },
+  { id: 'tree', label: 'Tree', href: `/${report.slug}/tree/` },
+  { id: 'leaves', label: 'Leaves', href: `/${report.slug}/leaves/` },
+  { id: 'synthesis', label: 'Synthesis', href: `/${report.slug}/synthesis/` },
+  { id: 'log', label: 'Pass Log', href: `/${report.slug}/log/` },
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title} — Auto-Research</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="min-h-screen">
+    <header class="border-b border-[var(--color-line)] bg-[var(--color-paper)]">
+      <div class="max-w-6xl mx-auto px-6 py-4">
+        <div class="flex items-baseline justify-between mb-3">
+          <a href="/" class="text-sm text-[var(--color-ink-soft)] hover:text-[var(--color-accent)]">← Auto-Research</a>
+          <div class="text-xs text-[var(--color-ink-soft)] font-mono">
+            pass #{report.meta.current_pass} · {report.meta.status}
+          </div>
+        </div>
+        <h1 class="text-2xl font-serif font-semibold text-[var(--color-ink)] leading-snug">
+          {report.meta.root_question}
+        </h1>
+      </div>
+      <nav class="max-w-6xl mx-auto px-6 flex gap-6 -mb-px">
+        {tabs.map((tab) => (
+          <a
+            href={tab.href}
+            class:list={[
+              'pb-3 text-sm border-b-2 transition-colors',
+              activeTab === tab.id
+                ? 'border-[var(--color-accent)] text-[var(--color-accent)] font-medium'
+                : 'border-transparent text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]',
+            ]}
+          >
+            {tab.label}
+          </a>
+        ))}
+      </nav>
+    </header>
+    <main class="max-w-6xl mx-auto px-6 py-8">
+      <slot />
+    </main>
+    <footer class="max-w-6xl mx-auto px-6 py-6 mt-12 border-t border-[var(--color-line)] text-xs text-[var(--color-ink-soft)] flex justify-between">
+      <div>last updated {report.meta.last_updated}</div>
+      <div>auto-research engine · multi-pass</div>
+    </footer>
+  </body>
+</html>

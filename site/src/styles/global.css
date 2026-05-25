@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #1a1a1a;
+  --color-ink-soft: #4a4a4a;
+  --color-paper: #fafaf7;
+  --color-paper-dim: #f0efe9;
+  --color-accent: #c4622d;
+  --color-accent-soft: #e8a87c;
+  --color-line: #d4d2c7;
+  --color-leaf: #2d6a4f;
+  --color-warn: #d97706;
+  --color-flag: #b91c1c;
+  --color-unaudited: #9ca3af;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Source Serif Pro', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+}
+
+.prose-leaf h1, .prose-leaf h2, .prose-leaf h3 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.prose-leaf h2 { margin-top: 2rem; margin-bottom: 0.75rem; font-size: 1.5rem; }
+.prose-leaf h3 { margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.2rem; }
+.prose-leaf p { margin-bottom: 1rem; line-height: 1.7; }
+.prose-leaf ul { margin-bottom: 1rem; padding-left: 1.5rem; list-style: disc; }
+.prose-leaf li { margin-bottom: 0.25rem; }
+.prose-leaf a { color: var(--color-accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+.prose-leaf code { background: var(--color-paper-dim); padding: 0.1rem 0.35rem; border-radius: 3px; font-size: 0.9em; }
+.prose-leaf table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+.prose-leaf th, .prose-leaf td { border: 1px solid var(--color-line); padding: 0.5rem 0.75rem; text-align: left; }
+.prose-leaf th { background: var(--color-paper-dim); font-weight: 600; }
