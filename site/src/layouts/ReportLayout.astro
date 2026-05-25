@@ -33,33 +33,53 @@ const tabs = [
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="build-hash" content={BUILD_HASH} />
+    <meta http-equiv="refresh" content="120" />
     <title>{title} — Auto-Research</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <script is:inline define:vars={{ BUILD_HASH }}>
+      const LOG_PREFIX = '[live-reload]';
+      console.log(LOG_PREFIX, 'embedded BUILD_HASH:', BUILD_HASH);
       async function checkAndReload() {
         const badge = document.getElementById('freshness-badge');
+        const setBadge = (text, title, color) => {
+          if (!badge) return;
+          badge.textContent = text;
+          badge.title = title;
+          if (color) badge.style.color = color;
+        };
         try {
-          const resp = await fetch('/build-hash.txt?cb=' + Date.now(), { cache: 'no-store' });
+          console.log(LOG_PREFIX, 'fetching /build-hash.txt');
+          const resp = await fetch('/build-hash.txt?cb=' + Date.now(), {
+            cache: 'no-store',
+            headers: { 'Cache-Control': 'no-cache' },
+          });
+          console.log(LOG_PREFIX, 'fetch returned status', resp.status);
           if (!resp.ok) {
-            if (badge) { badge.textContent = '?'; badge.title = 'check failed ' + resp.status; }
+            setBadge('?', 'HTTP ' + resp.status, '#d97706');
             return;
           }
           const live = (await resp.text()).trim();
+          console.log(LOG_PREFIX, 'live build-hash:', live, '==', BUILD_HASH, '?', live === BUILD_HASH);
           if (live && live !== BUILD_HASH) {
-            if (badge) { badge.textContent = '↻'; badge.title = 'newer deploy detected, reloading'; }
+            setBadge('↻', 'newer deploy detected, reloading…', '#c4622d');
+            console.log(LOG_PREFIX, 'mismatch — reloading');
             const url = new URL(location.href);
             url.searchParams.set('v', live);
             location.replace(url.toString());
             return;
           }
-          if (badge) {
-            badge.textContent = '✓';
-            badge.title = 'latest (checked ' + new Date().toLocaleTimeString() + ')';
-          }
+          setBadge('✓', 'latest (checked ' + new Date().toLocaleTimeString() + ')', '#2d6a4f');
         } catch (e) {
-          if (badge) { badge.textContent = '⚠'; badge.title = 'check error: ' + e; }
+          console.error(LOG_PREFIX, 'check error:', e);
+          setBadge('⚠', 'check error: ' + e + ' — click footer Reload to force', '#b91c1c');
         }
       }
+      function forceReload() {
+        const url = new URL(location.href);
+        url.searchParams.set('v', String(Date.now()));
+        location.replace(url.toString());
+      }
+      window.__forceReload = forceReload;
       (async () => {
         try {
           if ('serviceWorker' in navigator) {
@@ -109,11 +129,16 @@ const tabs = [
     <main class="max-w-6xl mx-auto px-6 py-8">
       <slot />
     </main>
-    <footer class="max-w-6xl mx-auto px-6 py-6 mt-12 border-t border-[var(--color-line)] text-xs text-[var(--color-ink-soft)] flex justify-between">
+    <footer class="max-w-6xl mx-auto px-6 py-6 mt-12 border-t border-[var(--color-line)] text-xs text-[var(--color-ink-soft)] flex justify-between items-center">
       <div>report data updated {reportUpdatedStr}</div>
-      <div>
-        site built <span class="font-mono">{buildTime}</span>
-        <span id="freshness-badge" class="ml-2 px-1.5 py-0.5 rounded bg-[var(--color-paper-dim)]" title="checking for new deploys...">⏳</span>
+      <div class="flex items-center gap-2">
+        <span>site built <span class="font-mono">{buildTime}</span></span>
+        <span id="freshness-badge" class="px-1.5 py-0.5 rounded bg-[var(--color-paper-dim)]" title="checking for new deploys...">⏳</span>
+        <button
+          onclick="window.__forceReload && window.__forceReload()"
+          class="ml-1 px-2 py-0.5 rounded border border-[var(--color-line)] hover:bg-[var(--color-paper-dim)] hover:border-[var(--color-accent)] transition-colors"
+          title="Force reload bypassing any cache"
+        >↻ reload</button>
       </div>
     </footer>
   </body>

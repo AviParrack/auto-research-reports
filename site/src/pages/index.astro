@@ -11,20 +11,32 @@ const reports = loadAllReports();
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="build-hash" content={BUILD_HASH} />
+    <meta http-equiv="refresh" content="120" />
     <title>Auto-Research</title>
     <script is:inline define:vars={{ BUILD_HASH }}>
+      console.log('[live-reload] embedded BUILD_HASH:', BUILD_HASH);
       async function checkAndReload() {
         try {
-          const resp = await fetch('/build-hash.txt', { cache: 'no-store' });
+          const resp = await fetch('/build-hash.txt?cb=' + Date.now(), {
+            cache: 'no-store',
+            headers: { 'Cache-Control': 'no-cache' },
+          });
           if (!resp.ok) return;
           const live = (await resp.text()).trim();
+          console.log('[live-reload] live:', live, '== embedded?', live === BUILD_HASH);
           if (live && live !== BUILD_HASH) {
+            console.log('[live-reload] mismatch — reloading');
             const url = new URL(location.href);
             url.searchParams.set('v', live);
             location.replace(url.toString());
           }
-        } catch { /* offline or blocked — ignore */ }
+        } catch (e) { console.error('[live-reload]', e); }
       }
+      window.__forceReload = () => {
+        const url = new URL(location.href);
+        url.searchParams.set('v', String(Date.now()));
+        location.replace(url.toString());
+      };
       (async () => {
         try {
           if ('serviceWorker' in navigator) {
