@@ -3,12 +3,12 @@ question: "What upfront capex and what discrete engineering milestones are requi
 status: researching
 passes_status:
   research: done
-  calc: pending
+  calc: done
   reconcile: pending
   source-review: pending
   consistency: pending
   write: pending
-last_pass: 1
+last_pass: 2
 contradictions_with: []
 sources_by_tier:
   S: 9
@@ -60,4 +60,5 @@ sources_gathered:
     - cbs-2026-moonbase
 flagged_for_avi:
   - "PDF body extraction failed for: jones-2020-breakeven, mueller-2022-lunar-construction-planning, ida-2024-demand-drivers, sowers-2018-clpa. Key claims reconstructed from secondary coverage. Re-fetch with better PDF tooling would tighten the source-review for these."
-  - "Total capex anchors span ~3 orders of magnitude ($1.5B Zubrin to >$1T Handmer). The structural cause is heterogeneity of product class + transport architecture + automation regime, not just optimism. Calc pass will produce regime-conditional numbers, not a single point estimate."
+  - "Total capex anchors span ~3 orders of magnitude ($1.5B Zubrin to >$1T Handmer). The structural cause is heterogeneity of product class + transport architecture + automation regime, not just optimism. Calc pass produces regime-conditional numbers: BAU $150-400B, IE $1.2-3B, TAI degenerate."
+  - "Codex audit on pass-02 calc returned verdict 'weak' with several high-severity findings: ISRU plant mass under-sized vs NIA benchmarks (75t actual vs ~150t corrected), mobility/manufacturing/infrastructure under-counted, TAI M6 (12-mo occupation) cannot compress below 12 months. Claims revised to ranges; calc-baseline point estimates retained as lower bound."

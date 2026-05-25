@@ -57,7 +57,7 @@
       comment_file: null
 
 - id: q5.c4
-  text: "Total program capex (launch + hardware + development) under business-as-usual is approximately $167B over 20 years (sensitive to the assumed $100,000/kg aerospace hardware-cost figure)."
+  text: "Total program capex (launch + hardware + development) under business-as-usual is in the range approximately $150-400B over 20 years. The calc-baseline point estimate is $167B; the upper bound reflects Codex-accepted upward adjustments to ISRU/mobility/mfg/infra mass and the possibility of double-counting between $100k/kg aerospace hardware cost and the development multiplier. Realistic central estimate after these adjustments is approximately $200-300B order of magnitude."
   type: derived
   evidence:
     - source: first-principles-calc
@@ -67,9 +67,9 @@
   derivation_path: passes/pass-02-calc.md
   audit:
     gpt:
-      status: pending
+      status: flagged
       audit_file: passes/pass-02-audit.md
-      notes: "Confidence is low because the hardware-cost-per-kg knob is heuristic — reconcile pass will check vs Falcon 9 / Starlink commercial benchmarks."
+      notes: "Codex flagged dev-cost / sqrt(time-compression) heuristic as weak/wrong-signed and the $/kg hardware vs $/kg-includes-development risk of double-counting. Headline figure widened to a $150-400B range to reflect these criticisms; reconcile pass will compare to PwC $72-88B and MacDonald SEI $1T anchors."
     human:
       status: unnoted
       comment_file: null
@@ -111,7 +111,7 @@
       comment_file: null
 
 - id: q5.c7
-  text: "The buildup decomposes into 8 discrete engineering milestones: M1 robotic precursor, M2 cargo lander demonstration, M3 uncrewed habitat deployment, M4 fission surface power installation, M5 ISRU pilot plant, M6 first crewed sustained occupation, M7 manufacturing complement operational, M8 net-positive export reached. Under business-as-usual the cumulative timeline is approximately 25 years; under industrial explosion 5 years; under TAI under one year."
+  text: "The buildup decomposes into 8 discrete engineering milestones: M1 robotic precursor, M2 cargo lander demonstration, M3 uncrewed habitat deployment, M4 fission surface power installation, M5 ISRU pilot plant, M6 first crewed sustained occupation, M7 manufacturing complement operational, M8 net-positive export reached. Under business-as-usual the cumulative timeline is approximately 25 years; under industrial explosion approximately 5 years; under TAI the milestone clock between events compresses sharply but M6 (12-month sustained occupation) is by definition an irreducible 12-month floor, so M8 cannot complete in under approximately 12-24 months even under TAI."
   type: derived
   evidence:
     - source: first-principles-calc
@@ -121,9 +121,9 @@
   derivation_path: passes/pass-02-calc.md
   audit:
     gpt:
-      status: pending
+      status: flagged
       audit_file: passes/pass-02-audit.md
-      notes: null
+      notes: "Codex correctly observed the TAI <1 yr M8 in pass-02-calc.md is internally inconsistent (M6 12-month occupation cannot compress to 0.4 yr). Claim text amended to acknowledge the irreducible 12-month floor."
     human:
       status: unnoted
       comment_file: null
