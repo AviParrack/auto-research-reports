@@ -1,11 +1,63 @@
 id: q5-capital-buildup
 question: "What upfront capex and what discrete engineering milestones are required to establish a lunar manufacturing base capable of net-positive export, and how compressible is each milestone under industrial-explosion or TAI-grade automation?"
-status: open
+status: researching
 passes_status:
-  research: pending
+  research: done
   calc: pending
   reconcile: pending
   source-review: pending
   consistency: pending
   write: pending
-last_pass: 0
+last_pass: 1
+contradictions_with: []
+sources_by_tier:
+  S: 9
+  A: 10
+  B: 9
+  C: 6
+  D: 2
+sources_gathered:
+  tier_s:
+    - metzger-2013-bootstrap
+    - metzger-2023-economics
+    - jones-2020-breakeven
+    - sowers-2021-ice-mining
+    - sowers-2018-clpa
+    - metzger-autry-2022-landing-pads
+    - walther-2024-autonomous-construction
+    - nasa-fsp-2024-glenn
+    - mueller-2022-lunar-construction-planning
+  tier_a:
+    - duchek-2024-fsps-falcon-heavy
+    - aiaa-2025-mass-driver
+    - shubov-2021-gsfr
+    - darpa-2024-luna-10
+    - pwc-2026-lunar-market
+    - csis-miller-2026-cracking-code
+    - csis-macdonald-2026-economics
+    - csis-swope-2024-cislunar
+    - ida-2024-demand-drivers
+    - nasa-oig-2021-artemis-93b
+  tier_b:
+    - figure-metzger
+    - figure-sowers
+    - figure-musk
+    - figure-shotwell
+    - figure-bezos
+    - figure-zubrin
+    - figure-handmer
+    - figure-isaacman
+    - figure-nelson
+  tier_c:
+    - spacenews-2023-luna-10-companies
+    - payloadspace-2023-luna-10-awards
+    - spaceflightnow-2026-20b-moonbase
+    - interestingengineering-2026-musk-mass-driver
+    - space-com-2026-musk-catapult
+    - breaking-defense-2024-csis-cislunar
+  tier_d:
+    - abc-2019-bezos-blue-moon
+    - cbs-2026-moonbase
+flagged_for_avi:
+  - "PDF body extraction failed for: jones-2020-breakeven, mueller-2022-lunar-construction-planning, ida-2024-demand-drivers, sowers-2018-clpa. Key claims reconstructed from secondary coverage. Re-fetch with better PDF tooling would tighten the source-review for these."
+  - "Total capex anchors span ~3 orders of magnitude ($1.5B Zubrin to >$1T Handmer). The structural cause is heterogeneity of product class + transport architecture + automation regime, not just optimism. Calc pass will produce regime-conditional numbers, not a single point estimate."
