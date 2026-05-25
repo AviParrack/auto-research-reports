@@ -1,12 +1,32 @@
 id: q3-isru-feasibility
 question: "Which orbital-infrastructure materials (structural Al/Fe/Si/Ti, glass, oxygen, propellants) are plausibly producible from lunar regolith without complex Earth imports, and at what TRL by 2040?"
-status: researching
+status: reviewed
 passes_status:
   research: done
   calc: done
   reconcile: done
   source-review: done
   consistency: done
-  write: pending
-last_pass: 5
+  write: done
+last_pass: 6
 contradictions_with: []
+sources_gathered:
+  - sierra-space-carbothermal-2024
+  - lyon-industries-isru-2026
+  - lunarpedia-ffc-cambridge
+  - schreiner-mre-model
+  - arxiv-simulant-2601
+  - sanders-prime1-viper
+  - nasa-sanders-2025
+  - wustl-lunar-soil
+  - lunarpedia-ilmenite
+  - helios-project
+  - aerospace-america-propellant
+  - changee5-volatiles
+flagged_for_avi:
+  - "q3.c8 regime-decomposition rates are illustrative, not derived. Codex flagged as scenario, not first-principles. Confirm framing acceptable for q4/q8 synthesis."
+  - "q3.c13b lifetime-integrated phi inference re q4 threshold; double-check the multi-year integration argument before using in q8."
+  - "Highland composition assumptions in pass-2 calc are mid-mafic rather than Apollo 16 anorthositic; consider re-running calc with explicit Lunar Sourcebook composition if downstream synthesis sensitive."
+  - "Eight 'merits investigation' verdicts from source-review (DARPA LunA-10, 2026-2028 prospecting wave, salt recycling, TPR-vs-reactor yield, MRE program consolidation, CE-5 mineralogy, CLPS funding sensitivity, polar ice gap closure). Candidates for tree-pass."
+  - "Primary sources not fetched (PDF 403 errors): Schreiner-Sibille parametric paper, NASA Sanders 2025 PDF, Sowers/Kornuta tent sublimation. Future iteration."
+  - "Aerospace America extract was originally dated 2024; corrected to 2021 (April) after Codex pass-4 audit. All claims unchanged."

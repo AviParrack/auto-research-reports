@@ -38,13 +38,13 @@ nodes:
     depth: 1
     type: leaf
     question: "Which orbital-infrastructure materials (structural Al/Fe/Si/Ti, glass, oxygen, propellants) are plausibly producible from lunar regolith without complex Earth imports, and at what TRL by 2040?"
-    status: open
-    answer: null
-    confidence: null
+    status: answered
+    answer: "O2, Fe, Si, structural mass, and LOX propellant are producible at TRL 4-6 today across carbothermal (TRL 6), MRE (TRL 4-6), and ilmenite reduction (TRL 5-6). Al and Ti via FFC Cambridge face a chlorine import bottleneck. LH2 is prospecting-gated (PRIME-1 partial; VIPER late-2027). LCH4 has no bulk lunar carbon route. Forward TRL trajectory is acceleration-regime dependent: TAI-C reaches TRL 8 within a few years; BAU lands roughly a decade later; stall freezes at present baseline."
+    confidence: medium-high
     leaf_path: 02-leaves/q3-isru-feasibility/
     created_by: agent
     created_pass: 1
-    last_touched_pass: 1
+    last_touched_pass: 6
     children: []
 
   - id: q4-gear-ratio
