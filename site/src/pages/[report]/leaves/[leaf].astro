@@ -85,7 +85,7 @@ const bodyHtml = leaf?.body ? marked.parse(leaf.body) : null;
         </section>
       )}
 
-      <section>
+      <section class="mb-8">
         <h3 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-3">Pass Status</h3>
         <ul class="text-sm font-mono space-y-1">
           {Object.entries(leaf.passes_status).map(([k, v]) => (
@@ -103,6 +103,56 @@ const bodyHtml = leaf?.body ? marked.parse(leaf.body) : null;
           ))}
         </ul>
       </section>
+
+      {leaf.sources && leaf.sources.length > 0 && (
+        <section class="mb-8">
+          <h3 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-3">Sources captured ({leaf.sources.length})</h3>
+          <ul class="space-y-3">
+            {leaf.sources.map((s) => (
+              <li class="border border-[var(--color-line)] rounded p-3">
+                <div class="flex items-baseline justify-between gap-3 mb-1">
+                  <div>
+                    <span class="font-mono text-xs text-[var(--color-ink-soft)] mr-2">{s.slug}</span>
+                    {s.title && <span class="font-medium">{s.title}</span>}
+                  </div>
+                  <div class="text-xs text-[var(--color-ink-soft)] font-mono shrink-0">
+                    {s.authors && s.authors.length > 0 && <span class="mr-2">{s.authors.join(', ')}</span>}
+                    {s.year && <span>{s.year}</span>}
+                    {s.type && <span class="ml-2 px-1.5 py-0.5 bg-[var(--color-paper-dim)] rounded">{s.type}</span>}
+                  </div>
+                </div>
+                {s.url && (
+                  <a href={s.url} target="_blank" rel="noopener" class="text-xs text-[var(--color-accent)] hover:underline break-all">{s.url}</a>
+                )}
+                <details class="mt-2">
+                  <summary class="text-xs text-[var(--color-ink-soft)] cursor-pointer hover:text-[var(--color-ink)]">show extract ({Math.round(s.body.length / 100) / 10}k chars)</summary>
+                  <article class="prose-leaf mt-3 text-sm" set:html={marked.parse(s.body)} />
+                </details>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {leaf.passArtifacts && leaf.passArtifacts.length > 0 && (
+        <section>
+          <h3 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-3">Pass artifacts ({leaf.passArtifacts.length})</h3>
+          <ul class="space-y-3">
+            {leaf.passArtifacts.map((p) => (
+              <li class="border border-[var(--color-line)] rounded p-3">
+                <details>
+                  <summary class="cursor-pointer hover:text-[var(--color-accent)]">
+                    <span class="font-mono text-xs text-[var(--color-ink-soft)] mr-2">{p.filename}</span>
+                    <span class="text-sm font-medium">{p.kind}</span>
+                    {p.kind.endsWith('audit') && <span class="ml-2 text-xs px-1.5 py-0.5 rounded bg-[var(--color-paper-dim)]">codex critique</span>}
+                  </summary>
+                  <article class="prose-leaf mt-3 text-sm" set:html={marked.parse(p.body)} />
+                </details>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </>
   ) : (
     <div class="border border-[var(--color-line)] rounded p-6 text-[var(--color-ink-soft)]">

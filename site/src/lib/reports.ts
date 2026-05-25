@@ -61,6 +61,22 @@ export interface Claim {
   };
 }
 
+export interface SourceMeta {
+  slug: string;
+  title?: string;
+  url?: string;
+  year?: number | string;
+  authors?: string[];
+  type?: string;
+  body: string;
+}
+
+export interface PassArtifact {
+  filename: string;
+  kind: string; // "research" | "calc" | ...
+  body: string;
+}
+
 export interface Leaf {
   id: string;
   question: string;
@@ -69,6 +85,8 @@ export interface Leaf {
   last_pass: number;
   claims: Claim[];
   body?: string;
+  sources: SourceMeta[];
+  passArtifacts: PassArtifact[];
 }
 
 export interface Report {
@@ -109,7 +127,43 @@ export function loadReport(slug: string): Report {
       if (fs.existsSync(reportPath)) {
         body = matter(fs.readFileSync(reportPath, 'utf8')).content;
       }
-      leaves.push({ ...leafMeta, claims, body });
+
+      // Sources: each subdir of sources/ with an extract.md
+      const sourcesDir = path.join(leafDir, 'sources');
+      const sources: SourceMeta[] = [];
+      if (fs.existsSync(sourcesDir)) {
+        for (const sEntry of fs.readdirSync(sourcesDir, { withFileTypes: true })) {
+          if (!sEntry.isDirectory()) continue;
+          const extractPath = path.join(sourcesDir, sEntry.name, 'extract.md');
+          if (!fs.existsSync(extractPath)) continue;
+          const parsed = matter(fs.readFileSync(extractPath, 'utf8'));
+          sources.push({
+            slug: sEntry.name,
+            title: (parsed.data as any).title,
+            url: (parsed.data as any).url,
+            year: (parsed.data as any).year,
+            authors: (parsed.data as any).authors,
+            type: (parsed.data as any).type,
+            body: parsed.content,
+          });
+        }
+      }
+
+      // Pass artifacts: each pass-NN-kind.md in passes/
+      const passesDir = path.join(leafDir, 'passes');
+      const passArtifacts: PassArtifact[] = [];
+      if (fs.existsSync(passesDir)) {
+        for (const pEntry of fs.readdirSync(passesDir)) {
+          if (!pEntry.endsWith('.md')) continue;
+          const m = pEntry.match(/^pass-\d+-(.+)\.md$/);
+          const kind = m ? m[1] : pEntry.replace('.md', '');
+          const parsed = matter(fs.readFileSync(path.join(passesDir, pEntry), 'utf8'));
+          passArtifacts.push({ filename: pEntry, kind, body: parsed.content });
+        }
+        passArtifacts.sort((a, b) => a.filename.localeCompare(b.filename));
+      }
+
+      leaves.push({ ...leafMeta, claims, body, sources, passArtifacts });
     }
   }
 
