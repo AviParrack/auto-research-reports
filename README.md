@@ -22,7 +22,7 @@ site/                # Astro app — reads from reports/, generates static HTML
 
 A separate Claude Code skill (`auto-research`) runs **passes** over each report folder. Each pass reads current state, writes new artifacts, commits, and pushes — Cloudflare Pages auto-rebuilds.
 
-The engine is designed to defeat the failure mode Steve Newman identified in [The Centaur Era](https://secondthoughts.ai/p/the-centaur-era): *narrative emphasis without cross-section logic*. Countermeasures include a claim-graph substrate, first-principles calculation that doesn't trust sources by default, point-by-point source reviews against every major public figure on the topic, and Claude+GPT tag-team writing at every step.
+inspo from Steve Newman, [The Centaur Era](https://secondthoughts.ai/p/the-centaur-era):
 
 Spec lives in the [scaffold](https://github.com/AviParrack/Avi-Claude) — `Workshop/Auto-Research/SPEC.md` (private).
 
