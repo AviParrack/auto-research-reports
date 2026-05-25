@@ -1,11 +1,11 @@
 id: q7-mass-driver-feasibility
 question: "What engineering and capital work remains before a lunar mass driver is operational, how compressible is each step under industrial-explosion or TAI-level automation, and how much does the root answer depend on its availability vs. chemical-rocket-only delivery?"
-status: open
+status: researching
 passes_status:
-  research: pending
+  research: done
   calc: pending
   reconcile: pending
   source-review: pending
   consistency: pending
   write: pending
-last_pass: 0
+last_pass: 1

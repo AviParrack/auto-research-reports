@@ -1,0 +1,82 @@
+# Cross-leaf topic tags
+# Used by source frontmatter (topics: [...]) and consistency-pass topic clustering.
+# New topics created in q5-capital-buildup pass-01-research, with q7-mass-driver-feasibility additions.
+
+topics:
+  capex-models:
+    description: "Estimates of total upfront capital expenditure for lunar manufacturing / lunar base buildup."
+    leaves: [q5-capital-buildup]
+  autonomy-construction:
+    description: "Autonomous and teleoperated construction on the lunar surface — robotics, additive manufacturing, in-situ boulder handling."
+    leaves: [q5-capital-buildup]
+  isru-plant-scaling:
+    description: "ISRU plant mass, power, throughput — how the plant scales from MVP to industrial output."
+    leaves: [q3-isru-feasibility, q4-gear-ratio, q5-capital-buildup]
+  lunar-base-architecture:
+    description: "Habitat + power + mobility + comms + landing pad — the integrated lunar surface architecture."
+    leaves: [q5-capital-buildup]
+  robotic-assembly:
+    description: "Robotic / humanoid assembly on lunar surface; M_K compression via automation."
+    leaves: [q5-capital-buildup, q4-gear-ratio]
+  industrial-explosion-compression:
+    description: "How an industrial-explosion regime (mass-produced robotic + AI design) compresses milestone time and capital mass."
+    leaves: [q1-earth-launch-cost, q3-isru-feasibility, q5-capital-buildup, q7-mass-driver-feasibility]
+  tai-acceleration:
+    description: "TAI-grade automation as a step-change in lunar capital efficiency and timeline."
+    leaves: [q1-earth-launch-cost, q3-isru-feasibility, q5-capital-buildup, q7-mass-driver-feasibility]
+  depreciation-curves:
+    description: "Lunar capital reliability, lifetime, replacement cadence — drives effective capex over the operating horizon."
+    leaves: [q4-gear-ratio, q5-capital-buildup]
+  learning-rate-wright:
+    description: "Wright's-law learning curves applied to lunar manufacturing serial production (landers, ISRU plants, rovers)."
+    leaves: [q5-capital-buildup]
+  bootstrap-seed-mass:
+    description: "Mass landed at start-of-program vs steady-state mass — Metzger-Mueller-Muscatello bootstrap framework."
+    leaves: [q5-capital-buildup]
+  lunar-mass-driver:
+    description: "Mass-driver-based delivery architecture: trades vs chemical, mass-to-surface, capex."
+    leaves: [q2-lunar-ascent-cost, q5-capital-buildup, q7-mass-driver-feasibility]
+  fission-surface-power:
+    description: "Fission Surface Power System: mass, kWe, lifetime, cost."
+    leaves: [q3-isru-feasibility, q5-capital-buildup]
+  artemis-program-cost:
+    description: "NASA Artemis program total cost, per-launch cost, GAO/OIG audits."
+    leaves: [q5-capital-buildup]
+  staged-buildup-milestones:
+    description: "Discrete engineering milestones from cargo lander through net-positive export."
+    leaves: [q5-capital-buildup, q7-mass-driver-feasibility]
+  public-figure-projections:
+    description: "Lunar capex / timeline claims by tech executives, founders, NASA administrators, prominent commentators."
+    leaves: [q5-capital-buildup, q7-mass-driver-feasibility]
+
+  # q7-mass-driver-feasibility additions
+  em-launch-engineering:
+    description: "Electromagnetic launch engineering — railgun vs coilgun, drive coils, pulsed power, projectile capture, cycle life."
+    leaves: [q7-mass-driver-feasibility, q2-lunar-ascent-cost]
+  mass-driver-historical:
+    description: "Historical mass-driver development arc: O'Neill / Kolm / MIT-Princeton (1976-82), NASA SP-428 (1979), Mass Driver 1-3 prototypes."
+    leaves: [q7-mass-driver-feasibility]
+  capacitor-bank-engineering:
+    description: "Pulsed-power supply engineering — capacitor banks, compulsators, flywheels — for high-rep-rate GW-class EM launchers."
+    leaves: [q7-mass-driver-feasibility]
+  projectile-materials:
+    description: "Projectile / payload materials — sintered regolith, basalt blocks, aluminum/iron casings, raw lunar rock for mass-driver launch."
+    leaves: [q7-mass-driver-feasibility, q3-isru-feasibility]
+  lunar-power-budget:
+    description: "Lunar surface power requirements — peak vs average power for an operating mass driver; reactor sizing."
+    leaves: [q7-mass-driver-feasibility, q3-isru-feasibility, q5-capital-buildup]
+  launch-tube-construction:
+    description: "Construction of the multi-kilometer mass-driver track on the lunar surface — alignment, thermal expansion, regolith burial, anchoring."
+    leaves: [q7-mass-driver-feasibility, q5-capital-buildup]
+  capital-cost-mass-driver:
+    description: "Capital cost estimates for an operational lunar mass driver — track + reactor + capacitor bank + projectile manufacturing."
+    leaves: [q7-mass-driver-feasibility, q2-lunar-ascent-cost, q5-capital-buildup]
+  TAI-compression-em-launch:
+    description: "How TAI-grade automation compresses mass-driver development and operational scale-up timelines."
+    leaves: [q7-mass-driver-feasibility, q5-capital-buildup]
+  alternative-architectures-tether:
+    description: "Cislunar tether and momentum-exchange architectures (Hoyt 2000s NIAC) as alternatives to a mass driver."
+    leaves: [q7-mass-driver-feasibility, q5-capital-buildup]
+  alternative-architectures-elevator:
+    description: "Lunar space elevator (Pearson NIAC 2005, M5 ribbon) as the canonical non-mass-driver alternative for cis-lunar bulk transport."
+    leaves: [q7-mass-driver-feasibility, q5-capital-buildup]

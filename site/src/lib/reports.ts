@@ -139,10 +139,25 @@ export function listReportSlugs(): string[] {
     .map((d) => d.name);
 }
 
+/** YAML loader that survives malformed input — the report-side Claude is editing
+ *  YAML files in parallel, so we treat parse errors as soft-fail (warn + empty)
+ *  rather than killing the entire build. js-yaml's `json` mode also relaxes
+ *  duplicate-key strictness, which has bitten q2 once already. */
+function safeYamlLoad<T = any>(filePath: string, fallback: T): T {
+  try {
+    const text = fs.readFileSync(filePath, 'utf8');
+    const parsed = yaml.load(text, { json: true });
+    return (parsed ?? fallback) as T;
+  } catch (err: any) {
+    console.warn(`[reports] YAML parse failed for ${filePath}: ${err?.message || err}`);
+    return fallback;
+  }
+}
+
 export function loadReport(slug: string): Report {
   const dir = path.join(REPORTS_DIR, slug);
-  const meta = yaml.load(fs.readFileSync(path.join(dir, 'meta.yaml'), 'utf8')) as Meta;
-  const tree = yaml.load(fs.readFileSync(path.join(dir, '01-tree/tree.yaml'), 'utf8')) as Tree;
+  const meta = safeYamlLoad<Meta>(path.join(dir, 'meta.yaml'), {} as Meta);
+  const tree = safeYamlLoad<Tree>(path.join(dir, '01-tree/tree.yaml'), { root: { id: 'root', question: '', answer: null, status: 'open' }, nodes: [] } as Tree);
 
   const leavesDir = path.join(dir, '02-leaves');
   const leaves: Leaf[] = [];
@@ -152,10 +167,10 @@ export function loadReport(slug: string): Report {
       const leafDir = path.join(leavesDir, entry.name);
       const leafYaml = path.join(leafDir, 'leaf.yaml');
       if (!fs.existsSync(leafYaml)) continue;
-      const leafMeta = yaml.load(fs.readFileSync(leafYaml, 'utf8')) as Omit<Leaf, 'claims' | 'body'>;
+      const leafMeta = safeYamlLoad<Omit<Leaf, 'claims' | 'body'>>(leafYaml, {} as any);
       const claimsPath = path.join(leafDir, 'claims.yaml');
       const claims: Claim[] = fs.existsSync(claimsPath)
-        ? ((yaml.load(fs.readFileSync(claimsPath, 'utf8')) as Claim[]) ?? [])
+        ? safeYamlLoad<Claim[]>(claimsPath, [])
         : [];
       const reportPath = path.join(leafDir, 'passes/pass-write.md');
       let body: string | undefined;
