@@ -2,7 +2,7 @@ id: q1-earth-launch-cost
 question: "What is the projected cost per kg to LEO from Earth launch over 2026-2040, with realistic uncertainty bands?"
 status: open
 passes_status:
-  research: pending
+  research: done
   calc: pending
   reconcile: pending
   source-review: pending
