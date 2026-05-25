@@ -1,0 +1,11 @@
+id: q8-synthesis-crossover
+question: "Integrating Starship cost curve, lunar gear ratio, ISRU feasibility, capital buildup, and orbital demand: when (if ever) does lunar-sourced bulk mass beat Earth-launched mass for orbital infrastructure, and under what scenarios does the crossover materialise?"
+status: open
+passes_status:
+  research: pending
+  calc: pending
+  reconcile: pending
+  source-review: pending
+  consistency: pending
+  write: pending
+last_pass: 0

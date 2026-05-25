@@ -5,100 +5,114 @@ root:
   status: open
 
 nodes:
-  - id: q1-bulk-mass-cost
+  - id: q1-earth-launch-cost
     parent: root
     depth: 1
     type: leaf
-    question: "What is the projected cost per kg of delivering bulk mass from Earth to LEO over 2026-2040?"
+    question: "What is the projected cost per kg to LEO from Earth launch over 2026-2040, with realistic uncertainty bands?"
     status: open
     answer: null
     confidence: null
-    leaf_path: 02-leaves/q1-bulk-mass-cost/
+    leaf_path: 02-leaves/q1-earth-launch-cost/
     created_by: agent
-    created_pass: 0
-    last_touched_pass: 0
+    created_pass: 1
+    last_touched_pass: 1
     children: []
 
   - id: q2-lunar-ascent-cost
     parent: root
     depth: 1
     type: leaf
-    question: "What is the projected cost per kg of delivering bulk mass from the lunar surface to LEO over 2026-2040?"
+    question: "What is the projected cost per kg from lunar surface to LEO over 2026-2040, broken out by chemical rocket vs mass driver delivery?"
     status: open
     answer: null
     confidence: null
     leaf_path: 02-leaves/q2-lunar-ascent-cost/
     created_by: agent
-    created_pass: 0
-    last_touched_pass: 0
+    created_pass: 1
+    last_touched_pass: 1
     children: []
 
   - id: q3-isru-feasibility
     parent: root
     depth: 1
     type: leaf
-    question: "Which orbital-infrastructure materials are plausibly producible from lunar regolith without complex Earth imports?"
+    question: "Which orbital-infrastructure materials (structural Al/Fe/Si/Ti, glass, oxygen, propellants) are plausibly producible from lunar regolith without complex Earth imports, and at what TRL by 2040?"
     status: open
     answer: null
     confidence: null
     leaf_path: 02-leaves/q3-isru-feasibility/
     created_by: agent
-    created_pass: 0
-    last_touched_pass: 0
+    created_pass: 1
+    last_touched_pass: 1
     children: []
 
-  - id: q4-capital-buildup
+  - id: q4-gear-ratio
     parent: root
     depth: 1
     type: leaf
-    question: "What is the upfront capital and time required to establish a lunar manufacturing base capable of producing structural mass at scale?"
+    question: "What capital-mass-to-product-mass ratio (Metzger's gear ratio) must lunar capital achieve for economic viability, and is this attainable with realistic ISRU technology?"
     status: open
     answer: null
     confidence: null
-    leaf_path: 02-leaves/q4-capital-buildup/
+    leaf_path: 02-leaves/q4-gear-ratio/
     created_by: agent
-    created_pass: 0
-    last_touched_pass: 0
+    created_pass: 1
+    last_touched_pass: 1
     children: []
 
-  - id: q5-orbital-demand
+  - id: q5-capital-buildup
     parent: root
     depth: 1
     type: leaf
-    question: "What is the projected demand for structural mass in LEO and cislunar space over 2026-2040 (data centers, power plants, depots)?"
+    question: "What upfront capex and calendar time are required to establish a lunar manufacturing base capable of net-positive export, and what's the realistic earliest-deployment date?"
     status: open
     answer: null
     confidence: null
-    leaf_path: 02-leaves/q5-orbital-demand/
+    leaf_path: 02-leaves/q5-capital-buildup/
     created_by: agent
-    created_pass: 0
-    last_touched_pass: 0
+    created_pass: 1
+    last_touched_pass: 1
     children: []
 
-  - id: q6-mass-driver-vs-rocket
+  - id: q6-orbital-demand
+    parent: root
+    depth: 1
+    type: leaf
+    question: "What is the projected demand for structural mass and propellant in LEO and cislunar space 2026-2040, split by use case (data centers, solar power, depots, deep-space missions)?"
+    status: open
+    answer: null
+    confidence: null
+    leaf_path: 02-leaves/q6-orbital-demand/
+    created_by: agent
+    created_pass: 1
+    last_touched_pass: 1
+    children: []
+
+  - id: q7-mass-driver-feasibility
     parent: root
     depth: 1
     type: constraint
-    question: "Does lunar export economics depend critically on mass driver vs chemical rocket choice?"
+    question: "Is a lunar mass driver realistically deployable before 2040, and how much does the answer to the root question depend on its availability vs. chemical-rocket-only delivery?"
     status: open
     answer: null
     confidence: null
-    leaf_path: 02-leaves/q6-mass-driver-vs-rocket/
+    leaf_path: 02-leaves/q7-mass-driver-feasibility/
     created_by: agent
-    created_pass: 0
-    last_touched_pass: 0
+    created_pass: 1
+    last_touched_pass: 1
     children: []
 
-  - id: q7-synthesis-crossover
+  - id: q8-synthesis-crossover
     parent: root
     depth: 1
     type: synthesis
-    question: "Combining cost curves, ISRU feasibility, capital buildup, and demand: when (if ever) does lunar-sourced bulk mass beat Earth-launched mass for orbital infrastructure?"
+    question: "Integrating Starship cost curve, lunar gear ratio, ISRU feasibility, capital buildup, and orbital demand: when (if ever) does lunar-sourced bulk mass beat Earth-launched mass for orbital infrastructure, and under what scenarios does the crossover materialise?"
     status: open
     answer: null
     confidence: null
-    leaf_path: 02-leaves/q7-synthesis-crossover/
+    leaf_path: 02-leaves/q8-synthesis-crossover/
     created_by: agent
-    created_pass: 0
-    last_touched_pass: 0
+    created_pass: 1
+    last_touched_pass: 1
     children: []

@@ -1,5 +1,5 @@
 id: q2-lunar-ascent-cost
-question: "What is the projected cost per kg of delivering bulk mass from the lunar surface to LEO over 2026-2040?"
+question: "What is the projected cost per kg from lunar surface to LEO over 2026-2040, broken out by chemical rocket vs mass driver delivery?"
 status: open
 passes_status:
   research: pending

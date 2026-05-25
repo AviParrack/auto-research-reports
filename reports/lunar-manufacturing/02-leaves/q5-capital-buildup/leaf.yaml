@@ -1,0 +1,11 @@
+id: q5-capital-buildup
+question: "What upfront capex and calendar time are required to establish a lunar manufacturing base capable of net-positive export, and what's the realistic earliest-deployment date?"
+status: open
+passes_status:
+  research: pending
+  calc: pending
+  reconcile: pending
+  source-review: pending
+  consistency: pending
+  write: pending
+last_pass: 0

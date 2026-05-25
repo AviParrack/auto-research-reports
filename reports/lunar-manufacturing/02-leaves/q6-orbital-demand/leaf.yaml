@@ -1,0 +1,11 @@
+id: q6-orbital-demand
+question: "What is the projected demand for structural mass and propellant in LEO and cislunar space 2026-2040, split by use case (data centers, solar power, depots, deep-space missions)?"
+status: open
+passes_status:
+  research: pending
+  calc: pending
+  reconcile: pending
+  source-review: pending
+  consistency: pending
+  write: pending
+last_pass: 0

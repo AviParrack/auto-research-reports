@@ -1,0 +1,52 @@
+# Initial hand-written tree, pre-intake-pass.
+# Snapshotted 2026-05-25 before pass #1 refinement.
+
+root:
+  id: root
+  question: "When does lunar surface manufacturing become cheaper than Earth launch for orbital infrastructure?"
+  answer: null
+  status: open
+
+nodes:
+  - id: q1-bulk-mass-cost
+    parent: root
+    depth: 1
+    type: leaf
+    question: "What is the projected cost per kg of delivering bulk mass from Earth to LEO over 2026-2040?"
+    status: open
+  - id: q2-lunar-ascent-cost
+    parent: root
+    depth: 1
+    type: leaf
+    question: "What is the projected cost per kg of delivering bulk mass from the lunar surface to LEO over 2026-2040?"
+    status: open
+  - id: q3-isru-feasibility
+    parent: root
+    depth: 1
+    type: leaf
+    question: "Which orbital-infrastructure materials are plausibly producible from lunar regolith without complex Earth imports?"
+    status: open
+  - id: q4-capital-buildup
+    parent: root
+    depth: 1
+    type: leaf
+    question: "What is the upfront capital and time required to establish a lunar manufacturing base capable of producing structural mass at scale?"
+    status: open
+  - id: q5-orbital-demand
+    parent: root
+    depth: 1
+    type: leaf
+    question: "What is the projected demand for structural mass in LEO and cislunar space over 2026-2040 (data centers, power plants, depots)?"
+    status: open
+  - id: q6-mass-driver-vs-rocket
+    parent: root
+    depth: 1
+    type: constraint
+    question: "Does lunar export economics depend critically on mass driver vs chemical rocket choice?"
+    status: open
+  - id: q7-synthesis-crossover
+    parent: root
+    depth: 1
+    type: synthesis
+    question: "Combining cost curves, ISRU feasibility, capital buildup, and demand: when (if ever) does lunar-sourced bulk mass beat Earth-launched mass for orbital infrastructure?"
+    status: open
