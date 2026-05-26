@@ -11,6 +11,13 @@ passes_status:
   consistency: done
   write: done
 last_pass: 6
+contradictions_with:
+  - leaf: q3-isru-feasibility
+    topic: hydrolox-polar-ice-gate
+    summary: "q2.c2 aggressive-ISRU scenarios use hydrolox (Isp 450s). q3.c4 says lunar-derivable rocket-fuel H2 only available via polar-ice electrolysis, geologically gated pending VIPER (late-2027). q2 aggressive-ISRU $994/kg late-era figure assumes the polar-ice gate clears. Stall regime for q2 ≈ stall regime for q3. Cross-leaf dependency, not contradiction."
+  - leaf: q7-mass-driver-feasibility
+    topic: capital-cost-mass-driver
+    summary: "q2.c5 assumes $10B mass-driver capital → $50/kg late-era headline. q7.c6 first-principles BAU lands at $1,242B (124x). Reconciled only at q7 TAI-grade compression ($13.3B). q2 headline is therefore TAI-conditional. Recorded reciprocally on q7."
 flagged_for_avi:
   - "SEP transfer cost is asserted, not derived from first principles. Codex flagged this as severity-high in pass-02-audit. A future calc v2 should derive SEP cost from Isp + ΔV + power + vehicle dry mass + reuse count. Headline mass-driver $/kg figures depend on this assumption."
   - "Mass driver $10B capital is my extrapolation, not a Handmer figure. Reactor alone is $2-4B per Handmer; total capital could be 2-4× my assumption. Would shift early-era $/kg by ±$50-100 — small but real."

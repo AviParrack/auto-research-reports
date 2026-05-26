@@ -11,6 +11,10 @@ passes_status:
   consistency: done
   write: done
 last_pass: 6
+contradictions_with:
+  - leaf: q6-orbital-demand
+    topic: list-price-vs-internal-cost-coupling
+    summary: "q1.c5 reports Falcon 9 list prices rising at $500/kg/yr while q1.c1 internal cost runs $107-466/kg under partial-reuse. q6 BAU demand projection implicitly assumes internal-cost-level pricing propagates to commercial pricing. If list prices stay above ~$1,000/kg through 2030, q6's BAU demand compresses ~3x. Not a contradiction in fact — a regime-coupling for q8 synthesis."
 flagged_for_avi:
   - "Citigroup 2040 forecast secondhand-cited; primary BusinessWire URL surfaced by Codex audit but not yet fetched (timed out). Worth a refetch."
   - "Falcon-9-to-Starship reuse extrapolation is a structural caveat carried through claims c6 + c8."

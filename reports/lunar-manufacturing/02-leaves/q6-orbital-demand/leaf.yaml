@@ -9,6 +9,13 @@ passes_status:
   consistency: done
   write: done
 last_pass: 6
+contradictions_with:
+  - leaf: q1-earth-launch-cost
+    topic: list-price-vs-internal-cost-coupling
+    summary: "q1.c5 Falcon 9 list prices rising at $500/kg/yr vs q1.c1 internal $107-466/kg. q6 BAU demand projection implicitly assumes internal-cost-level pricing propagates to commercial. The specific '$1,000/kg through 2030 → 10-20 GW' sensitivity is cross-pass inference flagged for q8 synthesis, not encoded in q6 claims.yaml. Recorded reciprocally on q1."
+  - leaf: q7-mass-driver-feasibility
+    topic: tai-c-supply-side-coupling
+    summary: "q6.c6's lunar-architecturally-necessary conclusion under TAI-C presupposes mass-driver throughput exists at Mt/yr scale, which q7 says is TAI-grade only ($13B capex / 1.5yr buildup). q6 demand-side TAI-C and q7 supply-side TAI-grade are matched regime claims. Cross-leaf dependency."
 sources_gathered:
   - marcy-2026-arxiv
   - nasa-otps-sbsp-2024

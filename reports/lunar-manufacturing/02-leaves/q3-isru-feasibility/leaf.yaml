@@ -9,7 +9,10 @@ passes_status:
   consistency: done
   write: done
 last_pass: 6
-contradictions_with: []
+contradictions_with:
+  - leaf: q2-lunar-ascent-cost
+    topic: hydrolox-polar-ice-gate
+    summary: "q3.c4's polar-ice geological gate (pending VIPER late-2027) is the binding constraint on q2's aggressive-ISRU hydrolox scenarios. Cross-leaf dependency, not contradiction. Recorded reciprocally on q2."
 sources_gathered:
   - sierra-space-carbothermal-2024
   - lyon-industries-isru-2026

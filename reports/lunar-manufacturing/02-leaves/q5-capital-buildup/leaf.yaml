@@ -11,8 +11,11 @@ passes_status:
 last_pass: 6
 contradictions_with:
   - leaf: q7-mass-driver-feasibility
-    nature: scope-mismatch
-    detail: "q7 BAU mass-driver capex $1.24T is on top of q5 base capex $150-400B; combined architecture is $1.4-1.7T. NOT a contradiction in fact (different scopes: q5 base, q7 launch system); load-bearing for write-pass narrative."
+    topic: base-plus-mass-driver-capex-stacking
+    summary: "q7 BAU mass-driver capex $1.24T is on top of q5 base capex $150-400B; combined BAU full architecture is $1.4-1.7T. NOT a contradiction in fact — different scopes (q5 base, q7 launch system). Synthesis must use 'base + mass-driver launch system' phrasing to avoid reading q5 as 'the answer.' Recorded reciprocally on q7."
+  - leaf: q3-isru-feasibility
+    topic: propellant-scope-dependency
+    summary: "q5 propellant scope is LOX + LH2 (never LCH4) per q3.c5. q5 implicitly assumes Earth-imported methane for any methalox uses. Cross-leaf dependency, not contradiction."
 sources_by_tier:
   S: 9
   A: 10

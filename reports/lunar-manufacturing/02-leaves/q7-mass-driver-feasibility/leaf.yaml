@@ -47,8 +47,7 @@ flagged_for_avi:
 contradictions_with:
   - leaf: q2-lunar-ascent-cost
     topic: capital-cost-mass-driver
-    summary: "q2.c5 assumes $10B mass-driver capital with 20-yr amortization; q7.c6 first-principles BAU lands at $1,242B (100x). Reconciled only at q7 TAI-grade compression ($13.3B). Load-bearing for the report's $50/kg late-era headline."
-contradictions_with:
-  - leaf: q2-lunar-ascent-cost
-    topic: capital-cost-mass-driver
-    summary: "q2.c5 assumes $10B mass-driver capital with 20-yr amortization; q7.c6 first-principles BAU lands at $1,242B (100x). Reconciled only at q7 TAI-grade compression ($13.3B). Load-bearing for the report's $50/kg late-era headline."
+    summary: "q2.c5 assumes $10B mass-driver capital with 20-yr amortization; q7.c6 first-principles BAU lands at $1,242B (124x). Reconciled only at q7 TAI-grade compression ($13.3B). Load-bearing for the report's $50/kg late-era headline. q7.c6/c8 are themselves low-confidence speculative anchors — synthesis must preserve that uncertainty. Recorded reciprocally on q2."
+  - leaf: q5-capital-buildup
+    topic: base-plus-mass-driver-capex-stacking
+    summary: "q7's mass-driver capex stacks ON TOP OF q5's base capex; not an alternative. Combined BAU full architecture $1.4-1.7T. Synthesis must distinguish 'base only' from 'base + mass-driver launch system' framings. Recorded reciprocally on q5."
