@@ -1,17 +1,20 @@
 slug: lunar-manufacturing
 root_question: "When does lunar surface manufacturing become cheaper than Earth launch for orbital infrastructure?"
-status: in_progress
-current_pass: 2
+status: done
+current_pass: 9
 created: 2026-05-25
-last_updated: 2026-05-25T14:52:00Z
+last_updated: 2026-05-26T00:00:00Z
 models:
   primary: claude-opus-4-7
   critic: codex:gpt-5
 deploy:
   cloudflare_project: auto-research-reports
 termination:
-  root_answered: false
+  root_answered: true
   all_figures_reviewed: false
+synthesis_versions:
+  - v1
+  - v1-codex
 figures_identified:
   - philip-metzger
   - andrew-mccalip

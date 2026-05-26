@@ -1,8 +1,8 @@
 root:
   id: root
   question: "When does lunar surface manufacturing become cheaper than Earth launch for orbital infrastructure?"
-  answer: null
-  status: open
+  answer: "Under TAI-grade compression — and only there — on two independent legs: (1) cost: mass-driver+SEP $50/kg vs optimistic-late Starship $59/kg, with the cycle-life gap (5-7 OOM beyond demonstrated) as binding engineering risk; (2) throughput necessity: TAI-C SDC demand 10× Earth-launch ceiling, lunar bulk mass architecturally necessary for ~50% of SDC mass budget. Under BAU, neither leg holds (mass driver doesn't reach scale; demand fits inside Earth-launch capacity). Under stall, demand fails entirely. The framework is the deliverable; the headline number is conditional on the regime obtaining. Synthesis at 03-synthesis/v1/."
+  status: answered
 
 nodes:
   - id: q1-earth-launch-cost
@@ -10,13 +10,13 @@ nodes:
     depth: 1
     type: leaf
     question: "What is the projected cost per kg to LEO from Earth launch over 2026-2040, with realistic uncertainty bands?"
-    status: open
-    answer: null
-    confidence: null
+    status: answered
+    answer: "Three operational scenarios bracket Starship cost-per-kg to LEO: optimistic $59-277/kg internal cost, partial $107-466/kg (demonstrated by B1076 34-reuse milestone), pessimistic $194-878/kg. Refurbishment rate dominates, not hardware amortization. Musk's $10/kg target sits outside the calc envelope unless TAI-grade compression AND zero-margin pricing both occur. Falcon 9 list prices rising at $500/kg/yr — Starship has not yet pulled market prices down."
+    confidence: medium-high
     leaf_path: 02-leaves/q1-earth-launch-cost/
     created_by: agent
     created_pass: 1
-    last_touched_pass: 1
+    last_touched_pass: 6
     children: []
 
   - id: q2-lunar-ascent-cost
@@ -24,13 +24,13 @@ nodes:
     depth: 1
     type: leaf
     question: "What is the projected cost per kg from lunar surface to LEO over 2026-2040, broken out by chemical rocket vs mass driver delivery?"
-    status: open
-    answer: null
-    confidence: null
+    status: answered
+    answer: "Lunar-surface-to-LEO cost spans $50-$13,029/kg across realistic aerobraking-included scenarios (chemical Earth-imports-only $1,303-$13,029/kg, chemical aggressive-ISRU $994-$8,912/kg, mass-driver+SEP $50-$528/kg). Architectural choice (aerobraking vs propulsive; mass-driver vs chemical) more consequential than propellant chemistry. Only mass-driver+SEP at late-era throughput closes within a factor of 2 of q1's optimistic-late Starship ($50 vs $59/kg) — and the $10B capital assumption is TAI-conditional per q7."
+    confidence: medium-high
     leaf_path: 02-leaves/q2-lunar-ascent-cost/
     created_by: agent
     created_pass: 1
-    last_touched_pass: 1
+    last_touched_pass: 6
     children: []
 
   - id: q3-isru-feasibility
@@ -52,13 +52,13 @@ nodes:
     depth: 1
     type: leaf
     question: "What capital-mass-to-product-mass ratio (Metzger's gear ratio) must lunar capital achieve for economic viability, and is this attainable with realistic ISRU technology?"
-    status: open
-    answer: null
-    confidence: null
+    status: answered
+    answer: "Approximately 35× φ-threshold for absolute advantage at GTO under Metzger's mid-range. LEO structurally harder (Γ ≈ 14 chemical, ≈ 1 with SEP). Tent sublimation (φ = 442-534 in published TEAs) exceeds the threshold by an order of magnitude; strip mining clusters at or near it. Threshold is model-contingent, not universal physics. Industrial-explosion / TAI automation compressing capital mass puts even pessimistic ISRU technologies far above threshold."
+    confidence: high
     leaf_path: 02-leaves/q4-gear-ratio/
     created_by: agent
     created_pass: 1
-    last_touched_pass: 1
+    last_touched_pass: 6
     children: []
 
   - id: q5-capital-buildup
@@ -66,13 +66,13 @@ nodes:
     depth: 1
     type: leaf
     question: "What upfront capex and what discrete engineering milestones are required to establish a lunar manufacturing base capable of net-positive export, and how compressible is each milestone under industrial-explosion or TAI-grade automation?"
-    status: open
-    answer: null
-    confidence: null
+    status: answered
+    answer: "Net-positive-export base capex: BAU $150-400B over 20-25 years; industrial-explosion $1.2B over ~5 years (140× compression, consistent with Shotwell's 5-year framing); TAI degenerate near-zero capex but lead-time-bound, with M6 12-month crewed-occupation as irreducible floor. Earth-side hardware capex dominates launch capex by 1-2 OOM across all regimes. q5 base capex is additive with q7 mass-driver capex: combined BAU full architecture $1.4-1.7T; TAI full architecture $15-25B."
+    confidence: medium
     leaf_path: 02-leaves/q5-capital-buildup/
     created_by: agent
     created_pass: 1
-    last_touched_pass: 1
+    last_touched_pass: 6
     children: []
 
   - id: q6-orbital-demand
@@ -80,13 +80,13 @@ nodes:
     depth: 1
     type: leaf
     question: "What is the projected demand for structural mass and propellant in LEO and cislunar space 2026-2040, split by use case (data centers, solar power, depots, deep-space missions)?"
-    status: open
-    answer: null
-    confidence: null
+    status: answered
+    answer: "Demand spans three orders of magnitude across regimes: stall ~20kt cumulative, BAU ~2.15Mt, TAI-C ~42.9Mt. SDC dominates at ~93% under BAU and TAI-C (mass intensity ~40 t/MW continuous compute). Under TAI-C, SDC demand alone (~2.67 Mt/yr) exceeds plausible Earth-launch throughput (~400 kt/yr) by 10×, making lunar bulk mass architecturally necessary for ~50% of SDC mass budget; the other ~50% (compute hardware) stays Earth-launch-bound. Stall regime fails the lunar manufacturing thesis for lack of demand."
+    confidence: medium-high
     leaf_path: 02-leaves/q6-orbital-demand/
     created_by: agent
     created_pass: 1
-    last_touched_pass: 1
+    last_touched_pass: 6
     children: []
 
   - id: q7-mass-driver-feasibility
@@ -94,13 +94,13 @@ nodes:
     depth: 1
     type: constraint
     question: "What engineering and capital work remains before a lunar mass driver is operational, how compressible is each step under industrial-explosion or TAI-level automation, and how much does the root answer depend on its availability vs. chemical-rocket-only delivery?"
-    status: open
-    answer: null
-    confidence: null
+    status: answered
+    answer: "First-principles BAU capex $1,242B over 20-30 years (96% track + drive coils); industrial-explosion $127B / ~6 years; TAI-grade $13.3B / ~1.5 years (converges with q2's $10B assumption and NASA 1979 SP-428 inflated). Stall never reached. Cycle-life gap (10⁶-10⁹ shots required vs ~10³ demonstrated; Navy EMRG cancelled 2021) is the binding engineering risk independent of capital and TAI compression — requires materials-science breakthrough. q2's $50/kg mass-driver headline is TAI-conditional."
+    confidence: medium-low
     leaf_path: 02-leaves/q7-mass-driver-feasibility/
     created_by: agent
     created_pass: 1
-    last_touched_pass: 1
+    last_touched_pass: 6
     children: []
 
   - id: q8-synthesis-crossover
@@ -108,11 +108,11 @@ nodes:
     depth: 1
     type: synthesis
     question: "Integrating Starship cost curve, lunar gear ratio, ISRU feasibility, capital buildup, and orbital demand: when (if ever) does lunar-sourced bulk mass beat Earth-launched mass for orbital infrastructure, and under what scenarios does the crossover materialise?"
-    status: open
-    answer: null
-    confidence: null
+    status: answered
+    answer: "Under TAI-grade compression — and only there — on two independent legs: (1) cost: mass-driver+SEP $50/kg vs optimistic-late Starship $59/kg, with the cycle-life gap as binding engineering risk; (2) throughput necessity: TAI-C SDC demand 10× Earth-launch ceiling, lunar bulk mass architecturally necessary for ~50% of SDC mass budget. Under BAU neither leg holds; under stall demand fails. Synthesis at 03-synthesis/v1/."
+    confidence: medium
     leaf_path: 02-leaves/q8-synthesis-crossover/
     created_by: agent
     created_pass: 1
-    last_touched_pass: 1
+    last_touched_pass: 7
     children: []
