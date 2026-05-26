@@ -184,23 +184,25 @@ function alignmentScore(s: EnrichedSource): number {
         </button>
       ))}
     </div>
-    {leafFacets.length > 0 && (
-      <div class="flex items-baseline gap-2 mb-2 flex-wrap">
-        <span class="text-[var(--color-ink-soft)] uppercase tracking-wider shrink-0">Leaf:</span>
-        {leafFacets.map(([k, n]) => (
-          <button type="button" data-filter="leaf" data-value={k}
-            class="px-2 py-0.5 rounded border border-[var(--color-line)] font-mono hover:bg-[var(--color-paper-dim)] transition-colors data-[active=true]:bg-[var(--color-accent)] data-[active=true]:text-white data-[active=true]:border-[var(--color-accent)]">
-            {k} <span class="opacity-60">{n}</span>
-          </button>
-        ))}
-      </div>
-    )}
     {typeFacets.length > 0 && (
       <details class="mb-2">
         <summary class="cursor-pointer text-[var(--color-ink-soft)] uppercase tracking-wider">Type ({typeFacets.length})</summary>
         <div class="flex flex-wrap gap-2 mt-2">
           {typeFacets.map(([k, n]) => (
             <button type="button" data-filter="type" data-value={k}
+              class="px-2 py-0.5 rounded border border-[var(--color-line)] font-mono hover:bg-[var(--color-paper-dim)] transition-colors data-[active=true]:bg-[var(--color-accent)] data-[active=true]:text-white data-[active=true]:border-[var(--color-accent)]">
+              {k} <span class="opacity-60">{n}</span>
+            </button>
+          ))}
+        </div>
+      </details>
+    )}
+    {leafFacets.length > 0 && (
+      <details class="mb-2">
+        <summary class="cursor-pointer text-[var(--color-ink-soft)] uppercase tracking-wider">Leaf ({leafFacets.length})</summary>
+        <div class="flex flex-wrap gap-2 mt-2">
+          {leafFacets.map(([k, n]) => (
+            <button type="button" data-filter="leaf" data-value={k}
               class="px-2 py-0.5 rounded border border-[var(--color-line)] font-mono hover:bg-[var(--color-paper-dim)] transition-colors data-[active=true]:bg-[var(--color-accent)] data-[active=true]:text-white data-[active=true]:border-[var(--color-accent)]">
               {k} <span class="opacity-60">{n}</span>
             </button>
