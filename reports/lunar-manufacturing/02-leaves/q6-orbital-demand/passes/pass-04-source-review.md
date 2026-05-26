@@ -9,10 +9,17 @@ status: done
 # Pass 4 — Source Review (tier-dependent depth)
 
 Per-source review at depth matched to tier (per source-tiers.md):
-- Tier S: full claim-by-claim review (7 sources)
+- Tier S: full claim-by-claim review against local extract.md content
+  (7 sources). Note: for five of the seven tier-S sources, the primary
+  PDF was binary-unparseable via WebFetch, so review claims were
+  extracted from abstracts, ResearchGate / ADS metadata, secondary
+  aggregators, or NASA architecture-site descriptions. The "claim-by-
+  claim" framing applies to what's in the local extract.md, not to
+  full primary text. Future iteration should hand-extract primary PDFs
+  for deeper review.
 - Tier A: medium review with 3-5 key claims (2 sources)
 - Tier B: per-public-figure quote review (5 figures)
-- Tier C: scalar verdict + 1 paragraph (9 sources)
+- Tier C: scalar verdict + 1 paragraph (11 sources — corrected count)
 - Tier D: scalar verdict + flag if conflicts higher tier (7 sources)
 - Tier E: not reviewed (5 wiki sources)
 
@@ -32,9 +39,10 @@ aggregates the headline verdicts.
 | ida-demand-drivers | Consistent 3 / Merits 1 | 4 |
 
 **Tier S net:** 22 consistent verdicts, 2 novel supporting, 5 merits-
-investigation, 1 different-conclusion. The single different-conclusion
-verdict (NASA OTPS vs Saarland on emissions) is tangential to q6's
-mass-demand question and flagged for synthesis.
+investigation, 1 different-conclusion, 1 not-relevant (Crawford
+Earth-Moon-system-coupling). The single different-conclusion verdict
+(NASA OTPS vs Saarland on emissions) is tangential to q6's mass-
+demand question and flagged for synthesis.
 
 ## Tier A verdicts (2 sources)
 
@@ -54,10 +62,11 @@ mass-demand question and flagged for synthesis.
 | Andrew McCalip | Supports BAU skepticism; 3.2× cost-multiple is canonical skeptical bracket |
 
 **Tier B net:** Three figures supporting the optimist + conditional-
-optimist case (Musk, Bezos, Metzger, Handmer); one figure supporting
-the skeptic case (McCalip). The McCalip / Handmer cost-multiple delta
-(3.2× vs 2×) brackets the BAU-to-TAI-C transition; q6.c2 and q6.c10
-explicitly capture this.
+optimist case (Musk, Metzger, Handmer); one figure mixed (Bezos —
+"beat terrestrial cost" contradicts BAU McCalip but supports TAI-C);
+one figure supporting the BAU-skeptic case (McCalip). The McCalip /
+Handmer cost-multiple delta (3.2× vs 2×) brackets the BAU-to-TAI-C
+transition; q6.c2 and q6.c10 explicitly capture this.
 
 ## Tier C verdicts (9 sources, scalar)
 
@@ -128,7 +137,10 @@ Two divergent findings within the source set:
 ## Anti-hallucination checks (per source-tiers.md)
 
 - All quoted figures in tier S/A/B reviews appear verbatim in the
-  source extract.md files.
+  corresponding LOCAL extract.md files. This is a check against
+  hallucinated quotes; it is not equivalent to verification against
+  original primary PDFs, which for five of seven tier-S sources were
+  not parseable via WebFetch.
 - Verdicts assigned per Newman taxonomy (Consistent / Different
   conclusion / Novel supporting / Merits investigation / Not relevant)
   for tier S; per scalar verdict (Consistent / Mixed / Different
@@ -136,6 +148,11 @@ Two divergent findings within the source set:
 - Scalar verdicts at tier C/D are calibrated against tier S findings;
   no tier C/D verdict contradicts a tier S finding without explicit
   flag.
+- Codex pass-04 audit caught two specific cross-attribution errors:
+  the scientificamerican-2026-sdc review incorrectly attributed
+  Marcy's 100 GW figure to Scientific American; the marcy-2026-arxiv
+  review had a 1000× unit error in the kg/m² density derivation. Both
+  fixed in the individual review files.
 
 ## Codex audit
 

@@ -11,8 +11,9 @@ reviewed_by: claude+gpt
 **Confidence:** medium
 **Conflicts with higher tier?** Partial — see emissions question.
 
-The 100 GW US data center demand by 2030 framing and the Google
-Suncatcher $200/kg threshold both align with tier S findings. The
+The "nearly half of U.S. electricity demand growth through 2030" data
+center framing, the Starcloud 5 GW by 2035 figure, and the Google
+Suncatcher $200/kg threshold all align with tier S findings. The
 10×-lower vs 10×-higher emissions debate between Starcloud and
 Saarland researchers is a real disagreement; Scientific American
 correctly presents both sides without endorsing either. The Benjamin

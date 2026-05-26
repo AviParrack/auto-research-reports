@@ -20,7 +20,7 @@ ceiling.
 
 - **US data center power demand >100 GW by 2035** → Consistent. Directly underlies q6.c2 TAI-C 1,000 GW scenario by extrapolation (orbital DC captures fraction of full demand). Also corroborates scientificamerican-2026-sdc.
 
-- **5 GW orbital facility = 4×4 km array** → Consistent. Implies ~20-30 t/m² panel mass density consistent with q6.c1 SDC 40 t/MW range (5 GW × 40 t/MW = 200,000 t in 16 km² → 12.5 t/m²; Marcy's geometric description is plausible for thin-film at integrated structures).
+- **5 GW orbital facility = 4×4 km array** → Consistent. Implies ~12.5 kg/m² total system mass density at the SDC 40 t/MW range (5 GW × 40 t/MW = 200,000 t in 16 km² → 12.5 kg/m²). Marcy's geometric description is plausible for thin-film panels with integrated radiator + structure mass.
 
 - **Orbital-brightness magnitude g = -5 to -7** → Consistent (tangential to q6). The astronomy concern reinforces that aggressive scale-up faces non-launch-cost constraints.
 
