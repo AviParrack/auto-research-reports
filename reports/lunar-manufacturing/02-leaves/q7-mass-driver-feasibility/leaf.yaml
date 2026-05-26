@@ -6,6 +6,10 @@ passes_status:
   calc: done
   reconcile: done
   source-review: done
-  consistency: pending
+  consistency: done
   write: pending
-last_pass: 4
+last_pass: 5
+contradictions_with:
+  - leaf: q2-lunar-ascent-cost
+    topic: capital-cost-mass-driver
+    summary: "q2.c5 assumes $10B mass-driver capital with 20-yr amortization; q7.c6 first-principles BAU lands at $1,242B (100x). Reconciled only at q7 TAI-grade compression ($13.3B). Load-bearing for the report's $50/kg late-era headline."
