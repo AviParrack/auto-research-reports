@@ -5,11 +5,14 @@ passes_status:
   research: done
   calc: done
   reconcile: done
-  source-review: pending
-  consistency: pending
+  source-review: done
+  consistency: done
   write: pending
-last_pass: 3
-contradictions_with: []
+last_pass: 5
+contradictions_with:
+  - leaf: q7-mass-driver-feasibility
+    nature: scope-mismatch
+    detail: "q7 BAU mass-driver capex $1.24T is on top of q5 base capex $150-400B; combined architecture is $1.4-1.7T. NOT a contradiction in fact (different scopes: q5 base, q7 launch system); load-bearing for write-pass narrative."
 sources_by_tier:
   S: 9
   A: 10
