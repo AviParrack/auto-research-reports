@@ -181,3 +181,106 @@
     human:
       status: unnoted
       comment_file: null
+
+- id: q5.c11
+  text: "PwC 2026 projects cumulative lunar infrastructure spend of US$72.7-88.5B across all parties (NASA + ESA + JAXA + China + commercial) over 2026-2050. Transportation accounts for 70-80% of cost in 2026-2035, declining to 50-60% by 2046-2050. This figure is in the same order of magnitude as our BAU total-program-capex range ($150-400B over 20 years) but is NOT a cross-methodology convergence: it is all-party cumulative across all infrastructure, whereas our calc is one-program first-principles for a single net-positive-export base."
+  type: factual
+  evidence:
+    - source: pwc-2026-lunar-market
+      ref: abstract
+      verdict: supports
+    - source: first-principles-calc
+      ref: pass-03-reconcile.md
+      verdict: partial
+  confidence: high
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-03-audit.md
+      notes: "Codex correctly flagged my original 'convergence within 20%' framing as artifact of subtotal selection. Claim text amended: PwC is a published anchor in the same order of magnitude, not a methodology cross-validation."
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q5.c12
+  text: "Combined NASA public-program lunar capex through approximately 2033 is around $115-140B order of magnitude: $93B Artemis program-of-record through FY2025 (NASA OIG audit 2021) plus $20B Isaacman 2026 announcement for surface base infrastructure over 7 years plus ongoing operations. SLS/Orion per-launch production cost approximately $4.1B (OIG 2021). This is the cislunar-transport-plus-surface-base cost; it excludes a manufacturing complement and the net-positive-export endpoint."
+  type: factual
+  evidence:
+    - source: nasa-oig-2021-artemis-93b
+      ref: abstract
+      verdict: supports
+    - source: figure-isaacman
+      ref: 20b-7-years
+      verdict: supports
+    - source: spaceflightnow-2026-20b-moonbase
+      ref: 20b-7-years
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-03-audit.md
+      notes: "Codex confirmed these are well-anchored public figures. The $115-140B aggregation is straightforward addition; my claim about scope (transport-plus-base, not manufacturing) matches Isaacman's own framing."
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q5.c13
+  text: "Sowers' Commercial Lunar Propellant Architecture (2018 study; 2021 New Space business case) projects a $4 billion initial investment ($2.5 billion for the capture-tent ISRU plant) for a tent-sublimation propellant production architecture with end-state output of approximately 2,450 tonnes propellant per year, 9 percent ROI, $550M annual revenue, $2B profit over a 15-year project life. The architecture is fully robotic (no humans at the mining site) and assumes commercial launch (not SLS-class) transport. This anchors the commercial M5-only target; the architecture is fundamentally different from our manufacturing-export base and is not directly comparable via simple capex scaling."
+  type: factual
+  evidence:
+    - source: sowers-2021-ice-mining
+      ref: abstract
+      verdict: supports
+    - source: figure-sowers
+      ref: 4b-luxury-hotel
+      verdict: supports
+    - source: sowers-2018-clpa
+      ref: abstract
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: flagged
+      audit_file: passes/pass-03-audit.md
+      notes: "Codex correctly noted that my φ-rescaling from 20 to 534 does not give a defensible numeric bridge between our calc and Sowers' $4B. Claim text amended to state they are not directly comparable rather than reconcilable via scaling."
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q5.c14
+  text: "Metzger et al. 2013 'Affordable, Rapid Bootstrapping' models that 12 metric tons landed on the Moon over approximately 20 years can seed a self-sustaining industrial endpoint of 156 MT (60 humanoid robots) or up to 40,000 MT (100,000 humanoid robots) under accelerated launch cadence (41 MT total Earth-launched). The bootstrap mechanism is the generation scheme (Gen 1.0 to Gen 6.0) in which the seed produces successively less-crude lunar-made hardware until electronics reach 90 percent lunar-made by Gen 3.0 and 100 percent by Gen 6.0. Metzger does not assess development cost. This framework is consistent with the industrial-explosion regime's 10x Earth-launched mass compression but does not validate cost compression to the same degree."
+  type: factual
+  evidence:
+    - source: metzger-2013-bootstrap
+      ref: seed-mass-12t-20yr
+      verdict: supports
+    - source: metzger-2013-bootstrap
+      ref: terminal-mass-156t-60robots
+      verdict: supports
+  confidence: high
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-03-audit.md
+      notes: "Codex confirmed Metzger really does model 41 MT total Earth-launched mass and the Gen 3+ electronics local-production assumption supports mass compression direction; cost compression is not validated (development cost, failure realism, supply-chain closure excluded)."
+    human:
+      status: unnoted
+      comment_file: null
+
+- id: q5.c15
+  text: "Published lunar capex anchors span approximately three orders of magnitude ($1.5B Zubrin Moon Direct to $1T+ Handmer mature industry), but the spread is explained by scope (product class, milestone, transport architecture) rather than analytical disagreement. When normalized to the same scope, the analytical disagreement between credible sources is approximately 2-4x, which is the expected range for an early-stage area of engineering economics. None of the seven published anchors directly cross-validates our BAU $150-400B figure at the same scope; our calc is the only first-principles full-scope estimate in this corpus for a net-positive-export base."
+  type: derived
+  evidence:
+    - source: first-principles-calc
+      ref: pass-03-reconcile.md
+      verdict: supports
+  confidence: medium
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-03-audit.md
+      notes: "Codex agreed that the scope-normalization decomposition is fair (Zubrin minimal-presence, Sowers propellant-only, Isaacman M6-surface-base-only, PwC all-party-cumulative, MacDonald 1989-architecture, Handmer mature-industry). Confidence stays medium because the scope-normalization itself can be challenged."
+    human:
+      status: unnoted
+      comment_file: null
