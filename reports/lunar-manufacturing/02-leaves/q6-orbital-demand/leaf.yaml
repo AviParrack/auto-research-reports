@@ -1,14 +1,14 @@
 id: q6-orbital-demand
 question: "What is the projected demand for structural mass and propellant in LEO and cislunar space 2026-2040, split by use case (data centers, solar power, depots, deep-space missions)?"
-status: researching
+status: reviewed
 passes_status:
   research: done
   calc: done
   reconcile: done
   source-review: done
-  consistency: pending
-  write: pending
-last_pass: 4
+  consistency: done
+  write: done
+last_pass: 6
 sources_gathered:
   - marcy-2026-arxiv
   - nasa-otps-sbsp-2024
@@ -46,7 +46,19 @@ sources_by_tier:
   S: 7
   A: 2
   B: 5
-  C: 9
+  C: 11
   D: 7
   E: 5
+  total: 37
 contradictions_with: []
+flagged_for_avi:
+  - item: "q6.c6 lunar-sourced-bulk-mass necessary-but-not-sufficient conclusion is conditional on TAI-C scenario obtaining. Codex pass-03 audit flagged this as 'not source-settled'; framing held in write but worth Avi's eyes for q8 synthesis."
+    severity: medium
+  - item: "Cote bandwidth-ceiling rebuttal (OISL bypass + training-not-inference) is the author's argument, not source-supported. Codex pass-03 flagged severity:high. ~200 GW TAI-C SDC fallback ceiling is a real sensitivity that q8 should engage."
+    severity: high
+  - item: "Five of seven tier-S source PDFs were not parseable via WebFetch during pass-04 source-review; reviewed against abstracts and secondary aggregators. Hand-extraction of primary PDFs is a future-pass action item."
+    severity: medium
+  - item: "TAI-C demand projection rests on three load-bearing aspirational positions (Marcy 100 GW, SpaceX/xAI 1M-sat filing, Musk Mars cadence). Each is plausible under industrial-compression; none operationally committed. Any one slipping compresses TAI-C number by 2-5x."
+    severity: medium
+  - item: "q1↔q6 demand-elasticity-cost coupling: q1.c5 Falcon 9 list prices rising $500/kg/yr is a partial counter-signal to BAU 50 GW SDC adoption. Internal-cost vs list-price distinction matters for which regime materializes commercially. Flagged for q8."
+    severity: medium
