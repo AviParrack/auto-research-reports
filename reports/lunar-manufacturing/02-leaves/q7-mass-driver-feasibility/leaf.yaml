@@ -1,14 +1,53 @@
 id: q7-mass-driver-feasibility
 question: "What engineering and capital work remains before a lunar mass driver is operational, how compressible is each step under industrial-explosion or TAI-level automation, and how much does the root answer depend on its availability vs. chemical-rocket-only delivery?"
-status: researching
+status: reviewed
 passes_status:
   research: done
   calc: done
   reconcile: done
   source-review: done
   consistency: done
-  write: pending
-last_pass: 5
+  write: done
+last_pass: 6
+sources_gathered:
+  - aiaa-2025-4123-mass-driver-tech
+  - coilgun-wiki-engineering
+  - dsiac-hypervelocity-2015
+  - handmer-mass-driver-2026
+  - handmer-moon-factories-2026
+  - janhunen-2024-gravity-anomalies
+  - kolm-l5-news-1980
+  - lunarpedia-mass-drivers
+  - mass-driver-wiki
+  - metzger-twitter-2025
+  - musk-mass-driver-tweet-2026
+  - nasa-mass-drivers-iii-1979
+  - oneill-kolm-acta-1980
+  - pearson-lunar-elevator-2005
+  - peterkin-general-atomics-2023
+  - sciencearray-mass-drivers
+  - spinlaunch-status-2025
+  - wright-kuznetsov-kloesel-2011
+sources_by_tier:
+  S: 4   # wright-2011, nasa-sp428-1979, oneill-kolm-acta-1980, pearson-niac-2005
+  A: 4   # aiaa-2025-4123, janhunen-2024, dsiac-2015, kolm-l5-news-1980
+  B: 3   # peterkin, musk, metzger (3 figures, 1-4 quotes each)
+  C: 4   # handmer-may-2026, handmer-feb-2026, sciencearray, spinlaunch
+  D: 0
+  E: 3   # lunarpedia, coilgun-wiki, mass-driver-wiki (orientation only)
+flagged_for_avi:
+  - "q7.c6 BAU capex ($1,242B) carries low confidence — the 200x lunar construction multiplier on EMALS pricing is a sourced prior with wide uncertainty (50x-1000x plausible range; capex swings $300B-$6T). Confirm framing acceptable for q8 synthesis."
+  - "q7.c8 regime compression factors (track 100x under TAI, construction 50x) are scenario priors per anti-pattern #11, not externally validated. If TAI compression is only 10x, the TAI capex rises to $100B and the q2 headline collapses."
+  - "Load-bearing q2-q7 contradiction: q2.c5 $10B capital vs q7.c6 $1,242B BAU. Reconciled only at TAI-grade compression ($13.3B). The report's $50/kg late-era headline is conditional on TAI economics — explicitly bridge this in q8 synthesis."
+  - "Cycle-life gap (q7.c10): 10^6-10^9 shots required for Mt-scale operations vs ~10^3 demonstrated (Navy EMRG cancelled 2021). Strongest single-source corroboration is Handmer 2026 explicit caveat. Candidate for q7.1 sub-leaf in next tree-pass."
+  - "Primary sources not fully fetched: O'Neill-Kolm Acta Astronautica 1980 PDF; AIAA 2025-4123 paywalled full PDF; SP-428 1979 96.4% efficiency claim subsystem breakdown. Bibliographic anchors in place; full Tier-S claim-by-claim review awaits future iteration."
+  - "Musk 500-1000 TW/yr AI satellite capacity claim is contradicted by q7 BAU and IE regimes under reasonable kg/kW mass intensity (~1-10 kg/kW); reconciled only under aggressively low ≤0.1 kg/kW for ultra-thin-film satellites. Aspirational, not engineering-grounded."
+  - "Codex caught one anti-hallucination hit in pass-4 source-review (Wright efficiency decomposition misquoted); corrected. No other anti-hallucination flags."
+  - "Alternative architecture (Pearson NIAC 2005 lunar elevator) is documented but not deeply explored. If elevator is more easily engineered, q4→q7→q2 chain has a competing branch worth surfacing in synthesis."
+contradictions_with:
+  - leaf: q2-lunar-ascent-cost
+    topic: capital-cost-mass-driver
+    summary: "q2.c5 assumes $10B mass-driver capital with 20-yr amortization; q7.c6 first-principles BAU lands at $1,242B (100x). Reconciled only at q7 TAI-grade compression ($13.3B). Load-bearing for the report's $50/kg late-era headline."
 contradictions_with:
   - leaf: q2-lunar-ascent-cost
     topic: capital-cost-mass-driver
