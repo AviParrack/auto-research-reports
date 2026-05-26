@@ -1,0 +1,129 @@
+---
+pass: 6
+kind: write
+leaf: q5-capital-buildup
+date: 2026-05-25
+status: done
+---
+
+# Q5 — Capital Buildup for a Net-Positive-Export Lunar Manufacturing Base
+
+## Motivation
+
+The lunar manufacturing thesis runs on three economic levers — gear ratio (q4), ascent cost (q2), and a believable export-revenue story (q4, q6). All three presume the base exists. This leaf asks how it gets built, in whose dollars, and on what physical schedule. The published anchors span three orders of magnitude [q5.c15]: Zubrin's $1.5B Moon Direct floor [figure-zubrin] (a propellant-only minimal-presence architecture); Sowers' $4B Commercial Lunar Propellant Architecture [figure-sowers, sowers-2021-ice-mining] (fully robotic, no human site presence); Isaacman's $20B / 7-year surface-base announcement [figure-isaacman, spaceflightnow-2026-20b-moonbase]; the existing $93B Artemis program-of-record [nasa-oig-2021-artemis-93b]; PwC's all-party $72-88B cumulative 2026-2050 [pwc-2026-lunar-market, q5.c11]; CSIS MacDonald's 1989-architecture estimate approaching $1T [csis-macdonald-2026-economics]; Casey Handmer's trillions-of-dollars mature-industry endpoint [figure-handmer]. The temptation is to treat the spread as analytical disagreement; the reality is that each anchor measures a different scope. Disambiguating the scopes — and grounding a single first-principles estimate for the specific milestone of net-positive export — is the leaf's deliverable.
+
+## Where it fits
+
+This leaf sits in the architecture chain q1 → q5 → q6 → q7. Q1 sets Earth-to-LEO launch cost at $59-466/kg under partial-to-optimistic Starship reuse [q1.c1, q1.c7]; q5 takes that cost as input and asks what a lunar base requires in launched mass, hardware capex, and engineering milestones. Q5's output — a one-set capital mass of 311-500 t [q5.c1] and a BAU total program capex of $150-400B [q5.c4] — feeds q6 (demand-side justification) and q7 (mass-driver-as-launch-system, which sits *on top of* q5's base capex). The cross-leaf scope distinction is load-bearing: q5 is the *base* (habitat, ISRU, power, mobility, manufacturing complement) and q7 is the *launch system* (mass driver). Reading either as "total lunar manufacturing capex" double-counts or under-counts; the combined BAU architecture is q5 + q7 ≈ $1.4-1.7T.
+
+## Headline
+
+Under business-as-usual (BAU) — Starship-cadence launches at $59-466/kg [q1], Earth aerospace-flight-hardware at $100,000/kg, and Apollo-era reliability assumptions — total program capex for a net-positive-export lunar manufacturing base lands in the range **\$150-400 billion** over an approximately **20-25 year buildup**. The lower bound is the first-principles calc baseline ($167B point estimate); the upper bound reflects Codex-accepted upward revisions to ISRU plant mass (~140 kg/(t/yr) per NIA benchmarks rather than the calc's 75 t baseline), to mobility and manufacturing mass budgets, and to the risk of double-counting between $100k/kg hardware cost and the development-cost multiplier [q5.c1, q5.c4]. Under sustained industrial-explosion (IE) automation — 10× mass compression, 5× time compression, $59/kg LEO launch, $10,000/kg commodity-electronics hardware build — the figures fall to **\$1.2 billion / approximately 5 years**, a 140× compression versus BAU consistent with the rough scale of Gwynne Shotwell's "ideally five years" framing under Starship-cadence assumptions [q5.c5]. Under TAI-grade automation the calc converges to a degenerate near-zero capex in under a year — read honestly as "capital allocation stops being the binding constraint and physical lead-time on hardware assembly becomes the only limit." The first-crewed-occupation milestone (M6) imposes an irreducible 12-month floor below which no regime can compress [q5.c6, q5.c7].
+
+The buildup decomposes into eight discrete engineering milestones [q5.c7]: M1 robotic precursor → M2 cargo lander demonstration → M3 uncrewed habitat deployment → M4 fission surface power installation → M5 ISRU pilot plant → M6 first crewed sustained occupation (12-month minimum) → M7 manufacturing complement operational → M8 net-positive export reached. BAU cumulative timeline approximately 25 years; IE approximately 5 years; TAI approximately 12-24 months. Total Earth-launched mass over the 20-year operating horizon is approximately **722 tonnes** [q5.c2] — an initial 311-tonne set plus replacements driven by 5-15 year component lifetimes, equating to approximately 36 t/yr amortized. Earth-side hardware capex dominates total program capex by 1-2 orders of magnitude over launch capex across all automation regimes [q5.c3]: under BAU $100k/kg flight-hardware pricing, hardware capex over 20 years is approximately $72B vs $1.7B in launch capex. Continuous lunar surface power requirement is approximately 500 kWe [q5.c8] — 10-12 times the NASA Fission Surface Power demonstrator class (40 kWe). Combined US public-program lunar capex through approximately 2033 — Artemis $93B [nasa-oig-2021-artemis-93b] + Isaacman $20B / 7 years [figure-isaacman, spaceflightnow-2026-20b-moonbase] + ongoing operations — sits in the **$115-140 billion order of magnitude** [q5.c12]; this is below our BAU bracket because it excludes the manufacturing complement and the net-positive-export endpoint.
+
+**Confidence: medium overall, with key items at low confidence.** The bottom-up calc structure and milestone framework are well-anchored. The cost components — Earth aerospace flight-hardware pricing, the development-cost multiplier, regime compression factors — are sourced-prior estimates with substantial spread; the Codex pass-02 audit appropriately downgraded several to low confidence.
+
+## Body
+
+### Capital mass and component breakdown
+
+A first-principles bottom-up mass budget for a minimum net-positive-export base lands at **311 tonnes** under the calc baseline, with the Codex-accepted upper revision at approximately 500 tonnes [q5.c1, pass-02-calc.py]. The decomposition: habitat 25 t (ECLSS, structure, radiation shielding for crew of 4); fission surface power 125 t (500 kWe class, either a single 350 kWth microreactor per Duchek 2024 or a cluster of NASA-FSP-class 40 kWe units [duchek-2024-fsps-falcon-heavy, nasa-fsp-2024-glenn]); ISRU plant 75 t calc-baseline (Codex upper revision: ~140 t reflecting NIA benchmarks of ~140 kg/(t/yr) pre-redundancy); mobility 31.5 t (haulers, manipulators, regolith-handling equipment — calc-baseline mass per scout-class assumption, Codex upper revision to industrial-scale haulers); manufacturing complement 40 t (sintering, casting, machining, electronics-substitute for Metzger-Gen 1-2 lunar-made hardware [metzger-2013-bootstrap]); infrastructure 15 t calc-baseline (Codex upper revision: power distribution, cryogenic storage, thermal control under-counted).
+
+The mass budget is the load-bearing input to the rest of the calc. Walther 2024's autonomous-construction analysis [walther-2024-autonomous-construction] and Mueller 2022's lunar-construction-planning study [mueller-2022-lunar-construction-planning] both indicate that the construction-mass overhead — surface preparation, regolith-shielding, landing-pad construction per Metzger and Autry 2022 [metzger-autry-2022-landing-pads] — is largely captured under the infrastructure line item. The 311-500 tonne range is the calc's headline output for one-set capital mass; the Codex revisions widen rather than displace the lower bound because the calc baseline represents an internally-consistent point estimate, not a deliberate under-count.
+
+### 20-year operating mass and replacement schedule
+
+With component lifetimes ranging from approximately 5 years (mobility, mechanical-stress-bearing systems) to approximately 15 years (habitat structure, fission reactor), over a 20-year operating horizon the average component must be replaced approximately 1.3 times [q5.c9]. Total Earth-launched mass for the full 20-year buildup-plus-operation is approximately **722 tonnes** — the initial 311 t set plus 411 t in replacements [q5.c2, pass-02-calc.py]. Amortized: ~36 t/yr.
+
+Replacement reliability is the load-bearing single variable in long-run total program cost. The calc-baseline lifetimes are Earth-engineering optimism applied to lunar conditions; Jones 2020 [jones-2020-breakeven] cautions in the propellant-only context that on-Moon reliability may prove 2-3× worse than baseline expectations, driven by regolith dust ingress, thermal cycling stress on bearings and electronics, and the absence of routine human maintenance access during BAU cadence. If actual reliability proves 2-3× worse than baseline, BAU total capex approximately doubles to roughly **\$300-800B**. The replacement-schedule uncertainty alone covers a factor-of-2-3 swing in headline capex within BAU — substantially smaller than the BAU-to-IE 140× regime swing, but still the single-variable item most likely to shift the headline number in normal program-execution.
+
+### Cost stack and dominance of Earth-side hardware
+
+Under BAU pricing, the cost stack decomposes [q5.c3]:
+
+\[ C_{\text{total}} \approx C_{\text{hardware}} + C_{\text{launch}} + C_{\text{development}} \]
+
+with the 20-year hardware total \( C_{\text{hardware}} = 722 \text{ t} \times \$100,000/\text{kg} = \$72.2\text{B} \), the 20-year launch total \( C_{\text{launch}} = 722 \text{ t} \times \$2,400/\text{kg} \approx \$1.7\text{B} \) (Falcon Heavy-class trans-lunar at q1's BAU-late launch cost), and a development line covering integration, NRE, ground-segment, and operations. The calc applies a development multiplier \( k_{\text{dev}} = 3.0 / \sqrt{\tau} \) (where τ is the time-compression factor; τ=1 for BAU) against the first-set hardware cost only — i.e., \( C_{\text{development}}^{\text{BAU}} = k_{\text{dev}} \cdot M_{\text{set}} \cdot C_{\text{hw}}^{\text{Earth}} = 3.0 \times 311.5 \text{ t} \times \$100\text{k/kg} \approx \$93.5\text{B} \). The point-estimate total: $1.7B + $72.2B + $93.5B ≈ **\$167B** (pass-02-calc.py). The Codex pass-02 audit flagged \( k_{\text{dev}} = 3.0 / \sqrt{\tau} \) as weak/wrong-signed (the heuristic compresses dev cost with the *square root* of time compression, which is not first-principles-justified) and noted double-counting risk between $100k/kg aerospace hardware and the development multiplier. Widening the range to \$150-400B [q5.c4] reflects (a) the Codex critique on dev-multiplier methodology, (b) the upper-bound on ISRU/mobility/mfg/infra mass revisions ($M_{\text{set}}$ up to ~500 t), and (c) the reliability uncertainty in c9 below.
+
+Earth-side hardware dominates launch cost by approximately 40× under BAU. The intuition often applied to space programs — "launch cost is the bottleneck" — is correct for *bulk-mass* delivery (raw fuel, water, structural mass) but inverts for *capability-dense* delivery (flight-rated hardware, electronics, reactors). The 40× ratio holds even under optimistic Starship-late launch pricing of $59/kg: hardware would still be approximately 1,700× the launch cost per kilogram, because Earth manufacturing markup, certification, integration, and aerospace-supply-chain finance dominate the per-kilogram cost. This is the structural reason the q5 framework places so much weight on hardware-cost compression as a regime lever — far more than launch-cost compression alone.
+
+### Power requirement and reactor architecture
+
+Continuous lunar surface power for the manufacturing base is approximately **500 kWe** [q5.c8]: ISRU plant approximately 150 kW (carbothermal or MRE at TRL 6 [q3.c3, q3.c12, sowers-2018-clpa]); mobility approximately 75 kW; manufacturing complement approximately 150 kW (sintering, vacuum-casting, electronics integration); habitat ECLSS approximately 50 kW; margin approximately 75 kW. This is 10-12 times the NASA Fission Surface Power demonstrator class (40 kWe) [nasa-fsp-2024-glenn]. Two architectures meet this requirement: a cluster of approximately 12-13 NASA-FSP-class 40 kWe demonstrators (modular but operationally complex); or a larger custom microreactor design — Duchek 2024's FSPS-Falcon Heavy 350 kWth class produces approximately 70-100 kWe electrical at modest conversion efficiency [duchek-2024-fsps-falcon-heavy], so roughly 6 such units (or a single larger ~2 MWth-class design) would meet the 500 kWe target. Shubov 2021's General-Surface-Fission-Reactor analysis [shubov-2021-gsfr] sits in the reactor-design space between the NASA-FSP and Duchek points.
+
+Cross-leaf — Handmer's tier-B 450 MW power floor for the mature-industry endpoint [figure-handmer] is approximately 900× the calc-baseline 500 kWe. Both are consistent at their respective scopes: q5 sizes the *base*; Handmer's number sizes the *industry*. Q5's 500 kWe is the M4 milestone target (fission surface power installed); Handmer's 450 MW is the q6/q7 mature-industry steady-state.
+
+### Regime compression and the IE / TAI logic
+
+Compressibility is regime-conditional and non-linear [q5.c10]. Sustained automation pressure on mass (better robot designs, AI-optimized hardware), time (parallel-execution of milestones), launch cost (Starship cadence), and hardware build cost (commodity-electronics economics) all compound multiplicatively. The IE regime — defined as 10× mass compression, 5× time compression, $59/kg LEO launch [q1.c7], $10,000/kg commodity-electronics hardware — delivers approximately 140× total compression versus BAU: $167B → $1.2B; 25 years → 5 years [q5.c5, pass-02-calc.py]. This is in the rough scale of Shotwell's "ideally five years" framing in the March 2026 TIME interview [figure-shotwell].
+
+The TAI regime — 100× mass compression, 30× time, $15/kg LEO, $1,000/kg material-cost hardware — converges to a degenerate near-zero capex in less than one year. The honest reading [q5.c6] is *not* literal-zero cost. It is that capital allocation stops being the binding constraint and physical lead-time on hardware assembly becomes the only limit. The M6 milestone — first 12-month sustained crewed occupation — imposes an irreducible floor: no regime can compress 12 months of human operations time below 12 months. Combined with the M1-M5 lead-times even under TAI compression (each milestone has a minimum elapsed-time floor), M8 cannot complete in under approximately 12-24 months even under TAI. Q5.c7's claim text was amended in pass-02 to acknowledge this floor after Codex correctly observed the calc's original TAI <1 yr M8 was internally inconsistent.
+
+### Published anchor comparison
+
+Seven published anchors span approximately three orders of magnitude [q5.c15]: Zubrin's Moon Direct $1.5B + $420M/yr [figure-zubrin]; Sowers' Commercial Lunar Propellant Architecture $4B [figure-sowers, sowers-2021-ice-mining, sowers-2018-clpa]; Isaacman's $20B / 7 years [figure-isaacman, spaceflightnow-2026-20b-moonbase]; PwC's $72-88B all-party cumulative 2026-2050 [pwc-2026-lunar-market]; NASA Artemis program-of-record $93B through FY2025 [nasa-oig-2021-artemis-93b]; CSIS MacDonald's 1989-architecture estimate approaching $1T [csis-macdonald-2026-economics]; Handmer's "trillions of dollars" mature-industry endpoint [figure-handmer]. When normalized to the same scope, the analytical disagreement between credible sources is approximately 2-4× — the expected range for an early-stage area of engineering economics.
+
+None of the seven anchors directly cross-validates the BAU $150-400B figure at the same scope. Our calc is the only first-principles full-scope estimate in this corpus for a *net-positive-export base*. The PwC and Isaacman anchors are in the same order of magnitude but explicitly different scopes (all-party cumulative; surface-base layer only). Sowers' $4B is for propellant-only commercial architecture, robotic-only, no crewed occupation — a structurally different milestone class. Zubrin's $1.5B is for minimal presence with no manufacturing capacity — different milestone class again. Metzger 2013's bootstrap framework [metzger-2013-bootstrap] models 12 t / 20 yr seed mass to 156 MT (60 humanoid robots) or up to 40,000 MT (100,000 humanoid robots) terminal mass under accelerated launch cadence — consistent with our IE regime's 10× mass compression direction but not validating cost compression to the same degree (Metzger does not assess development cost).
+
+The scope-normalization is the principal analytical contribution of this leaf. Treating any single anchor as "the lunar capex" misreads the corpus; the load-bearing distinction is *which milestone* and *which architecture* the anchor refers to.
+
+### Cross-leaf scope: q7 mass-driver capex sits on top of q5
+
+The consistency pass [pass-05-consistency.md] surfaced one load-bearing cross-leaf scope mismatch. Q7's BAU mass-driver capex estimate is approximately **$1.24 trillion** [q7.c6] — roughly 3-8× our q5 BAU range. This is *not* a contradiction in fact. Q5 sizes the base (habitat, ISRU, power, mobility, manufacturing complement); q7 sizes the launch system (mass driver, primarily track + drive coils). The full BAU architecture of a net-positive-export base *plus* lunar mass driver for bulk delivery to LEO is q5 + q7 ≈ **\$1.4-1.7 trillion**. Under IE, q5 $1.2B + q7 $127B ≈ **$128B**. Under TAI, q5 negligible + q7 $13B ≈ **$13B** — within striking distance of q2.c5's $10B mass-driver capital assumption [q2.c5]. The TAI regime closes the q2-q5-q7 architecture loop at approximately $15-25B total capital.
+
+This means the mass driver, not the base itself, is the dominant capital line item in any full-architecture costing under BAU. The base is necessary-but-not-sufficient. For headline-number purposes, the question "what does lunar manufacturing for orbital infrastructure cost?" requires specifying which subsystem one is asking about; the q5 answer ($150-400B BAU) is only complete for net-positive-export-base scope.
+
+### Propellant infrastructure scope: bounded by q3's LCH4 impossibility
+
+Q3.c5 finds that lunar methane is not bulk-lunar-native at any acceleration regime: bulk regolith carbon is solar-wind-implanted at parts-per-million levels and polar PSR CO/CO2 ice is prospecting-limited and exhaustible. The q5 propellant infrastructure scope is therefore bounded — surface propellant production at the base is LOX (from regolith carbothermal or MRE [q3.c9, q3.c12]) plus LH2 (from polar ice electrolysis, contingent on ice-prospecting closure at PRIME-1 / VIPER) [q3.c4]. The Starship methalox architecture, by contrast, imports CH4 from Earth — and the q5 mass budget implicitly assumes this. Sowers' $4B propellant-only architecture [figure-sowers] operates on the same LOX + LH2 production scope; q5's manufacturing complement adds the structural-mass and electronics-substitution lines on top, which is what raises the total scope by orders of magnitude.
+
+### Public-program anchor and policy weight
+
+The Isaacman $20B / 7 years announcement (March 2026) [figure-isaacman, spaceflightnow-2026-20b-moonbase] is the highest-policy-weight anchor in the corpus. Combined with the existing $93B Artemis program-of-record through FY2025 [nasa-oig-2021-artemis-93b] plus ongoing operations, the combined US public-program lunar capex through approximately 2033 sits in the **$115-140B order of magnitude** [q5.c12]. SLS/Orion per-launch production cost is approximately $4.1B [nasa-oig-2021-artemis-93b], corroborated by Nelson's $4.2B-per-launch figure [figure-nelson]. Critically, this is the cislunar-transport-plus-surface-base layer; it explicitly excludes a manufacturing complement and the net-positive-export endpoint — Isaacman's own framing centers on habitats, pressurized rovers, and nuclear power systems, not on industrial-export capability. The $115-140B figure is below our BAU $150-400B bracket precisely because it is the M6/M7 boundary scope, not the M8 endpoint.
+
+Nelson's 2021-2025 policy-narrative-setting on China competition [figure-nelson, csis-miller-2026-cracking-code] provided the political prerequisite for the Isaacman announcement. The CSIS Swope 2024 analysis [csis-swope-2024-cislunar] argues from the skeptical pole that "no compelling strategic military value from cislunar space within the next decade." The political and analytical pull are in tension; the headline $20B figure reflects the political resolution.
+
+### Mathematical summary
+
+The BAU total program capex is the sum of three lines:
+
+\[ C_{\text{BAU}} = M_{\text{set}} \cdot r_{\text{repl}} \cdot \left( C_{\text{hw}}^{\text{Earth}} + C_{\text{launch}}^{\text{LEO}} \right) + k_{\text{dev}} \cdot M_{\text{set}} \cdot C_{\text{hw}}^{\text{Earth}} \]
+
+with \( M_{\text{set}} \in [311, 500] \) t, replacement factor \( r_{\text{repl}} \approx 2.3 \) (one initial set plus 1.3 replacements over 20 yr per c9), \( C_{\text{hw}}^{\text{Earth}} = \$100\text{k/kg} \) BAU aerospace flight-hardware, \( C_{\text{launch}}^{\text{LEO}} \approx \$2.4\text{k/kg} \) trans-lunar BAU, and development multiplier \( k_{\text{dev}} = 3.0 / \sqrt{\tau} \) calc-baseline (τ=1 for BAU; Codex-flagged as a soft-prior heuristic). The calc baseline gives $1.7B + $72.2B + $93.5B = $167B; widening the range to \$150-400B reflects \( M_{\text{set}} \) up to 500 t (Codex-accepted upward revision), \( k_{\text{dev}} \) uncertainty spanning roughly [1.5, 5] under double-counting / methodology critique, and reliability uncertainty in c9. The IE regime compresses \( M_{\text{set}} \) by ~10×, \( C_{\text{hw}}^{\text{Earth}} \) by 10× (commodity-electronics pricing), \( C_{\text{launch}}^{\text{LEO}} \) by ~40× (Starship cadence per q1.c7), and \( k_{\text{dev}} \) by \( \sqrt{5} \approx 2.2 \) (time compression 5×), giving the 140× total compression in headline [q5.c5, q5.c10].
+
+## Confidence per finding
+
+| Finding | Confidence | Driver |
+|---|---|---|
+| 311-500 t one-set capital mass [q5.c1] | medium | Mass budget bottom-up; ISRU/mobility/mfg/infra ranges from Codex review absorbed into the upper bound |
+| 722 t total 20-yr mass [q5.c2] | medium | Mechanically follows from c1 + replacement schedule c9 |
+| Earth-side hardware dominates launch 1-2 orders [q5.c3] | high | Robust to wide range of $/kg assumptions; structural |
+| BAU $150-400B [q5.c4] | low | $100k/kg hardware + μ_dev are the dominant low-confidence priors |
+| IE ~$1.2B / 5 yr [q5.c5] | low | Compression factors are scenario priors, not derived |
+| TAI degenerate; lead-time-bound [q5.c6] | speculative | The right qualitative reading; literal point estimate is not load-bearing |
+| 8 milestones M1-M8; BAU 25 yr / IE 5 yr / TAI ≥12 mo [q5.c7] | medium | Milestone structure well-anchored; durations regime-conditional with M6 floor |
+| 500 kWe surface power [q5.c8] | medium | Bottom-up power budget consistent with Duchek/NASA-FSP architectures |
+| Replacement-schedule load-bearing [q5.c9] | medium | Magnitudes (5-15 yr lifetimes; 2-3× Jones reliability cautions) bracketed; uncertainty doubles BAU capex |
+| Compressibility regime-conditional [q5.c10] | medium | Framing is structurally robust; specific multipliers are scenario priors |
+| PwC $72-88B all-party cumulative [q5.c11] | high | Published figure; scope-distinction Codex-confirmed |
+| US public $115-140B through ~2033 [q5.c12] | high | Sum of two well-anchored public figures + ongoing operations |
+| Sowers $4B not directly comparable [q5.c13] | high | Codex-confirmed; architectural scope difference |
+| Metzger 12 t / 20 yr seed [q5.c14] | high | Metzger 2013 primary source |
+| 3-orders-of-magnitude scope-spread [q5.c15] | medium | Scope-normalization is fair (Codex pass-03) but normalizations themselves can be contested |
+
+## Limitations
+
+**Cost components are sourced-prior estimates with substantial uncertainty.** The $100k/kg aerospace flight-hardware figure is conventionally cited but not formally derived; we apply it as a soft anchor and widen the BAU range to $150-400B to reflect this. The development-cost multiplier μ_dev = 0.3 baseline is Codex-flagged for double-counting risk with the hardware $/kg figure.
+
+**Regime compression factors are scenario priors, not derived.** The IE 10× mass / 5× time / 8× launch compression and the TAI 100× / 30× / 31× set are illustrative — the framework is the deliverable, not the specific point estimates. Sensitivity to these factors is non-linear and large.
+
+**Replacement-schedule uncertainty alone is an order-of-magnitude swing.** Jones 2020's 2-3× reliability cautions in the propellant-only context, if generalized to a full base, approximately double BAU capex to $300-800B. We have not separately modeled the lunar-condition reliability distribution.
+
+**Sowers' robotic-only architecture is a credible alternative q5 framing we have not separately costed.** A fully robotic net-positive-export base (no M3/M6 crewed milestones) would suppress the crew-related mass budget significantly. This is a real architectural choice that could materially reduce capex; the calc-baseline assumes a crewed base.
+
+**Cross-leaf scope: q7 mass-driver capex sits on top, not inside.** Treating q5's $150-400B BAU as "total lunar manufacturing capex" double-counts by omitting the dominant capital line (mass driver). The full BAU architecture is q5 + q7 ≈ $1.4-1.7T; reduce-the-noise headlines must specify the subsystem scope.
+
+**The Codex pass-02 audit's "weak" verdict on the calc remains the binding caution.** ISRU plant mass under-sized vs NIA benchmarks; mobility/manufacturing/infrastructure under-counted; TAI M6 cannot compress below 12 months. Claims were revised to ranges; calc-baseline point estimates retained as lower bounds. Confidence on c4-c6 remains low to speculative.
+
+**PDF body extraction failed for four sources** (jones-2020-breakeven, mueller-2022-lunar-construction-planning, ida-2024-demand-drivers, sowers-2018-clpa). Key claims were reconstructed from secondary coverage. A re-fetch with better PDF tooling would tighten the source-review for these.

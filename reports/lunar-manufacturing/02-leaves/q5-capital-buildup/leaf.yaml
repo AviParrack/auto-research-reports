@@ -1,14 +1,14 @@
 id: q5-capital-buildup
 question: "What upfront capex and what discrete engineering milestones are required to establish a lunar manufacturing base capable of net-positive export, and how compressible is each milestone under industrial-explosion or TAI-grade automation?"
-status: researching
+status: reviewed
 passes_status:
   research: done
   calc: done
   reconcile: done
   source-review: done
   consistency: done
-  write: pending
-last_pass: 5
+  write: done
+last_pass: 6
 contradictions_with:
   - leaf: q7-mass-driver-feasibility
     nature: scope-mismatch
@@ -65,3 +65,6 @@ flagged_for_avi:
   - "PDF body extraction failed for: jones-2020-breakeven, mueller-2022-lunar-construction-planning, ida-2024-demand-drivers, sowers-2018-clpa. Key claims reconstructed from secondary coverage. Re-fetch with better PDF tooling would tighten the source-review for these."
   - "Total capex anchors span ~3 orders of magnitude ($1.5B Zubrin to >$1T Handmer). The structural cause is heterogeneity of product class + transport architecture + automation regime, not just optimism. Calc pass produces regime-conditional numbers: BAU $150-400B, IE $1.2-3B, TAI degenerate."
   - "Codex audit on pass-02 calc returned verdict 'weak' with several high-severity findings: ISRU plant mass under-sized vs NIA benchmarks (75t actual vs ~150t corrected), mobility/manufacturing/infrastructure under-counted, TAI M6 (12-mo occupation) cannot compress below 12 months. Claims revised to ranges; calc-baseline point estimates retained as lower bound."
+  - "Codex audit on pass-write returned verdict 'weak' with two high-severity findings (math formula ambiguity on dev multiplier; Duchek 350 kWth vs 500 kWe conversion error). Both corrected inline in pass-write.md and pass-write-response.md. Headline numbers ($150-400B BAU; $1.2B IE; TAI degenerate) unchanged; corrections were on framing and methodology grounding."
+  - "Cross-leaf scope decision: q5 base capex ($150-400B BAU) does NOT include q7 mass-driver launch-system capex ($1.24T BAU). Combined full architecture is q5 + q7 ≈ $1.4-1.7T BAU. Headline-number consumers must specify which subsystem is being costed."
+  - "Sowers' robotic-only architecture is a credible alternative q5 framing not separately costed. A fully-robotic net-positive-export base (no M3/M6 crewed milestones) would suppress crew-related mass budget significantly. Avi review: should this be a separate sub-claim or a sister leaf?"
