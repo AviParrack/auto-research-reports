@@ -1,8 +1,6 @@
 ---
 import ReportLayout from '../../layouts/ReportLayout.astro';
-import { listReportSlugs, loadReport, getNodeChildren, renderMath } from '../../lib/reports';
-import fs from 'node:fs';
-import path from 'node:path';
+import { listReportSlugs, loadReport, getNodeChildren, renderMath, loadLatestSynthesis, rewriteSynthesisFigureUrls } from '../../lib/reports';
 
 export function getStaticPaths() {
   return listReportSlugs().map((slug) => ({ params: { report: slug } }));
@@ -26,21 +24,28 @@ const doneSubPasses = report.leaves.reduce((acc, l) =>
   acc + Object.values(l.passes_status).filter((v) => v === 'done').length, 0);
 const totalSources = new Set(report.leaves.flatMap((l) => l.sources.map((s) => s.slug))).size;
 
-// Look for a top-level synthesis report
-const REPORTS_DIR = path.resolve(process.cwd(), '../reports');
-const synthPath = path.join(REPORTS_DIR, slug!, '03-synthesis', 'claude-v2.md');
-let synthBody: string | null = null;
-if (fs.existsSync(synthPath)) {
-  synthBody = fs.readFileSync(synthPath, 'utf8');
-}
+// Synthesis: latest v{N}/ under 03-synthesis/, primary = claude-v2 ?? claude-v1
+const synthesis = loadLatestSynthesis(slug!);
+const synthBody = synthesis?.primary
+  ? rewriteSynthesisFigureUrls(synthesis.primary.body, slug!, synthesis.version)
+  : null;
 ---
 <ReportLayout report={report} title={report.meta.root_question} activeTab="report">
   <div class="grid md:grid-cols-3 gap-8">
     <section class="md:col-span-2 space-y-6">
       <div>
-        <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-3">Report</h2>
+        <div class="flex items-baseline justify-between mb-3">
+          <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)]">Report</h2>
+          {synthesis && (
+            <div class="flex items-center gap-3 text-xs text-[var(--color-ink-soft)]">
+              <span class="font-mono">synthesis {synthesis.version}</span>
+              <span>·</span>
+              <a href={`/${slug}/synthesis/`} class="text-[var(--color-accent)] hover:underline">all versions</a>
+            </div>
+          )}
+        </div>
         {synthBody ? (
-          <article class="prose-leaf" set:html={renderMath(synthBody, { inline: false })} />
+          <article class="prose-leaf synthesis-body" set:html={renderMath(synthBody, { inline: false })} />
         ) : report.tree.root.answer ? (
           <div class="prose-leaf bg-[var(--color-paper-dim)] border-l-4 border-[var(--color-accent)] p-5 rounded-r">
             <p>{report.tree.root.answer}</p>
@@ -54,6 +59,26 @@ if (fs.existsSync(synthPath)) {
           </div>
         )}
       </div>
+      <style>
+        .synthesis-body img {
+          display: block;
+          margin: 1.5rem auto;
+          max-width: 100%;
+          height: auto;
+          border: 1px solid var(--color-line);
+          border-radius: 4px;
+          padding: 4px;
+          background: var(--color-paper);
+        }
+        .synthesis-body img + em {
+          display: block;
+          text-align: center;
+          font-size: 0.875rem;
+          color: var(--color-ink-soft);
+          margin-top: -1rem;
+          margin-bottom: 1.5rem;
+        }
+      </style>
     </section>
 
     <aside class="space-y-6">

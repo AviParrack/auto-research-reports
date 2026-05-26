@@ -158,6 +158,86 @@ export interface Report {
   leaves: Leaf[];
 }
 
+export interface SynthesisFile {
+  name: string;           // "claude-v1" | "codex-v1" | "diff" | "context" | "consensus" | ...
+  filename: string;       // "claude-v1.md"
+  body: string;           // post-frontmatter content
+  data: Record<string, any>;
+}
+
+export interface SynthesisBundle {
+  version: string;        // "v1"
+  primary: SynthesisFile | null;     // claude-v2 if exists, else claude-v1
+  alternate: SynthesisFile | null;   // codex-v2 if exists, else codex-v1
+  files: SynthesisFile[];            // every md in the dir
+  figures: string[];                 // basenames of figures/*.png
+  dir: string;                       // absolute path to v{N}/
+}
+
+/**
+ * Load the latest synthesis bundle from 03-synthesis/v{N}/ dirs.
+ * Picks highest-numbered version; within it, prefers v2 (post-debate) over v1.
+ * Returns null if no synthesis exists.
+ */
+export function loadLatestSynthesis(slug: string): SynthesisBundle | null {
+  const synthRoot = path.join(REPORTS_DIR, slug, '03-synthesis');
+  if (!fs.existsSync(synthRoot)) return null;
+
+  const versions = fs.readdirSync(synthRoot, { withFileTypes: true })
+    .filter((d) => d.isDirectory() && /^v\d+$/.test(d.name))
+    .map((d) => d.name)
+    .sort((a, b) => {
+      const na = parseInt(a.slice(1), 10);
+      const nb = parseInt(b.slice(1), 10);
+      return nb - na;
+    });
+  if (versions.length === 0) return null;
+
+  const version = versions[0];
+  const dir = path.join(synthRoot, version);
+
+  const mdFiles = fs.readdirSync(dir)
+    .filter((f) => f.endsWith('.md'))
+    .map((filename) => {
+      const parsed = safeMatter(path.join(dir, filename));
+      const name = filename.replace(/\.md$/, '');
+      return { name, filename, body: parsed.content, data: parsed.data };
+    });
+
+  const figDir = path.join(dir, 'figures');
+  const figures = fs.existsSync(figDir)
+    ? fs.readdirSync(figDir).filter((f) => /\.(png|jpg|jpeg|svg|webp)$/i.test(f))
+    : [];
+
+  const pick = (preferred: string[]): SynthesisFile | null => {
+    for (const p of preferred) {
+      const found = mdFiles.find((f) => f.name === p);
+      if (found) return found;
+    }
+    return null;
+  };
+
+  return {
+    version,
+    primary: pick(['claude-v2', 'claude-v1']),
+    alternate: pick(['codex-v2', 'codex-v1', 'gpt-v2', 'gpt-v1']),
+    files: mdFiles,
+    figures,
+    dir,
+  };
+}
+
+/**
+ * Rewrite relative `figures/foo.png` references in synthesis markdown so they
+ * resolve to the endpoint at /{slug}/synthesis-figures/{version}/{name}.png.
+ */
+export function rewriteSynthesisFigureUrls(body: string, slug: string, version: string): string {
+  return body.replace(
+    /(!\[[^\]]*\]\()figures\/([^)]+)(\))/g,
+    (_m, pre, name, post) => `${pre}/${slug}/synthesis-figures/${version}/${name}${post}`
+  );
+}
+
 export function listReportSlugs(): string[] {
   if (!fs.existsSync(REPORTS_DIR)) return [];
   return fs

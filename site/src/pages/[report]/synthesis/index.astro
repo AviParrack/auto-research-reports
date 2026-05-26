@@ -1,0 +1,123 @@
+---
+import ReportLayout from '../../../layouts/ReportLayout.astro';
+import { listReportSlugs, loadReport, renderMath, loadLatestSynthesis, rewriteSynthesisFigureUrls } from '../../../lib/reports';
+
+export function getStaticPaths() {
+  return listReportSlugs()
+    .filter((slug) => loadLatestSynthesis(slug) !== null)
+    .map((slug) => ({ params: { report: slug } }));
+}
+
+const { report: slug } = Astro.params;
+const report = loadReport(slug!);
+const synthesis = loadLatestSynthesis(slug!)!;
+
+// Render order: primary, alternate, then everything else (diff, context, debate, consensus, etc.)
+const primaryName = synthesis.primary?.name;
+const alternateName = synthesis.alternate?.name;
+const orderedFiles = [
+  ...(synthesis.primary ? [synthesis.primary] : []),
+  ...(synthesis.alternate ? [synthesis.alternate] : []),
+  ...synthesis.files.filter((f) => f.name !== primaryName && f.name !== alternateName),
+];
+
+const niceLabels: Record<string, string> = {
+  'claude-v1': 'Claude · v1',
+  'claude-v2': 'Claude · v2 (consensus)',
+  'codex-v1': 'Codex · v1',
+  'codex-v2': 'Codex · v2 (consensus)',
+  'gpt-v1': 'GPT · v1',
+  'gpt-v2': 'GPT · v2 (consensus)',
+  diff: 'Diff · substance vs style',
+  context: 'Context · synthesis input',
+  debate: 'Debate · transcript',
+  consensus: 'Consensus',
+};
+const label = (n: string) => niceLabels[n] ?? n;
+
+// Pre-render each body
+const renderedBodies = orderedFiles.map((f) => ({
+  ...f,
+  html: renderMath(rewriteSynthesisFigureUrls(f.body, slug!, synthesis.version), { inline: false }),
+}));
+---
+<ReportLayout report={report} title={`Synthesis · ${synthesis.version}`} activeTab="report">
+  <div class="mb-6">
+    <div class="flex items-baseline justify-between flex-wrap gap-3 mb-2">
+      <h1 class="text-2xl font-semibold">Synthesis · {synthesis.version}</h1>
+      <a href={`/${slug}/`} class="text-sm text-[var(--color-accent)] hover:underline">← back to report</a>
+    </div>
+    <p class="text-sm text-[var(--color-ink-soft)]">
+      Dual-model synthesis pass. Both writers consumed the same <code>context.md</code> and wrote independently.
+      The diff agent classifies disagreements as substantive vs stylistic; if no substantive disagreement is found, both versions publish.
+    </p>
+  </div>
+
+  <div class="border border-[var(--color-line)] rounded-lg overflow-hidden" id="synthesis-tabs">
+    <div class="flex flex-wrap border-b border-[var(--color-line)] bg-[var(--color-paper-dim)]/40">
+      {renderedBodies.map((f, i) => (
+        <button
+          type="button"
+          class:list={[
+            'px-4 py-3 text-sm border-r border-[var(--color-line)] tab-btn',
+            i === 0 ? 'bg-[var(--color-paper)] font-medium active' : 'text-[var(--color-ink-soft)] hover:bg-[var(--color-paper)]'
+          ]}
+          data-tab={f.name}
+        >{label(f.name)}</button>
+      ))}
+    </div>
+    <div>
+      {renderedBodies.map((f, i) => (
+        <article
+          class:list={[
+            'prose-leaf synthesis-body p-6 tab-pane',
+            i === 0 ? '' : 'hidden'
+          ]}
+          data-tab-pane={f.name}
+          set:html={f.html}
+        />
+      ))}
+    </div>
+  </div>
+
+  <style>
+    .synthesis-body img {
+      display: block;
+      margin: 1.5rem auto;
+      max-width: 100%;
+      height: auto;
+      border: 1px solid var(--color-line);
+      border-radius: 4px;
+      padding: 4px;
+      background: var(--color-paper);
+    }
+    .synthesis-body img + em {
+      display: block;
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--color-ink-soft);
+      margin-top: -1rem;
+      margin-bottom: 1.5rem;
+    }
+    .tab-btn.active {
+      background: var(--color-paper);
+      color: var(--color-ink);
+      font-weight: 500;
+    }
+  </style>
+
+  <script>
+    const root = document.getElementById('synthesis-tabs');
+    if (root) {
+      const buttons = root.querySelectorAll<HTMLButtonElement>('.tab-btn');
+      const panes = root.querySelectorAll<HTMLElement>('.tab-pane');
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const tab = btn.dataset.tab;
+          buttons.forEach((b) => b.classList.toggle('active', b === btn));
+          panes.forEach((p) => p.classList.toggle('hidden', p.dataset.tabPane !== tab));
+        });
+      });
+    }
+  </script>
+</ReportLayout>
