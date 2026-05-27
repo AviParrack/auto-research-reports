@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import { loadAllReports } from '../lib/reports';
 import { BUILD_HASH } from '../lib/build-hash';
+import { SITE_VERSION, SITE_STAGE } from '../lib/version';
 
 const reports = loadAllReports();
 ---
@@ -101,12 +102,29 @@ const reports = loadAllReports();
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
           </svg>
         </button>
-        <h1 class="text-3xl font-serif font-semibold mb-2">Auto-Research</h1>
+        <div class="flex items-center gap-3 mb-2 flex-wrap">
+          <h1 class="text-3xl font-serif font-semibold">Auto-Research</h1>
+          <span
+            class="text-xs font-mono font-bold px-2 py-1 rounded border"
+            style="background: var(--color-warn); color: var(--color-paper); border-color: var(--color-warn); letter-spacing: 0.05em;"
+            title={`Engine ${SITE_VERSION} — in active development; expect change`}
+          >{SITE_STAGE} {SITE_VERSION}</span>
+        </div>
         <p class="text-[var(--color-ink-soft)] max-w-2xl">
           Living research reports built by multi-pass agentic engines. Each report is a question
           tree of cited claims, point-by-point source reviews, and dual-model synthesis — updated
           across passes as new evidence arrives or new questions surface.
         </p>
+        <div class="mt-4 p-4 rounded border-l-4 max-w-2xl" style="border-color: var(--color-warn); background: color-mix(in srgb, var(--color-warn) 6%, transparent);">
+          <p class="text-sm text-[var(--color-ink)] leading-relaxed">
+            <strong>Experiment in AI-generated analysis.</strong> Reports here are produced by a
+            multi-pass agentic engine — Claude as primary author, Codex as critic. The substrate is
+            AI-generated and the engine is in active development.
+            <strong>Extreme scrutiny is warranted.</strong> Cross-check load-bearing numbers
+            against primary sources before acting on them; the Pass Log on each report shows the
+            full audit trail.
+          </p>
+        </div>
       </div>
     </header>
     <script is:inline>

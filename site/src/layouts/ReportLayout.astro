@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import type { Report } from '../lib/reports';
 import { BUILD_HASH } from '../lib/build-hash';
+import { SITE_VERSION, SITE_STAGE } from '../lib/version';
 import { buildTooltipPayload } from '../lib/reports';
 
 interface Props {
@@ -342,11 +343,57 @@ const tabs = [
       })();
     </script>
 
+    {/* AI-generated-content disclaimer — dismissible but reappears each session.
+        Persists dismissal in sessionStorage so it returns on next visit. */}
+    <div
+      id="ai-disclaimer"
+      class="bg-[var(--color-warn)]/8 border-b-2 border-[var(--color-warn)] text-sm"
+      style="display: none;"
+    >
+      <div class="max-w-6xl mx-auto px-6 py-3 flex items-start gap-3">
+        <svg class="w-5 h-5 mt-0.5 shrink-0 text-[var(--color-warn)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 9v4M12 17h.01" />
+          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+        </svg>
+        <div class="flex-1">
+          <strong class="text-[var(--color-ink)]">Experiment in AI-generated analysis.</strong>
+          <span class="text-[var(--color-ink-soft)]"> This report is produced by a multi-pass agentic engine — Claude as primary author, Codex as critic. Every claim was Codex-audited, but the substrate is still AI-generated and the engine is in active development. <strong class="text-[var(--color-ink)]">Extreme scrutiny is warranted.</strong> Cross-check load-bearing numbers against primary sources before acting on them. Flag anything that looks off; see the Pass Log for the full audit trail.</span>
+        </div>
+        <button
+          id="ai-disclaimer-close"
+          type="button"
+          aria-label="Dismiss disclaimer"
+          class="shrink-0 text-[var(--color-ink-soft)] hover:text-[var(--color-ink)] transition-colors text-xs font-mono px-2 py-0.5 rounded border border-[var(--color-line)] hover:border-[var(--color-accent)]"
+        >dismiss ✕</button>
+      </div>
+    </div>
+    <script is:inline>
+      (function () {
+        var el = document.getElementById('ai-disclaimer');
+        var btn = document.getElementById('ai-disclaimer-close');
+        if (!el || !btn) return;
+        var dismissed = false;
+        try { dismissed = sessionStorage.getItem('ai-disclaimer-dismissed') === '1'; } catch (e) {}
+        if (!dismissed) el.style.display = '';
+        btn.addEventListener('click', function () {
+          el.style.display = 'none';
+          try { sessionStorage.setItem('ai-disclaimer-dismissed', '1'); } catch (e) {}
+        });
+      })();
+    </script>
+
     <header class="border-b border-[var(--color-line)] bg-[var(--color-paper)]">
       <div class="max-w-6xl mx-auto px-6 py-4">
         <div class="flex items-baseline justify-between mb-3">
-          <div class="text-sm text-[var(--color-ink-soft)] flex items-center gap-2">
-            <a href="/" class="hover:text-[var(--color-accent)]">← Auto-Research</a>
+          <div class="text-sm text-[var(--color-ink-soft)] flex items-center gap-2 flex-wrap">
+            <a href="/" class="hover:text-[var(--color-accent)] flex items-baseline gap-1.5">
+              ← Auto-Research
+              <span
+                class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border"
+                style="background: var(--color-warn); color: var(--color-paper); border-color: var(--color-warn); letter-spacing: 0.05em;"
+                title={`Engine ${SITE_VERSION} — in active development; expect change`}
+              >{SITE_STAGE} {SITE_VERSION}</span>
+            </a>
             <span class="text-[var(--color-line)]">/</span>
             <a href={`/${report.slug}/`} class="font-mono text-xs hover:text-[var(--color-accent)]">{report.slug}</a>
           </div>
