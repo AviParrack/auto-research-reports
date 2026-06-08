@@ -1,0 +1,209 @@
+# Claim graph for q1-earth-industrial-ceiling.
+# Every prose statement in the leaf write-up must trace to a claim id here.
+# Claims are typed: factual (from sources), derived (from calc), estimate.
+
+- id: q1.c1
+  text: "LOX is the first-binding industrial input for chemical-rocket-launched throughput. Soft ceiling (5% of US O2 production) at ~120 Block-3 launches/yr; hard ceiling (100%) at ~2,330 launches/yr."
+  type: derived
+  evidence:
+    - source: sdc-cadence-anchor-internal
+      ref: lox-binding-thresholds
+      verdict: supports
+    - source: air-liquide-baytown-2024
+      ref: baytown-asu-capacity
+      verdict: supports
+    - source: thunder-said-energy-asu
+      ref: asu-energy-range
+      verdict: supports
+    - source: epa-o2-supply-chain-2023
+      ref: us-o2-production-2019
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged-resolved
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged: industrial O2 ≠ merchant LOX capacity ≠ rocket-grade loading. Calc caveat added. Conclusion stands."
+    human:
+      status: unnoted
+
+- id: q1.c2
+  text: "Engine production binds at approximately 2,600 launches/year under SpaceX's stated 1,000-engines/year target and a 100-flight engine reuse life. At 10-flight demonstrated reuse the ceiling drops 10× to ~260 launches/year."
+  type: derived
+  evidence:
+    - source: spacex-raptor-wiki
+      ref: raptor-production-target
+      verdict: supports
+    - source: sdc-cadence-anchor-internal
+      ref: raptor-production-2025
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged-resolved
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged: 1000 engines/yr and 100-flight reuse are aspirational. Flagged explicitly in calc."
+    human:
+      status: unnoted
+
+- id: q1.c3
+  text: "Pad cadence binds at approximately 18,250-54,750 launches/year (50 pads × 1-3 launches/day). Below this rate the constraint is unbinding; above it requires substantial new launch site infrastructure."
+  type: derived
+  evidence:
+    - source: sdc-cadence-anchor-internal
+      ref: starship-pads-planned
+      verdict: supports
+    - source: sdc-cadence-anchor-internal
+      ref: faa-boca-chica-25
+      verdict: supports
+    - source: handmer-starship-2021
+      ref: handmer-pad-cadence
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged-resolved
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged: pad arithmetic omits GSE, deluge, range, loading infrastructure. Caveat added."
+    human:
+      status: unnoted
+
+- id: q1.c4
+  text: "Methane / natural gas is not the binding constraint for Starship at any plausible cadence. US natural gas saturates at approximately 545,000 launches/year; soft 5% threshold at ~27,000 launches/year."
+  type: derived
+  evidence:
+    - source: eia-natural-gas-2025
+      ref: us-ng-consumption-2025
+      verdict: supports
+    - source: mobius-fueling-starships-2024
+      ref: methane-demand-vs-us-supply
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged-resolved
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged: rocket-grade LCH4 liquefaction is a sub-constraint not bounded here. Caveat added."
+    human:
+      status: unnoted
+
+- id: q1.c5
+  text: "Stainless steel is non-binding for reusable Starship operations (saturation at ~710,000 launches/yr at 100-flight reuse). It is binding for expendable operations (~7,100 launches/yr saturates US stainless production)."
+  type: derived
+  evidence:
+    - source: gmk-stainless-steel-2024
+      ref: us-stainless-2024
+      verdict: supports
+    - source: sdc-cadence-anchor-internal
+      ref: stainless-steel-anchor
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-02-audit.md
+
+- id: q1.c6
+  text: "ASU electricity for LOX production reaches 5% of US grid at ~160,000 launches/year; not a binding constraint before LOX supply forces dedicated ASU build-out. At cosmic Tt/yr to LEO ASU power demand alone is ~1.3 TW — about 3× US current electricity generation."
+  type: derived
+  evidence:
+    - source: thunder-said-energy-asu
+      ref: asu-energy-range
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-02-audit.md
+
+- id: q1.c7
+  text: "Binding-input ordering for chemical-rocket-launched LEO throughput is: LOX (first, ~120-2,300 launches/yr from US O2) → engines (second, ~2,600 launches/yr at current target × 100-flight reuse) → pads (third, ~18-55k launches/yr at mature pad count × aspirational cadence). Methane, steel-reusable, and ASU electricity are not binding at any cadence below ~10⁵ launches/yr."
+  type: derived
+  evidence:
+    - source: sdc-cadence-anchor-internal
+      ref: lox-binding-thresholds
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: passed
+      audit_file: passes/pass-02-audit.md
+
+- id: q1.c8
+  text: "The Earth chemical-rocket throughput ceiling sits at approximately 10⁶-10⁸ tonnes/year to LEO (1 Mt/yr to 100 Mt/yr) with civilizational-scale industrial mobilisation. The high end requires ~15× current global O2 capacity, ~2,700 pads, ~390,000 engines/yr, and ~130 GW dedicated ASU power."
+  type: derived
+  evidence:
+    - source: sdc-cadence-anchor-internal
+      ref: lox-binding-thresholds
+      verdict: supports
+    - source: handmer-starship-2021
+      ref: handmer-cadence-trajectory
+      verdict: supports
+    - source: handmer-mass-driver-2026
+      ref: earth-launch-1tw-orbital-solar
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged-resolved
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged: original draft conflated 10⁸ t/yr and 10⁹ t/yr scales. Rewritten with per-scale numbers correct."
+
+- id: q1.c9
+  text: "Earth chemical-rocket launch cannot deliver Tt/yr (10⁹ t/yr) to LEO under any plausible industrial scaling. The chemical ceiling is 1-3 orders of magnitude below cosmic Tt/yr scale; reaching it categorically exceeds humanity's largest current industrial systems (global steel ~2 Gt/yr; global oil ~5 Gt/yr; global electricity ~30,000 TWh/yr) when measured by required-input-vs-supply ratios."
+  type: derived
+  evidence:
+    - source: sdc-cadence-anchor-internal
+      ref: lox-binding-thresholds
+      verdict: supports
+    - source: handmer-mass-driver-2026
+      ref: lunar-mass-driver-design-point
+      verdict: novel-supporting
+  confidence: high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged-resolved
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged: original draft said '4-5 OOM below', correct count is 1-3 OOM. Wording fixed."
+
+- id: q1.c10
+  text: "Musk's stated 10,000-ships-per-year Starship production target is bounded by LOX supply at the launch-rate scale, not by ship production capacity. At 100-flight reuse 10,000 ships/yr supports ~10⁶ launches/yr in steady state, but LOX would require ~1,350 Baytown-class ASUs and ~$1.1T of new capex."
+  type: derived
+  evidence:
+    - source: musk-10k-ships-2026-01
+      ref: musk-10k-ships-target
+      verdict: contradicts
+    - source: air-liquide-baytown-2024
+      ref: baytown-asu-capex
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: unaudited
+      audit_file: null
+      notes: "New claim derived during reconcile pass; not yet audited. Schedule for audit sub-pass."
+
+- id: q1.c11
+  text: "Handmer's '67,000 launches/year with seven or eight pads' to deploy 1 TW/yr of orbital solar capacity is internally consistent with the q1 calc: it sits below the pad ceiling (50 pads × 365 launches/yr-pad ≈ 18k at 1/day, 55k at 3/day → 67k requires ~10 pads at 3/day or 18 pads at 1/day, both feasible) but requires dedicated LOX capacity well beyond current US O2 supply."
+  type: derived
+  evidence:
+    - source: handmer-mass-driver-2026
+      ref: earth-launch-1tw-orbital-solar
+      verdict: supports
+  confidence: medium
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: unaudited
+      audit_file: null
+      notes: "New claim derived during reconcile pass; not yet audited."

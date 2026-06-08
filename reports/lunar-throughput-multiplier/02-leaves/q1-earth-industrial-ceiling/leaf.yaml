@@ -5,12 +5,13 @@ status: researching
 claims_file: claims.yaml
 passes_status:
   research: done
-  calc: pending
-  reconcile: pending
+  calc: done
+  reconcile: done
   source-review: pending
   consistency: pending
   write: pending
-last_pass: 3
+last_pass: 5
+claims_count: 11
 contradictions_with: []
 sources_gathered: 10
 sources_pending_re-fetch:
