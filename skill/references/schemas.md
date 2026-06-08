@@ -263,11 +263,15 @@ General-press piece. Some claims align with q3 ISRU TRL findings (carbothermal a
 
 ## `pass-log.jsonl`
 
-One JSON object per line, appended each pass:
+One JSON object per line, appended each pass.
+
+**Required fields:** `pass_id`, `focus`, `kinds`, `started`, `ended`, `models`, `outcome`, `commit`, `artifacts`, `human_input`.
+
+The `human_input` field captures user messages verbatim — every prompt, critique, or guidance from the user that shaped this pass. Multiple messages concatenated with `\n---\n`. Empty string (`""`) for purely autonomous passes. The pass log is a record of the collaboration, not just of Claude's actions; without the user's tokens the log is half the story.
 
 ```jsonl
-{"pass_id":"p001","focus":"intake","kinds":["intake"],"started":"2026-05-25T20:00:00Z","ended":"2026-05-25T20:18:00Z","models":["claude"],"outcome":"tree v1 created with 7 leaves","commit":"a3f8c2","artifacts":["meta.yaml","01-tree/tree.yaml"]}
-{"pass_id":"p002","focus":"leaf:q1-bulk-mass-cost","kinds":["research","calc"],"started":"...","ended":"...","models":["claude","gpt"],"outcome":"5 claims added, 1 flagged","commit":"b7d4e1","artifacts":["02-leaves/q1-bulk-mass-cost/passes/pass-01-research.md","..."]}
+{"pass_id":"p001","focus":"intake","kinds":["intake"],"started":"2026-05-25T20:00:00Z","ended":"2026-05-25T20:18:00Z","models":["claude"],"outcome":"tree v1 created with 7 leaves","commit":"a3f8c2","artifacts":["meta.yaml","01-tree/tree.yaml"],"human_input":"start a new auto-research on whether the Moon is necessary for cosmic-scale mass throughput"}
+{"pass_id":"p002","focus":"leaf:q1-bulk-mass-cost","kinds":["research","calc"],"started":"...","ended":"...","models":["claude","gpt"],"outcome":"5 claims added, 1 flagged","commit":"b7d4e1","artifacts":["...","..."],"human_input":"begin with q1"}
 ```
 
 ## Privacy

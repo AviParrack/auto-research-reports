@@ -43,7 +43,7 @@ The `mode` is set during intake and read from `reports/{slug}/meta.yaml` on ever
 3. **Pre-pass hooks.** Read the relevant `references/pass-{kind}.md` for the pass type. That file is the procedure.
 4. **Execute pass.** Following the pass-specific reference, do the work. All writing follows `references/claude-gpt-protocol.md` (Claude writes → GPT critiques → Claude responds). All output guards against `references/anti-patterns.md`.
 5. **Update indices.** Bump `meta.yaml:current_pass`, update `last_updated`, update affected leaf statuses, update tree node `last_touched_pass`.
-6. **Append to pass-log.jsonl.** One line: pass_id, focus, kinds, started, ended, models, outcome, commit-hash-placeholder.
+6. **Append to pass-log.jsonl.** One line: pass_id, focus, kinds, started, ended, models, outcome, commit-hash-placeholder. **Always capture human input verbatim in the `human_input` field** — every user message that shaped, prompted, or critiqued the pass goes in, exactly as it was written. The pass log is a record of the collaboration, not just of Claude's actions; without the user's tokens the log is half the story. If multiple user messages spanned the pass, concatenate with `\n---\n` separators. If a pass is purely autonomous (no user message), leave `human_input` empty but include the field.
 7. **Commit + deploy.** Read `meta.yaml.deploy.mode` and call `scripts/deploy.sh --mode <mode> "<message>"`. The script handles both cloudflare-push and local-serve.
 8. **Report back to the user.** Concise summary: what changed, what's flagged, what to run next. Include the live URL (cloudflare) or localhost URL (local).
 

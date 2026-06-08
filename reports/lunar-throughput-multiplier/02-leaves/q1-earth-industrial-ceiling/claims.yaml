@@ -299,24 +299,25 @@
       notes: "Per-launch GSE helium estimate (0.5-3 t) is order-of-magnitude; needs primary-source verification in future re-pass."
 
 - id: q1.c15
-  text: "Launch pad geographic suitability is fundamentally constrained, not willingness-to-scale. Suitable sites require equatorial proximity (for rotational velocity bonus), coastal location with downrange ocean (for safety), and low population density. Current global active launch sites ~30; plausible mature global pad count 50-100. At 1-3 launches/pad/day, pad-geography ceiling sits at 18,000-110,000 launches/yr (≈1.8-11 Mt/yr LEO at 100 t/launch). To exceed this requires offshore platform proliferation (new infrastructure class) or air-launch architectures (low TRL)."
-  type: factual
+  text: "Pad geography is NOT fundamentally constrained at post-singularity scale. Earth's ~620,000 km of coastline supports 10^5+ launch pads at safe spacing (1 km × 620,000 km = 620k pads; 10 km spacing = 62k pads). Non-equatorial sites incur only 2-4% delta-v penalty (cos(latitude) loss of 465 m/s rotation bonus vs ~9.4 km/s LEO insertion budget — even 60° latitude is only ~2.5% extra propellant). Inland sites (Russia, China, Kazakhstan precedent) and offshore platforms add essentially unbounded additional capacity. The practical pad-geography ceiling sits at ~10^8-10^9 launches/yr (~10-100 Gt/yr LEO), co-incident with the solar-PV-area ceiling at cosmic-mature scale. Pads are willingness-to-build, not physics. The prior claim of '50 pads max' was a demand-observation against current architecture, not a supply ceiling."
+  type: derived
   evidence:
     - source: pad-site-selection
       ref: equatorial-rotation-bonus
-      verdict: supports
-    - source: pad-site-selection
-      ref: equatorial-coast-finite
-      verdict: supports
+      verdict: partial
     - source: pad-site-selection
       ref: current-active-sites
-      verdict: supports
-  confidence: medium
+      verdict: partial
+  confidence: high
+  derivation_path: passes/pass-02d-pad-correction.md
   audit:
     gpt:
       status: unaudited
       audit_file: null
-      notes: "50-100 plausible mature pad count is stylised; not directly cited."
+      notes: "Revised per Avi 2026-06-09 feedback. Coastline + latitude-penalty math; 50-pad assumption corrected."
+    human:
+      status: noted
+      comment: "Avi 2026-06-09: 'Why should 50 pads be anything like the best Earth can do post singularity. I mean, you know, we could do much better than that at getting serious. We could just tile the coastlines with launch pads. And if we could bottleneck, we can even go away from the equator and pay more delta v, potentially.'"
 
 - id: q1.c16
   text: "ASU electricity is the fundamental physics-side constraint on Earth chemical-rocket throughput at cosmic-scale Tt/yr LEO. At 4.42e10 t LOX/yr demand and the Carnot-floor 51 kWh/t, ASU energy is 2,255 TWh/yr (0.54x current US grid; 7.5% of current global electricity). At SOTA 200 kWh/t practical efficiency: 8,843 TWh/yr (2.1x US grid; 29.5% of current global electricity). Capital-feasible but requires civilization-scale electricity build-out. The 'fundamentality' depends on the assumed energy supply scenario — under TAI / fusion / advanced renewables this is far more achievable than under static BAU."
