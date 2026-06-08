@@ -6,3 +6,10 @@ dist/
 .env
 .env.local
 .env.*.local
+
+# Local-mode serve state (per-machine, never committed)
+.auto-research-server.pid
+
+# Per-report private notes — default-private subfolder
+reports/*/notes/private/
+

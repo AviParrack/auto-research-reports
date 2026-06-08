@@ -29,6 +29,12 @@ def main():
     ap.add_argument("--seeds", help="Path to a markdown file with seed sources/notes")
     ap.add_argument("--primary-model", default="claude-opus-4-7")
     ap.add_argument("--critic-model", default="gpt-5-pro")
+    ap.add_argument(
+        "--deploy-mode",
+        choices=["cloudflare", "local"],
+        default="cloudflare",
+        help="cloudflare: commit+push, Pages auto-rebuilds. local: commit+serve on localhost:4321.",
+    )
     args = ap.parse_args()
 
     slug = args.slug.strip().lower()
@@ -50,6 +56,16 @@ def main():
     today = dt.date.today().isoformat()
     now = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
+    if args.deploy_mode == "cloudflare":
+        deploy_block = f"""\
+        deploy:
+          mode: cloudflare
+          cloudflare_project: {slug}"""
+    else:
+        deploy_block = """\
+        deploy:
+          mode: local"""
+
     meta = textwrap.dedent(f"""\
         slug: {slug}
         root_question: "{args.question}"
@@ -60,8 +76,7 @@ def main():
         models:
           primary: {args.primary_model}
           critic: {args.critic_model}
-        deploy:
-          cloudflare_project: {slug}
+{deploy_block}
         termination:
           root_answered: false
           all_figures_reviewed: false
