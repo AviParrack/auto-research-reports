@@ -2,6 +2,27 @@
 
 Avi-keyed notes for future passes. Most recent at top.
 
+## 2026-06-08 — q1 leaf v1 finished, Avi pushed back hard on framing
+
+The q1 v1 result ("LOX binds at 50-500× current global supply") is a demand-observation, not a supply-side ceiling. Current LOX industry is sized to current demand, not to a hard production ceiling. Saying "X is 50× current industry" doesn't establish that X is unreachable; it's the same epistemic move as saying "100M cars/year is impossible because in 1900 nobody made cars."
+
+The real question is: **what are the fundamental (physics, thermodynamics, geography, materials) constraints on scaling each input, separately from willingness-to-scale?** Specifically:
+
+- **LOX:** ASU is just air separation. Atmosphere is unlimited. Minimum work of separation is thermodynamic (~50 kWh/t O₂ theoretical, vs 150-800 kWh/t practical). At Tt/yr cosmic scale, electricity for ASU is ~1 TW continuous — comparable to current US grid. Is electricity the real binding constraint?
+- **Methane:** Natural gas reserves finite but huge (~200× current annual consumption); methane can also be synthesised from CO₂+H₂ (Terraform Industries). Not fundamentally binding.
+- **Engines:** Automotive does 80M engines/yr. No fundamental ceiling on engine manufacturing at scale.
+- **Pads:** Geographic constraint — equatorial coast with downrange ocean. Earth has substantial coastline. Soft.
+- **Steel:** Iron is 4th most abundant crustal element. No fundamental scarcity.
+- **Helium:** Truly scarce, ~30 kt/yr global. **THIS** might be the only fundamentally-binding industrial input.
+- **Argon co-production:** ASUs co-produce N₂ and Ar. At extreme scale, the Ar market saturates — could constrain ASU build-out unless you dump Ar.
+
+The required q1 rebuild:
+1. Distinguish "current industry size" (not a ceiling) from "willingness-to-scale" (capital + time, no physical ceiling) from "fundamental limits" (the real ceiling).
+2. The atmospheric ceiling (q2's territory) is likely the *first* fundamental binding constraint on Earth chemical-rocket throughput, not LOX.
+3. Tt/yr cosmic-scale conclusion may need to be softened from "impossible from Earth chemical" to "requires civilizational-scale capital and lead-time, AND probably saturates atmospheric chemistry well before saturation of industrial inputs."
+
+Action: q1 calc + write re-pass with the fundamental-vs-willingness distinction. Add a new claim (q1.c12 or similar) capturing the framing correction. Update the binding-input ordering: helium is probably the only truly-physically-scarce industrial input; everything else is willingness-to-scale modulo electricity at extreme scale.
+
 ## 2026-06-08 — after intake (drove tree v2)
 
 Substantive scoping revisions to apply across all leaf passes:

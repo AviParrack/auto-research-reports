@@ -3,7 +3,7 @@
 # Claims are typed: factual (from sources), derived (from calc), estimate.
 
 - id: q1.c1
-  text: "LOX is the first-binding industrial input for chemical-rocket-launched throughput. Soft ceiling (5% of US O2 production) at ~120 Block-3 launches/yr; hard ceiling (100%) at ~2,330 launches/yr."
+  text: "LOX is the first input to exceed current US industrial-oxygen production at modest rocket cadences (~120 launches/yr at 5% of US O2; ~2,330 launches/yr at 100% of US O2). But this is a demand-observation, not a supply ceiling: LOX production scales to any cadence given electricity and capital, since the atmospheric O2 feedstock is unlimited and the Carnot-limit minimum work of air separation (~51 kWh/t O2) leaves substantial headroom above the current ~200 kWh/t practical efficiency. LOX is willingness-to-scale, not fundamentally binding."
   type: derived
   evidence:
     - source: sdc-cadence-anchor-internal
@@ -18,15 +18,20 @@
     - source: epa-o2-supply-chain-2023
       ref: us-o2-production-2019
       verdict: supports
+    - source: asu-thermodynamic-minimum
+      ref: carnot-minimum-air-separation
+      verdict: supports
   confidence: high
   derivation_path: passes/pass-02-calc.md
+  revised_in: passes/pass-02b-recalc.md
   audit:
     gpt:
       status: flagged-resolved
       audit_file: passes/pass-02-audit.md
-      notes: "Codex flagged: industrial O2 ≠ merchant LOX capacity ≠ rocket-grade loading. Calc caveat added. Conclusion stands."
+      notes: "Codex flagged caveat about merchant LOX vs industrial O2. Avi pushed back further: 'current industry size' is demand-observation, not supply ceiling. q1.c1 reframed in pass-02b-recalc.md to distinguish demand-observation from fundamental constraint."
     human:
-      status: unnoted
+      status: noted
+      comment: "Avi 2026-06-08: pushed back on framing; LOX is willingness-to-scale, not fundamental."
 
 - id: q1.c2
   text: "Engine production binds at approximately 2,600 launches/year under SpaceX's stated 1,000-engines/year target and a 100-flight engine reuse life. At 10-flight demonstrated reuse the ceiling drops 10× to ~260 launches/year."
@@ -123,21 +128,35 @@
       audit_file: passes/pass-02-audit.md
 
 - id: q1.c7
-  text: "Binding-input ordering for chemical-rocket-launched LEO throughput is: LOX (first, ~120-2,300 launches/yr from US O2) → engines (second, ~2,600 launches/yr at current target × 100-flight reuse) → pads (third, ~18-55k launches/yr at mature pad count × aspirational cadence). Methane, steel-reusable, and ASU electricity are not binding at any cadence below ~10⁵ launches/yr."
+  text: "Distinguish two orderings. (a) Willingness-to-scale ordering at current capital + architecture: LOX → engines → pads → ASU electricity → methane → steel-reusable. These are demand-observations against current industry size, not fundamental ceilings. (b) FUNDAMENTAL-constraint ordering — constraints that bite even with infinite capital + lead-time: helium (in current GSE architecture) at ~few thousand launches/yr → pad geography ~10⁴-10⁵ launches/yr → ASU electricity at SOTA efficiency at ~10⁷ launches/yr (≈30% of current global electricity) → atmospheric chemistry (q2 territory, likely binds before any of these). Industrial inputs (LOX, methane, engines, steel) are willingness-to-scale, not fundamentally binding."
   type: derived
   evidence:
     - source: sdc-cadence-anchor-internal
       ref: lox-binding-thresholds
       verdict: supports
+    - source: asu-thermodynamic-minimum
+      ref: carnot-minimum-air-separation
+      verdict: supports
+    - source: helium-supply-2025
+      ref: falcon9-helium-per-launch
+      verdict: supports
+    - source: pad-site-selection
+      ref: equatorial-coast-finite
+      verdict: supports
   confidence: high
   derivation_path: passes/pass-02-calc.md
+  revised_in: passes/pass-02b-recalc.md
   audit:
     gpt:
-      status: passed
+      status: flagged-resolved
       audit_file: passes/pass-02-audit.md
+      notes: "Reframed per Avi 2026-06-08 feedback to distinguish willingness-to-scale vs fundamental constraints."
+    human:
+      status: noted
+      comment: "Avi 2026-06-08: 'we need to know, brass tacks: are there fundamental limits to your ability to scale this up?' Reframing was the right move."
 
 - id: q1.c8
-  text: "The Earth chemical-rocket throughput ceiling sits at approximately 10⁶-10⁸ tonnes/year to LEO (1 Mt/yr to 100 Mt/yr) with civilizational-scale industrial mobilisation. The high end requires ~15× current global O2 capacity, ~2,700 pads, ~390,000 engines/yr, and ~130 GW dedicated ASU power."
+  text: "Earth chemical-rocket throughput has three regime-distinct ceilings: (1) Near-term current-architecture: ~10-100 kt/yr LEO (~100-1,000 launches/yr) bounded by current LOX merchant capacity + current pads + helium for COPV-style flight pressurisation. (2) Capital-scaled-out current-architecture: ~1-10 Mt/yr LEO (~10⁴-10⁵ launches/yr) bounded by pad geography (50-100 mature global pads × 1-3 launches/day). (3) Architecture-redesigned (offshore pads, autogenous GSE, civilisation-scale ASU electricity): ~10-100 Mt/yr LEO at 10⁵-10⁶ launches/yr, bounded by atmospheric chemistry (q2 territory) and ASU electricity supply. All three bands are *capital-feasible* given sufficient time; the truly load-bearing constraint at the upper end is atmospheric, not industrial."
   type: derived
   evidence:
     - source: sdc-cadence-anchor-internal
@@ -158,22 +177,29 @@
       notes: "Codex flagged: original draft conflated 10⁸ t/yr and 10⁹ t/yr scales. Rewritten with per-scale numbers correct."
 
 - id: q1.c9
-  text: "Earth chemical-rocket launch cannot deliver Tt/yr (10⁹ t/yr) to LEO under any plausible industrial scaling. The chemical ceiling is 1-3 orders of magnitude below cosmic Tt/yr scale; reaching it categorically exceeds humanity's largest current industrial systems (global steel ~2 Gt/yr; global oil ~5 Gt/yr; global electricity ~30,000 TWh/yr) when measured by required-input-vs-supply ratios."
+  text: "Earth chemical-rocket launch at Tt/yr (10⁹ t/yr) LEO is not categorically impossible from industrial-input considerations alone. It requires: (a) civilisation-scale electricity build-out for ASUs (~7-44% of current global generation depending on ASU efficiency, with the Carnot floor at 7.5%); (b) autogenous-GSE helium-architecture redesign to eliminate the ground-system helium bottleneck; (c) pad-architecture innovation (~10⁴ pads or offshore-platform proliferation); and (d) atmospheric chemistry NOT binding before this scale — the actually-binding question, which lives in q2. Whether the Moon is architecturally necessary for cosmic throughput rests primarily on q2's atmospheric ceiling, not on q1's industrial inputs."
   type: derived
   evidence:
-    - source: sdc-cadence-anchor-internal
-      ref: lox-binding-thresholds
+    - source: asu-thermodynamic-minimum
+      ref: carnot-minimum-air-separation
       verdict: supports
-    - source: handmer-mass-driver-2026
-      ref: lunar-mass-driver-design-point
-      verdict: novel-supporting
-  confidence: high
+    - source: helium-supply-2025
+      ref: starship-autogenous
+      verdict: supports
+    - source: pad-site-selection
+      ref: equatorial-coast-finite
+      verdict: supports
+  confidence: medium-high
   derivation_path: passes/pass-02-calc.md
+  revised_in: passes/pass-02b-recalc.md
   audit:
     gpt:
-      status: flagged-resolved
-      audit_file: passes/pass-02-audit.md
-      notes: "Codex flagged: original draft said '4-5 OOM below', correct count is 1-3 OOM. Wording fixed."
+      status: unaudited
+      audit_file: null
+      notes: "Major framing revision per Avi 2026-06-08 feedback. The Tt/yr-unreachable conclusion of v1 was overstated; q1 alone does not establish cosmic-scale impossibility. Pending Codex audit on pass-02b-recalc.md."
+    human:
+      status: noted
+      comment: "Avi 2026-06-08: 'brass tacks: are there fundamental limits to your ability to scale this up?' Answer: not from industrial inputs alone. Probably yes from atmosphere — but that's q2's job."
 
 - id: q1.c10
   text: "Musk's stated 10,000-ships-per-year Starship production target is bounded by LOX supply at the launch-rate scale, not by ship production capacity. At 100-flight reuse 10,000 ships/yr supports ~10⁶ launches/yr in steady state, but LOX would require ~1,350 Baytown-class ASUs and ~$1.1T of new capex."
@@ -207,3 +233,106 @@
       status: unaudited
       audit_file: null
       notes: "New claim derived during reconcile pass; not yet audited."
+
+# --- Claims added in pass-02b-recalc.md (Avi feedback 2026-06-08) ---
+
+- id: q1.c12
+  text: "Industrial inputs LOX, methane, engines, and steel are NOT fundamentally constrained at any throughput relevant to this analysis. Atmospheric O2 feedstock for LOX is unlimited; Carnot floor for air separation is ~51 kWh/t (4x below current SOTA). Natural gas reserves are ~50 years at current consumption; synthetic methane is demonstrated. Engine production is ~80,000x scalable per automotive precedent. Iron is the 4th most abundant crustal element. All four are willingness-to-scale (capital + lead-time), not physics."
+  type: derived
+  evidence:
+    - source: asu-thermodynamic-minimum
+      ref: carnot-minimum-air-separation
+      verdict: supports
+    - source: terraform-industries-methane
+      ref: terraform-methane-long-term-cost
+      verdict: supports
+    - source: automotive-engine-production-80m
+      ref: global-automotive-engines-per-year
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02b-recalc.md
+  audit:
+    gpt:
+      status: unaudited
+      audit_file: null
+      notes: "New claim from pass-02b-recalc; pending Codex audit."
+    human:
+      status: noted
+      comment: "Avi 2026-06-08: requested this exact framing distinction."
+
+- id: q1.c13
+  text: "Synthetic methane production from atmospheric CO2 (DAC) + electrolytic H2 (Sabatier reaction) is technologically demonstrated (Terraform Industries commercial delivery April 2024). Projected long-term cost $4-5/MMBtu, competitive with conventional natural gas. Implication: even if natural-gas reserves were depleted, methane supply for Earth chemical rockets scales with electricity supply + capital, not feedstock."
+  type: factual
+  evidence:
+    - source: terraform-industries-methane
+      ref: terraform-first-delivery
+      verdict: supports
+    - source: terraform-industries-methane
+      ref: terraform-methane-long-term-cost
+      verdict: supports
+  confidence: medium
+  audit:
+    gpt:
+      status: unaudited
+      audit_file: null
+      notes: "New claim from pass-02b-recalc; pending Codex audit. Cost projection is forward-looking, hence medium confidence."
+
+- id: q1.c14
+  text: "Helium is the only Earth-side industrial input fundamentally constrained at high rocket cadence in the current GSE architecture. Global production is ~32 kt/yr (190 million m^3); non-renewable; geographically concentrated (US 38%, Qatar 21%, Algeria 11%). Falcon 9 uses 14-18% of daily world helium per ignition for COPV pressurisation; Starship's autogenous methane/O2 pressurisation eliminates this for flight, but ground-system helium (purge, leak testing, GSE pneumatics) remains. At 1 t GSE-helium per Starship launch and 10^7 launches/yr (Tt/yr cosmic scale), demand is ~312x current global supply. The helium constraint is partly architecture-dependent: an autogenous-GSE redesign could in principle eliminate it."
+  type: derived
+  evidence:
+    - source: helium-supply-2025
+      ref: helium-global-production-2025
+      verdict: supports
+    - source: helium-supply-2025
+      ref: falcon9-helium-per-launch
+      verdict: supports
+    - source: helium-supply-2025
+      ref: starship-autogenous
+      verdict: supports
+  confidence: medium-high
+  derivation_path: passes/pass-02b-recalc.md
+  audit:
+    gpt:
+      status: unaudited
+      audit_file: null
+      notes: "Per-launch GSE helium estimate (0.5-3 t) is order-of-magnitude; needs primary-source verification in future re-pass."
+
+- id: q1.c15
+  text: "Launch pad geographic suitability is fundamentally constrained, not willingness-to-scale. Suitable sites require equatorial proximity (for rotational velocity bonus), coastal location with downrange ocean (for safety), and low population density. Current global active launch sites ~30; plausible mature global pad count 50-100. At 1-3 launches/pad/day, pad-geography ceiling sits at 18,000-110,000 launches/yr (≈1.8-11 Mt/yr LEO at 100 t/launch). To exceed this requires offshore platform proliferation (new infrastructure class) or air-launch architectures (low TRL)."
+  type: factual
+  evidence:
+    - source: pad-site-selection
+      ref: equatorial-rotation-bonus
+      verdict: supports
+    - source: pad-site-selection
+      ref: equatorial-coast-finite
+      verdict: supports
+    - source: pad-site-selection
+      ref: current-active-sites
+      verdict: supports
+  confidence: medium
+  audit:
+    gpt:
+      status: unaudited
+      audit_file: null
+      notes: "50-100 plausible mature pad count is stylised; not directly cited."
+
+- id: q1.c16
+  text: "ASU electricity is the fundamental physics-side constraint on Earth chemical-rocket throughput at cosmic-scale Tt/yr LEO. At 4.42e10 t LOX/yr demand and the Carnot-floor 51 kWh/t, ASU energy is 2,255 TWh/yr (0.54x current US grid; 7.5% of current global electricity). At SOTA 200 kWh/t practical efficiency: 8,843 TWh/yr (2.1x US grid; 29.5% of current global electricity). Capital-feasible but requires civilization-scale electricity build-out. The 'fundamentality' depends on the assumed energy supply scenario — under TAI / fusion / advanced renewables this is far more achievable than under static BAU."
+  type: derived
+  evidence:
+    - source: asu-thermodynamic-minimum
+      ref: carnot-minimum-air-separation
+      verdict: supports
+    - source: asu-thermodynamic-minimum
+      ref: practical-state-of-the-art
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02b-recalc.md
+  audit:
+    gpt:
+      status: unaudited
+      audit_file: null
+      notes: "Arithmetic verified with python3; awaiting Codex audit."
+
