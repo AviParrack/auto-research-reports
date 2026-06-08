@@ -1,13 +1,14 @@
 slug: lunar-throughput-multiplier
 root_question: "Does building a base on the Moon increase the total mass throughput humanity can deliver to elsewhere in the solar system — and at cosmic scales (Tt/yr), what constraints bind first on each side?"
 status: in_progress
-current_pass: 2
+current_pass: 8
 created: 2026-06-08
-last_updated: 2026-06-08T20:55:00Z
+last_updated: 2026-06-08T23:50:00Z
 tree_nodes: 10
 tree_active: 8
 tree_deprecated: 3
-tree_summary: "v2 (2026-06-08, Avi-driven tree pass): 7 active leaves (q1 Earth industrial, q2 Earth atmospheric, q3 propulsion-class destination reachability both sides, q5 lunar materials, q6 mass driver + parallelization + brief catcher, q8a Moon-prop-for-Earth, q8b Moon-prop-for-Moon) + 1 synthesis (q9). Deprecated: q4 lunar power (solar scalable beyond need), q7 receiver (payloads self-propel), original q8 (split into a/b)."
+leaves_reviewed: 1
+tree_summary: "v2 (2026-06-08, Avi-driven tree pass): 7 active leaves (q1 Earth industrial, q2 Earth atmospheric, q3 propulsion-class destination reachability both sides, q5 lunar materials, q6 mass driver + parallelization + brief catcher, q8a Moon-prop-for-Earth, q8b Moon-prop-for-Moon) + 1 synthesis (q9). Deprecated: q4 lunar power (solar scalable beyond need), q7 receiver (payloads self-propel), original q8 (split into a/b). q1 reviewed at pass 8."
 models:
   primary: claude-opus-4-7
   critic: gpt-5-pro

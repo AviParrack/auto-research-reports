@@ -10,13 +10,13 @@ nodes:
     depth: 1
     type: leaf
     question: "What is the Earth-launch throughput ceiling imposed by industrial inputs (LOX, methane, engine production, pad cadence, stainless steel, ASU power) for chemical rockets — at what kt/yr or Mt/yr to LEO does each input bind?"
-    status: open
-    answer: null
-    confidence: null
+    status: answered
+    answer: "LOX binds first — soft ceiling ~120 launches/yr (5% US O2), hard ceiling ~2,330/yr. Engines second (~2,600/yr at current target × 100-flight reuse), pads third (~18-55k/yr). With civilizational-scale mobilisation the Earth chemical ceiling sits at 1-100 Mt/yr LEO; Tt/yr cosmic scale is 1-3 OOM beyond and unreachable from Earth chemical alone."
+    confidence: medium-high
     leaf_path: 02-leaves/q1-earth-industrial-ceiling/
     created_by: agent
     created_pass: 0
-    last_touched_pass: 0
+    last_touched_pass: 8
     children: []
 
   - id: q2-earth-atmospheric-ceiling

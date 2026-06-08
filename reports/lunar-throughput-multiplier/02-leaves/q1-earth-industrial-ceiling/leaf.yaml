@@ -1,17 +1,19 @@
 id: q1-earth-industrial-ceiling
 question: "What is the Earth-launch throughput ceiling imposed by industrial inputs (LOX, methane, engine production, pad cadence, stainless steel, ASU power) for chemical rockets — at what kt/yr or Mt/yr to LEO does each input bind?"
 type: leaf
-status: researching
+status: reviewed
 claims_file: claims.yaml
 passes_status:
   research: done
   calc: done
   reconcile: done
-  source-review: pending
-  consistency: pending
-  write: pending
-last_pass: 5
+  source-review: done
+  consistency: done
+  write: done
+last_pass: 8
 claims_count: 11
+headline_answer: "LOX binds first (~120 to ~2,330 launches/yr from current US O2 supply). Earth chemical-rocket throughput ceiling sits at approximately 1-100 Mt/yr to LEO with aggressive industrial scaling. Cannot reach Tt/yr cosmic scale; gap is 1-3 orders of magnitude."
+confidence: medium-high
 contradictions_with: []
 sources_gathered: 10
 sources_pending_re-fetch:
