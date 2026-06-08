@@ -1,5 +1,5 @@
 id: q6-mass-driver-throughput
-question: "First-principles: given input power P (GW) and required exit velocity v_e (km/s), what mass-driver throughput (kg/s, kt/yr) is achievable, after accounting for duty cycle, cycle-life, thermal dissipation in vacuum, and structural-acceleration limits on the payload?"
+question: "What is the throughput ceiling of a mature lunar mass-driver architecture — first-principles power → kg/s for a single driver (accounting for duty cycle, cycle-life, thermal dissipation in vacuum, payload g-load tolerance), and what happens when the cycle-life or thermal limit on a single driver is reached and the response is to build N parallel drivers? Anchor against Casey Handmer (May 2026) and the NASA SP-428 / O'Neill lineage. Briefly assess whether catcher/receiver infrastructure at the destination is a paired binding constraint, or whether self-propelled payloads route around it."
 type: leaf
 status: pending
 claims_file: claims.yaml
@@ -12,11 +12,18 @@ passes_status:
   write: pending
 last_pass: 0
 contradictions_with: []
+scope_notes:
+  - "Single-driver throughput is a unit, not a ceiling. The ceiling is N × single-driver, bounded by power (input), regolith feed (q5), and total lunar manufacturing capacity to build drivers."
+  - "Casey Handmer May 2026 — pulsed power buffer / switches / thermal loop is the main machine; rail is secondary. Use as primary anchor for the engineering breakdown."
+  - "Catcher/receiver: brief subsection (1-2 paragraphs). Default architecture: payloads carry their own propulsion (ion/chemical/NTR) for destination capture. q3 owns the full propulsion-class analysis; q6 only addresses 'does receiver bind throughput.'"
+  - "Cycle-life is the binding engineering risk per the sibling lunar-manufacturing report — but parallelization is the response. Quantify how many parallel drivers are needed to hit 1 Mt/yr, 100 Mt/yr, 10 Gt/yr, 1 Tt/yr throughput targets, and what regolith / vitamin / manufacturing implications each level has (feed q5)."
 seed_anchors:
-  - Casey Handmer May 2026 lunar mass driver
-  - NASA SP-428 / O'Neill / Snyder
-  - arXiv 2410.09616 lunar gravity anomalies
-  - Miller 2023 SJSU
-  - Navy EMRG cycle-life data
-  - AIAA 2025 cost-benefit
-  - Workshop/Space/dyson-swarm/strategy/all-notes.md (g-load tradeoffs)
+  - Casey Handmer May 2026 "How to build a lunar mass driver"
+  - Casey Handmer 2022 "Powering the lunar base, version 2" (input power assumptions)
+  - NASA SP-428 / O'Neill / Snyder Mass Drivers III (1979 lineage)
+  - arXiv 2410.09616 (2024) — lunar gravity anomalies as launch aid
+  - Miller 2023 SJSU thesis on lunar mass driver implementation
+  - Navy EMRG cycle-life data (cancelled 2021 — material risk evidence)
+  - AIAA 2025-4123 — cost-benefit analysis of lunar mass driver technologies
+  - Workshop/Space/dyson-swarm/strategy/all-notes.md (g-load tradeoffs; high-g for raw material, low-g for processed)
+  - sibling report lunar-manufacturing q7-mass-driver-feasibility (cycle-life conclusion)

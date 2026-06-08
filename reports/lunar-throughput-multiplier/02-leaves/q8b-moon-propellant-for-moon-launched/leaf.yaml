@@ -1,0 +1,27 @@
+id: q8b-moon-propellant-for-moon-launched
+question: "If the Moon uses its entire propellant-production capacity on Moon-launched cargo (mass-driver-boosted-then-burned chemical/NTR upper stages, or fully propulsive chemical/NTR ascent from regolith): how much interplanetary throughput does Moon-as-launcher deliver, and how does that compare to the Moon-as-supplier case (q8a)?"
+type: leaf
+status: pending
+claims_file: claims.yaml
+passes_status:
+  research: pending
+  calc: pending
+  reconcile: pending
+  source-review: pending
+  consistency: pending
+  write: pending
+last_pass: 2
+contradictions_with: []
+scope_notes:
+  - "Cargo originates from the Moon."
+  - "Two sub-cases analysed: (i) mass-driver-launched payload + propulsive insertion at destination (propellant burned only for destination capture, not for ascent); (ii) fully-propulsive chemical or NTR ascent from regolith (no mass driver involved — pure propellant burn from lunar surface)."
+  - "Propellant comes from lunar ISRU (LOX from regolith, LH2 from polar ice, LCH4 not lunar-producible at scale)."
+  - "Compare against q8a as the alternative allocation: at each interplanetary destination, which allocation (q8a Earth-launched-with-Moon-propellant vs q8b Moon-launched-with-Moon-propellant) delivers higher kt/yr per unit of lunar propellant?"
+  - "The synthesis (q9) integrates: under each propulsion class and each destination, which allocation wins, and how does the answer differ?"
+seed_anchors:
+  - sibling q6 (mass driver throughput + parallelization)
+  - sibling q3 (propulsion-class destination reachability — applies to Moon-launched too)
+  - Sowers / Metzger — lunar propellant economics
+  - NTR Isp data (NERVA, particle-bed)
+  - mass-driver-with-propulsive-insertion architectures (Casey Handmer May 2026)
+  - lunar single-stage chemical to LEO / GEO / Mars / NEA reference burns

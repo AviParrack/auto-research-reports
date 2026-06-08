@@ -1,0 +1,27 @@
+id: q8a-moon-propellant-for-earth-launched
+question: "If the Moon uses its entire propellant-production capacity to supply LOX/LH2/H2O/etc. to LEO and cislunar (rather than burning it on Moon-launched cargo): how much does Earth-launched cargo's effective rocket-equation tax to Mars/NEAs/Belt/outer destinations fall, and what is the resulting throughput multiplier per Earth launch — relative to Earth-direct?"
+type: leaf
+status: pending
+claims_file: claims.yaml
+passes_status:
+  research: pending
+  calc: pending
+  reconcile: pending
+  source-review: pending
+  consistency: pending
+  write: pending
+last_pass: 2
+contradictions_with: []
+scope_notes:
+  - "Cargo originates from Earth; cargo's propulsion comes from Earth (Starship-class)."
+  - "Propellant in LEO is Moon-supplied via mass-driver-launched LOX/LH2 (or Moon-launched chemical tanker)."
+  - "Moon does NOT launch its own cargo to interplanetary in this scenario — all lunar capacity is allocated to supplying LEO."
+  - "Constrained by (a) lunar propellant production rate (q5 anchor: regolith mining + water ice prospecting), (b) Δv map from q3, (c) propellant transit losses Moon-surface → LEO depot."
+seed_anchors:
+  - Sowers (Colorado School of Mines) — lunar propellant economics
+  - Metzger 2023 — gear ratio with propellant-export modes
+  - Linne et al. — SRU to satisfy lunar oxygen demand
+  - PRIME-1 / VIPER prospecting data (LH2 gating)
+  - propellant depot architecture (Boeing / ULA papers; ACES; Crewless Tanker)
+  - George Sowers + Colorado School of Mines lunar propellant tank designs
+  - Forethought / SDC propellant depot capacity assumptions

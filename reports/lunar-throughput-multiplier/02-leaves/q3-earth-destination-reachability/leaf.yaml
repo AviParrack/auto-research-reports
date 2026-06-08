@@ -1,5 +1,5 @@
 id: q3-earth-destination-reachability
-question: "Conditional on any LEO mass flux from Earth, what fraction of that mass reaches each destination (GEO, cislunar, Mars, NEAs, asteroid belt, Mercury, sundivers, outer planets) under chemical rockets only — and which destinations are categorically unreachable single-stage from Earth chemical at any cadence?"
+question: "For each propulsion class — (a) chemical methalox (Starship-like primary regime), (b) electric / ion propulsion stages, (c) nuclear thermal rockets (NTR), (d) nuclear pulse propulsion (NPP / Orion-style) — and for both Earth-launched and Moon-launched cargo: what fraction of LEO (or Moon-surface) mass reaches each destination (GEO, cislunar, Mars, NEAs, Belt, Jovian, Mercury, sundivers), and which destinations are categorically unreachable from each side under each propulsion class?"
 type: constraint
 status: pending
 claims_file: claims.yaml
@@ -12,9 +12,17 @@ passes_status:
   write: pending
 last_pass: 0
 contradictions_with: []
+scope_notes:
+  - "Chemical methalox is the primary / load-bearing regime (Starship-like)."
+  - "Ion, NTR, NPP are future-regime sensitivities — analysed for the propulsion × origin × destination matrix."
+  - "Both Earth-launched and Moon-launched cargo treated symmetrically; Moon-launched chemical/NTR/NPP gain from the 2.4 km/s escape v."
+  - "Deliverable: a clearly-presented matrix of payload-fraction-to-destination across (propulsion class) × (origin: Earth, Moon) × (destination)."
 seed_anchors:
-  - Tsiolkovsky rocket equation; Δv budgets
-  - methalox / hydrolox Isp tables
+  - Tsiolkovsky rocket equation; Δv budgets per destination
+  - methalox / hydrolox Isp tables; ion thruster Isp (Hall, gridded ion, VASIMR ranges)
+  - NTR Isp range (~900 s NERVA, ~1100 s advanced; particle-bed designs)
+  - Orion / NPP Isp (~3,000-10,000 s; Dyson-Taylor configurations)
   - Workshop/Space/solar-system/Lunar-Economics/full-analysis.md (Earth-direct destination math)
-  - NASA Deep Space Mission Analysis tools
-  - Casey Handmer multiple posts on payload fractions
+  - NASA Deep Space Mission Analysis tools (DSMS, GMAT)
+  - Casey Handmer payload-fraction posts
+  - Forward, Andrews — magsail / electric-sail destinations

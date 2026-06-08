@@ -1,20 +1,20 @@
 id: q8-moon-as-supplier
-question: "If the Moon supplies LOX, LH2, H2O, and structural mass to LEO and cislunar (rather than launching cargo directly to interplanetary destinations), how much does Earth-launched cargo's effective rocket-equation tax to Mars/NEAs/Belt fall, and what is the resulting throughput multiplier per Earth launch?"
+question: "(SPLIT — superseded by q8a + q8b)"
 type: leaf
-status: pending
-claims_file: claims.yaml
+status: deprecated
+claims_file: null
 passes_status:
-  research: pending
-  calc: pending
-  reconcile: pending
-  source-review: pending
-  consistency: pending
-  write: pending
-last_pass: 0
+  research: deprecated
+  calc: deprecated
+  reconcile: deprecated
+  source-review: deprecated
+  consistency: deprecated
+  write: deprecated
+last_pass: 2
 contradictions_with: []
-seed_anchors:
-  - Sowers — lunar propellant economics
-  - Metzger 2023 — gear ratio + propellant export
-  - Linne et al. — SRU to satisfy lunar oxygen demand
-  - PRIME-1 / VIPER prospecting data
-  - propellant depot architecture (Boeing / ULA papers)
+flags: [split-by-avi]
+deprecation_reason: "Avi's call (intake feedback 2026-06-08): the single Moon-as-supplier framing collapsed two genuinely different allocations into one question. Split into q8a (Moon propellant → Earth-launched cargo) and q8b (Moon propellant → Moon-launched cargo). Synthesis compares the two allocations."
+superseded_by:
+  - q8a-moon-propellant-for-earth-launched
+  - q8b-moon-propellant-for-moon-launched
+do_not_fill: true

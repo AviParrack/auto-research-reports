@@ -37,29 +37,35 @@ nodes:
     parent: root
     depth: 1
     type: constraint
-    question: "Conditional on any LEO mass flux from Earth, what fraction of that mass reaches each destination (GEO, cislunar, Mars, NEAs, asteroid belt, Mercury, sundivers, outer planets) under chemical rockets only — and which destinations are categorically unreachable single-stage from Earth chemical at any cadence?"
+    question: "For each propulsion class — (a) chemical methalox (Starship-like primary regime), (b) electric / ion propulsion stages, (c) nuclear thermal rockets (NTR), (d) nuclear pulse propulsion (NPP / Orion-style) — and for both Earth-launched and Moon-launched cargo: what fraction of LEO (or Moon-surface) mass reaches each destination (GEO, cislunar, Mars, NEAs, Belt, Jovian, Mercury, sundivers), and which destinations are categorically unreachable from each side under each propulsion class?"
     status: open
     answer: null
     confidence: null
     leaf_path: 02-leaves/q3-earth-destination-reachability/
     created_by: agent
     created_pass: 0
-    last_touched_pass: 0
+    last_touched_pass: 2
     children: []
+    notes_for_leaf_pass:
+      - "Primary regime is chemical methalox (Starship-like). All four classes must be analysed; chemical is the load-bearing baseline, the rest are future-regime sensitivities."
+      - "Both Earth-launched AND Moon-launched cargo analysed in the same matrix. Moon-launched chemical / NTR / NPP need the Moon's lower escape v (2.4 km/s) factored in."
+      - "Report destination-reachability as a propulsion × origin × destination matrix."
 
   - id: q4-lunar-power-ceiling
     parent: root
     depth: 1
     type: leaf
-    question: "What is the achievable power-supply ceiling for a mature lunar industrial base (Peaks of Eternal Light solar, beamed power, surface PV, fission, fusion) — and how does that GW ceiling map to mass-driver mechanical throughput at 2.4 km/s (= 2.88 MJ/kg minimum energy, > 3 MJ/kg after efficiency losses)?"
-    status: open
+    question: "(DEPRECATED) What is the achievable power-supply ceiling for a mature lunar industrial base?"
+    status: deprecated
     answer: null
     confidence: null
     leaf_path: 02-leaves/q4-lunar-power-ceiling/
     created_by: agent
     created_pass: 0
-    last_touched_pass: 0
+    last_touched_pass: 2
     children: []
+    flags: [deprecated-by-avi]
+    deprecation_reason: "Avi's call (intake feedback 2026-06-08): solar is in-principle scalable beyond any throughput limit we'd want to contend with. Not the binding constraint. Any power-relevant analysis is folded into q6 mass-driver-throughput as input variable P."
 
   - id: q5-lunar-materials-ceiling
     parent: root
@@ -79,54 +85,89 @@ nodes:
     parent: root
     depth: 1
     type: leaf
-    question: "First-principles: given input power P (GW) and required exit velocity v_e (km/s), what mass-driver throughput (kg/s, kt/yr) is achievable, after accounting for duty cycle, cycle-life, thermal dissipation in vacuum, and structural-acceleration limits on the payload?"
+    question: "What is the throughput ceiling of a mature lunar mass-driver architecture — first-principles power → kg/s for a single driver (accounting for duty cycle, cycle-life, thermal dissipation in vacuum, payload g-load tolerance), and what happens when the cycle-life or thermal limit on a single driver is reached and the response is to build N parallel drivers? Anchor against Casey Handmer (May 2026) and the NASA SP-428 / O'Neill lineage. Briefly assess whether catcher/receiver infrastructure at the destination is a paired binding constraint, or whether self-propelled payloads route around it."
     status: open
     answer: null
     confidence: null
     leaf_path: 02-leaves/q6-mass-driver-throughput/
     created_by: agent
     created_pass: 0
-    last_touched_pass: 0
+    last_touched_pass: 2
     children: []
+    notes_for_leaf_pass:
+      - "Parallelization is a load-bearing argument: single-driver cycle-life is bounded; build five (or fifty) drivers to multiply throughput. The single-driver number is a unit, not a ceiling."
+      - "Casey Handmer's May 2026 post emphasises pulsed power buffer, switches, thermal loop as the main machine; rail is secondary. Use as primary anchor."
+      - "Catcher/receiver discussion: cover briefly (1-2 paragraphs). The alternative is mass-driver-launched payloads that carry their own propulsion (ion / chemical / NTR) for capture. Defer to q3 for the propulsion-class analysis."
 
   - id: q7-receiver-infrastructure
     parent: root
     depth: 1
     type: constraint
-    question: "What catcher/receiver infrastructure (orbital catcher, magsail decelerator, atmospheric capture, rotovator) is required to convert mass-driver-launched mass into useful payload at each destination — at what kt/yr does the receiver bind instead of the driver?"
-    status: open
+    question: "(DEPRECATED) What catcher/receiver infrastructure is required?"
+    status: deprecated
     answer: null
     confidence: null
     leaf_path: 02-leaves/q7-receiver-infrastructure/
     created_by: agent
     created_pass: 0
-    last_touched_pass: 0
+    last_touched_pass: 2
     children: []
+    flags: [deprecated-by-avi]
+    deprecation_reason: "Avi's call (intake feedback 2026-06-08): catcher infrastructure is not categorically binding because mass-driver payloads can carry their own propulsion (ion / chemical / NTR / NPP) for destination capture. A brief discussion folds into q6; the full propulsion-class analysis lives in q3."
 
-  - id: q8-moon-as-supplier
+  - id: q8a-moon-propellant-for-earth-launched
     parent: root
     depth: 1
     type: leaf
-    question: "If the Moon supplies LOX, LH2, H2O, and structural mass to LEO and cislunar (rather than launching cargo directly to interplanetary destinations), how much does Earth-launched cargo's effective rocket-equation tax to Mars/NEAs/Belt fall, and what is the resulting throughput multiplier per Earth launch?"
+    question: "If the Moon uses its entire propellant-production capacity to supply LOX/LH2/H2O/etc. to LEO and cislunar (rather than burning it on Moon-launched cargo): how much does Earth-launched cargo's effective rocket-equation tax to Mars/NEAs/Belt/outer destinations fall, and what is the resulting throughput multiplier per Earth launch — relative to Earth-direct?"
     status: open
     answer: null
     confidence: null
-    leaf_path: 02-leaves/q8-moon-as-supplier/
+    leaf_path: 02-leaves/q8a-moon-propellant-for-earth-launched/
     created_by: agent
-    created_pass: 0
-    last_touched_pass: 0
+    created_pass: 2
+    last_touched_pass: 2
     children: []
+    notes_for_leaf_pass:
+      - "Cargo originates from Earth; propellant in LEO is Moon-supplied; Moon does NOT launch its own cargo to interplanetary in this scenario."
+      - "Constrained by the lunar propellant production rate (q5 anchor) and the Δv map from q3."
+
+  - id: q8b-moon-propellant-for-moon-launched
+    parent: root
+    depth: 1
+    type: leaf
+    question: "If the Moon uses its entire propellant-production capacity on Moon-launched cargo (mass-driver-boosted-then-burned chemical/NTR upper stages, or fully propulsive chemical/NTR ascent from regolith): how much interplanetary throughput does Moon-as-launcher deliver, and how does that compare to the Moon-as-supplier case (q8a)?"
+    status: open
+    answer: null
+    confidence: null
+    leaf_path: 02-leaves/q8b-moon-propellant-for-moon-launched/
+    created_by: agent
+    created_pass: 2
+    last_touched_pass: 2
+    children: []
+    notes_for_leaf_pass:
+      - "Cargo originates from the Moon; propellant burned on Moon-launched chemical / NTR / NPP upper stages (or, in the mass-driver-only architecture, propellant is burned only for destination insertion)."
+      - "Two sub-cases worth distinguishing: (i) mass-driver-launched + propulsive insertion at destination; (ii) fully-propulsive chemical/NTR ascent from regolith (no mass driver)."
+      - "Compare against q8a as the alternative allocation. The synthesis answers: which allocation wins at each destination, and is the answer the same across propulsion classes?"
 
   - id: q9-synthesis-cosmic-multiplier
     parent: root
     depth: 1
     type: synthesis
-    question: "Integrating Earth ceilings (q1-q3), lunar capability (q4-q7), and the Moon-as-supplier channel (q8): at maturity, what is the throughput multiplier from adding a lunar base, per destination — and at cosmic scales (Tt/yr Dyson-relevant), does the Moon make achievable a throughput regime Earth alone cannot reach?"
+    question: "Integrating Earth ceilings (q1, q2), propulsion-class destination reachability (q3), lunar materials (q5), mass-driver throughput including parallelization and brief receiver discussion (q6), and the two Moon-propellant-allocation cases (q8a, q8b): at maturity, what is the throughput multiplier from adding a lunar base, per destination, per propulsion class — and at cosmic scales (Tt/yr Dyson-relevant), does the Moon make achievable a throughput regime Earth alone cannot reach?"
     status: open
     answer: null
     confidence: null
     leaf_path: 02-leaves/q9-synthesis-cosmic-multiplier/
     created_by: agent
     created_pass: 0
-    last_touched_pass: 0
+    last_touched_pass: 2
     children: []
+    depends_on:
+      - q1-earth-industrial-ceiling
+      - q2-earth-atmospheric-ceiling
+      - q3-earth-destination-reachability
+      - q5-lunar-materials-ceiling
+      - q6-mass-driver-throughput
+      - q8a-moon-propellant-for-earth-launched
+      - q8b-moon-propellant-for-moon-launched

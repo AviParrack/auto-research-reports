@@ -1,20 +1,20 @@
 id: q7-receiver-infrastructure
-question: "What catcher/receiver infrastructure (orbital catcher, magsail decelerator, atmospheric capture, rotovator) is required to convert mass-driver-launched mass into useful payload at each destination — at what kt/yr does the receiver bind instead of the driver?"
+question: "(DEPRECATED) What catcher/receiver infrastructure is required?"
 type: constraint
-status: pending
-claims_file: claims.yaml
+status: deprecated
+claims_file: null
 passes_status:
-  research: pending
-  calc: pending
-  reconcile: pending
-  source-review: pending
-  consistency: pending
-  write: pending
-last_pass: 0
+  research: deprecated
+  calc: deprecated
+  reconcile: deprecated
+  source-review: deprecated
+  consistency: deprecated
+  write: deprecated
+last_pass: 2
 contradictions_with: []
-seed_anchors:
-  - O'Neill 1976 mass catcher designs
-  - Hoyt rotovators / momentum-exchange tethers
-  - Andrews magsail
-  - Mars atmospheric capture (aerocapture / aerobraking)
-  - patent literature on inductive deceleration
+flags: [deprecated-by-avi]
+deprecation_reason: "Avi's call (intake feedback 2026-06-08): catcher infrastructure is not categorically binding because mass-driver payloads can carry their own propulsion (ion / chemical / NTR / NPP) for destination capture. A brief discussion folds into q6. The full propulsion-class analysis lives in q3."
+folded_into:
+  - q6-mass-driver-throughput (brief catcher subsection)
+  - q3-earth-destination-reachability (propulsion-class destination capture)
+do_not_fill: true
