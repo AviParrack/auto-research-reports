@@ -1,0 +1,102 @@
+# Claim graph for q2-earth-atmospheric-ceiling.
+# Every prose statement in the leaf write must trace to a claim id here.
+# Claims revised post Codex audit (pass-02-audit.md) per Larson 2017 anchor.
+
+- id: q2.c1
+  text: "Per-launch methalox emissions (Block 3 Starship) from stoichiometry CH4 + 2 O2 → CO2 + 2 H2O: ~3,200 t CO2 + ~2,800 t H2O + ~10-100 t NOx (altitude-dependent emission index) + ~3 t black carbon (much less than kerosene). Stratospheric injection fraction ~20-29% per Vliex et al. 2024 (not 50%); per-launch stratospheric injection ~600 t CO2 + ~700 t H2O + small NOx contribution from propellant combustion. Reentry NOx at 17.5% of reentered mass (Larson 2017 / Vliex 2024) gives ~18 t per launch at 100 t reentered."
+  type: derived
+  evidence:
+    - source: ryan-2022-emissions
+      ref: methalox-not-in-table
+      verdict: partial
+    - source: larson-2017-noaa
+      ref: larson-reentry-nox
+      verdict: supports
+  confidence: medium-high
+  derivation_path: passes/pass-02-calc.md
+  revised_in: passes/pass-02-response.md (post-audit corrections)
+  audit:
+    gpt:
+      status: flagged-resolved
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex flagged: original draft used 5 kg/kg-reentered (factor 30 high); 50% injection fraction (literature says 20-29%); 20 g/kg NOx EI is altitude-dependent. All corrected to literature-consistent values."
+
+- id: q2.c2
+  text: "Earth chemical-rocket atmospheric ceiling (methalox-dominant, anchored on Larson 2017 high-cadence H2-propellant chemistry-climate model): Detectable (~0.5% global ozone loss) at ~10^5 launches/yr (~10 Mt/yr LEO). Disruptive (~3-5% global, substantial Antarctic) at ~10^6 launches/yr (~100 Mt/yr LEO). Catastrophic (~10-30% global, UV catastrophe at high latitudes) at ~10^7 launches/yr (~1 Gt/yr LEO). Beyond-ceiling (stratospheric chemistry fundamentally altered) at ~10^8 launches/yr (~10 Gt/yr LEO)."
+  type: derived
+  evidence:
+    - source: larson-2017-noaa
+      ref: larson-1e5-cadence
+      verdict: supports
+    - source: larson-2017-noaa
+      ref: larson-1e6-cadence
+      verdict: supports
+    - source: revell-2025-ozone
+      ref: launch-rate-ambitious
+      verdict: partial
+  confidence: medium-high
+  derivation_path: passes/pass-02-calc.md
+  audit:
+    gpt:
+      status: flagged-resolved
+      audit_file: passes/pass-02-audit.md
+      notes: "Codex audit corrected my original Mt/yr ceiling estimate; revised to Larson 2017 anchored ~100 Mt-1 Gt/yr."
+
+- id: q2.c3
+  text: "Reentry NOx (from atmospheric N2 dissociation during reentry heating) is propellant-independent — it scales with reentered mass, not with propellant choice. At Larson 2017's 17.5% NOx-per-kg-reentered factor, reusable Starship Block 3 produces ~18 t NOx per launch from payload+booster reentry. This is comparable to propellant-combustion NOx and contributes substantially to ozone loss at high cadence."
+  type: derived
+  evidence:
+    - source: larson-2017-noaa
+      ref: larson-reentry-nox
+      verdict: supports
+    - source: ryan-2022-emissions
+      ref: ozone-loss-contributors
+      verdict: supports
+  confidence: high
+
+- id: q2.c4
+  text: "Synthetic methane via Sabatier in the Handmer solar-abundance regime does NOT reduce per-launch atmospheric chemistry vs fossil methane. Combustion products (CO2 + H2O + NOx + BC) are chemically identical regardless of carbon source. Solar-derived propellant improves Earth's carbon-cycle (no net new CO2 to atmosphere over the synthesis-combustion cycle) but does not help q2's stratospheric chemistry ceiling."
+  type: derived
+  evidence:
+    - source: ryan-2022-emissions
+      ref: methalox-not-in-table
+      verdict: partial
+  confidence: high
+
+- id: q2.c5
+  text: "At cosmic Tt/yr LEO (10^12 t/yr = 10^10 launches/yr Block-3 reusable), atmospheric chemistry binds by ~3-4 orders of magnitude beyond Larson 2017's modeled regime. Even with ozone-cycle saturation, the stratosphere is being rebuilt with anthropogenic emissions at this scale. Earth chemical-rocket launch cannot operate at cosmic Tt/yr because atmospheric chemistry itself is being fundamentally replaced."
+  type: derived
+  evidence:
+    - source: larson-2017-noaa
+      ref: larson-1e6-cadence
+      verdict: novel-supporting
+  confidence: medium-high
+
+- id: q2.c6
+  text: "The q2 atmospheric ceiling (~100 Mt-1 Gt/yr LEO at 'disruptive' to 'catastrophic' tiers) sits 10-100x lower than the q1 solar-PV ceiling (~10-100 Gt/yr LEO). Atmospheric chemistry remains the load-bearing Earth-side constraint at the Mt-Gt/yr LEO scale relevant to serious solar-system industrialisation. q9 synthesis should lean primarily on q2 for the Moon-necessity argument at this scale."
+  type: derived
+  evidence:
+    - source: larson-2017-noaa
+      ref: larson-1e6-cadence
+      verdict: supports
+  confidence: high
+
+- id: q2.c7
+  text: "Reentry alumina (Murphy 2023 + Maloney 2025) is a distinct atmospheric impact from propellant emissions. At current ~250 launches/yr cadence, ~10% of stratospheric aerosol particles already contain spacecraft-origin metals; at projected 2040 ~60k LEO satellite cadence (~30k reentries/yr), ~10 kt/yr alumina deposition with +1.5°C polar mesospheric warming. At post-Mt/yr LEO cadence (~10^6 launches/yr), reentry alumina ceiling depends on satellite material composition — partially architecture-dependent."
+  type: factual
+  evidence:
+    - source: murphy-2023-pnas
+      ref: spacecraft-metals-fraction-current
+      verdict: supports
+    - source: murphy-2023-pnas
+      ref: projected-50pct-fraction
+      verdict: supports
+    - source: maloney-2025-alumina
+      ref: alumina-2040-projection
+      verdict: supports
+  confidence: high
+
+- id: q2.c8
+  text: "Atmospheric chemistry effects are fundamentally physical — they accumulate from any chemical-rocket launch regardless of capital, willingness, or current industrial demand. Unlike q1's industrial inputs (which were largely willingness-to-scale), q2's atmospheric constraints are *genuinely fundamental*: pollutants degrade atmospheric absorption and chemistry capacity regardless of how the rocket fuel was produced. The post-singularity solar-abundance regime does NOT relax q2's ceiling."
+  type: derived
+  confidence: high

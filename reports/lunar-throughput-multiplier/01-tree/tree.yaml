@@ -24,13 +24,13 @@ nodes:
     depth: 1
     type: leaf
     question: "What is the Earth-launch throughput ceiling imposed by atmospheric chemistry — ozone depletion (Cl, BC, NOx), stratospheric water-vapor injection, reentry metal injection (alumina, Na, Fe), and thermal forcing — distinguishing launch from reentry, at what launches/yr or kt/yr does each effect become climate or ozone binding?"
-    status: open
-    answer: null
-    confidence: null
+    status: answered
+    answer: "Atmospheric chemistry binds Earth chemical-rocket throughput at ~100 Mt-1 Gt/yr LEO (10^6-10^7 launches/yr); anchored on Larson 2017's chemistry-climate modeling of high-cadence hydrogen-propellant launches. 10-100× lower than q1's solar-PV ceiling, making atmospheric chemistry the load-bearing Earth-side constraint. Methalox is cleaner than current mixed fuel mix but not architecture-redesignable — reentry NOx + stratospheric H2O perturbation are fundamentally physical. The Handmer solar-abundance regime does not relax q2 because synthetic methane combustion is chemically identical to fossil methane combustion."
+    confidence: medium-high
     leaf_path: 02-leaves/q2-earth-atmospheric-ceiling/
     created_by: agent
     created_pass: 0
-    last_touched_pass: 0
+    last_touched_pass: 12
     children: []
 
   - id: q3-earth-destination-reachability

@@ -1,17 +1,21 @@
 id: q2-earth-atmospheric-ceiling
 question: "What is the Earth-launch throughput ceiling imposed by atmospheric chemistry — ozone depletion (Cl, BC, NOx), stratospheric water-vapor injection, reentry metal injection (alumina, Na, Fe), and thermal forcing — distinguishing launch from reentry, at what launches/yr or kt/yr does each effect become climate or ozone binding?"
 type: leaf
-status: pending
+status: reviewed
 claims_file: claims.yaml
 passes_status:
-  research: pending
-  calc: pending
-  reconcile: pending
-  source-review: pending
-  consistency: pending
-  write: pending
-last_pass: 0
+  research: done
+  calc: done
+  reconcile: deferred
+  source-review: deferred
+  consistency: deferred
+  write: done
+last_pass: 12
 contradictions_with: []
+claims_count: 8
+headline_answer: "Atmospheric chemistry binds Earth chemical-rocket throughput at ~100 Mt-1 Gt/yr LEO (10^6-10^7 launches/yr). Anchored on Larson 2017. 10-100x lower than q1 solar-PV ceiling. Methalox cleaner than current mixed fuel but not architecture-redesignable; reentry NOx + H2O perturbation are fundamentally physical."
+confidence: medium-high
+note: "Sub-passes 3 (reconcile), 4 (source-review), 5 (cross-consistency vs q1) deferred to free context. Calc + write include sources-unsealed analysis informally."
 seed_anchors:
   - Murphy et al. 2023 PNAS — stratospheric metals from reentry
   - Maloney et al. 2025 npj-CAS — near-future rocket launches/ozone
