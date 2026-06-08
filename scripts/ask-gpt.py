@@ -49,8 +49,9 @@ def call_codex_cli(system_prompt: str, user_content: str) -> str:
     with tempfile.NamedTemporaryFile("w+", suffix=".txt", delete=False) as tmp:
         out_path = tmp.name
     try:
+        codex_model = os.environ.get("CODEX_MODEL", "gpt-5.5")
         result = subprocess.run(
-            ["codex", "exec", "--skip-git-repo-check", "-o", out_path, "-"],
+            ["codex", "exec", "--skip-git-repo-check", "-c", f"model={codex_model}", "-o", out_path, "-"],
             input=combined,
             text=True,
             capture_output=True,
