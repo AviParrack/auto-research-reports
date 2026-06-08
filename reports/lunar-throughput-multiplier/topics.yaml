@@ -1,0 +1,51 @@
+# Cross-leaf topic registry. Each topic gets a slug; extract.md frontmatter and claims.yaml reference these.
+# Grows incrementally as leaf passes run.
+
+topics:
+  - slug: lox-supply-bottleneck
+    description: "US and global oxygen production capacity; ASU economics; how rocket LOX demand scales with launch cadence."
+    introduced_pass: 3
+    introduced_leaf: q1-earth-industrial-ceiling
+    related_leaves: [q1-earth-industrial-ceiling, q8a-moon-propellant-for-earth-launched]
+
+  - slug: methane-supply-bottleneck
+    description: "US natural gas production / consumption; per-launch methane consumption; LNG liquefaction capacity at launch sites."
+    introduced_pass: 3
+    introduced_leaf: q1-earth-industrial-ceiling
+    related_leaves: [q1-earth-industrial-ceiling]
+
+  - slug: engine-production-rate
+    description: "Raptor production rate; engine reuse-life; production constraints for expendable vs reusable Starship fleet."
+    introduced_pass: 3
+    introduced_leaf: q1-earth-industrial-ceiling
+    related_leaves: [q1-earth-industrial-ceiling]
+
+  - slug: pad-cadence-faa
+    description: "Launch pad turnaround time; FAA-approved cadence at Boca Chica / KSC; pad infrastructure scaling."
+    introduced_pass: 3
+    introduced_leaf: q1-earth-industrial-ceiling
+    related_leaves: [q1-earth-industrial-ceiling]
+
+  - slug: airframe-feedstock
+    description: "Stainless steel and structural feedstock for Starship; reusable vs expendable fleet scaling."
+    introduced_pass: 3
+    introduced_leaf: q1-earth-industrial-ceiling
+    related_leaves: [q1-earth-industrial-ceiling]
+
+  - slug: asu-capacity-power
+    description: "Cryogenic air separation unit capacity, capex, electricity demand at industrial scale."
+    introduced_pass: 3
+    introduced_leaf: q1-earth-industrial-ceiling
+    related_leaves: [q1-earth-industrial-ceiling]
+
+  - slug: aspirational-cadence-target
+    description: "Public-figure-stated targets for Starship cadence (Musk: 10k ships/yr; Handmer: 10⁶ t/yr LEO; 67k launches/yr for 1 TW orbital solar)."
+    introduced_pass: 3
+    introduced_leaf: q1-earth-industrial-ceiling
+    related_leaves: [q1-earth-industrial-ceiling, q9-synthesis-cosmic-multiplier]
+
+  - slug: casey-handmer-views
+    description: "Casey Handmer's public positions on Starship cadence, lunar mass drivers, and the long-arc trajectory of space industrialisation."
+    introduced_pass: 3
+    introduced_leaf: q1-earth-industrial-ceiling
+    related_leaves: [q1-earth-industrial-ceiling, q6-mass-driver-throughput]

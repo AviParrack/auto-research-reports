@@ -1,17 +1,23 @@
 id: q1-earth-industrial-ceiling
 question: "What is the Earth-launch throughput ceiling imposed by industrial inputs (LOX, methane, engine production, pad cadence, stainless steel, ASU power) for chemical rockets — at what kt/yr or Mt/yr to LEO does each input bind?"
 type: leaf
-status: pending
+status: researching
 claims_file: claims.yaml
 passes_status:
-  research: pending
+  research: done
   calc: pending
   reconcile: pending
   source-review: pending
   consistency: pending
   write: pending
-last_pass: 0
+last_pass: 3
 contradictions_with: []
+sources_gathered: 10
+sources_pending_re-fetch:
+  - epa-o2-supply-chain-2023 (PDF binary stream issue)
+  - spacenews-faa-starship (429 rate limit)
+  - arstechnica-falcon9-33 (host blocked)
+  - faa-spacex-starship (403)
 seed_anchors:
   - Workshop/Space/sdc/starship-launch-cadence-constraints.md
   - Mobius Risk Group propellant supply analysis
