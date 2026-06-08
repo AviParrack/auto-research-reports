@@ -336,3 +336,60 @@
       audit_file: null
       notes: "Arithmetic verified with python3; awaiting Codex audit."
 
+
+# --- Claims added in pass-02c-planetary-ceilings.md (Avi feedback 2026-06-09) ---
+
+- id: q1.c17
+  text: "Per-kg-LEO energy budget in the Handmer/Terraform synthetic-methane architecture is ~338 kWh/kg-LEO at SOTA electrolysis (50 kWh/kg H2 + 10% liquefaction overhead × 12.28 kg LCH4 per kg LEO mass). Water electrolysis upstream of Sabatier reaction co-produces 8 kg O2 per kg H2, which equates to 4 kg O2 per kg CH4 synthesised — 11% MORE oxygen than combustion needs (3.6 kg O2 per kg CH4 at Raptor's operating ratio). LOX is effectively free as a byproduct in the synthetic-propellant architecture; the standalone LOX-ASU constraint disappears."
+  type: derived
+  evidence:
+    - source: terraform-industries-methane
+      ref: terraform-h2-cost
+      verdict: supports
+    - source: asu-thermodynamic-minimum
+      ref: practical-state-of-the-art
+      verdict: supports
+  confidence: high
+  derivation_path: passes/pass-02c-planetary-ceilings.md
+  audit:
+    gpt:
+      status: unaudited
+      audit_file: null
+
+- id: q1.c18
+  text: "Solar-PV area required for cosmic Tt/yr LEO throughput in the Handmer synthetic-propellant architecture is ~750,000 km^2 (~0.5% of Earth land area, ~area of Turkey, comparable to current global paved-road footprint). Solar-PV area is NOT fundamentally binding until ~100-400 Tt/yr LEO scale (50-100% of land + accessible ocean tiled). This is 100-400x cosmic Tt/yr; the energy/PV-area ceiling does not bind at cosmic-mature civilization scale."
+  type: derived
+  evidence:
+    - source: terraform-industries-methane
+      ref: methane-feedstock-unlimited
+      verdict: supports
+  confidence: medium-high
+  derivation_path: passes/pass-02c-planetary-ceilings.md
+  audit:
+    gpt:
+      status: unaudited
+      audit_file: null
+
+- id: q1.c19
+  text: "Waste-heat ceiling on Earth chemical-rocket throughput in a non-solar energy supply regime (fossil, nuclear, fusion) binds at ~1 Pt/yr LEO (10^12 t/yr = 1,000x cosmic Tt) — producing ~570 TW continuous, ~1.1 W/m^2 radiative forcing over Earth surface, ~+0.78 C steady-state warming from rocket energy alone. In a solar-energy regime this ceiling does not apply because solar PV recycles intercepted incoming solar (no net new energy added to Earth's budget). The Pt/yr scale sits 1,000x above cosmic Tt/yr; waste heat is not a near-term constraint."
+  type: derived
+  confidence: high
+  derivation_path: passes/pass-02c-planetary-ceilings.md
+  audit:
+    gpt:
+      status: unaudited
+      audit_file: null
+
+- id: q1.c20
+  text: "The Moon's necessity for cosmic-Tt/yr LEO throughput does NOT rest on Earth chemical-rocket launch being categorically unable to deliver it. From q1's planetary-ceilings analysis: Earth chemical can supply cosmic Tt/yr (and 100-400x beyond) before saturating fundamental Earth-system limits (solar PV area, waste heat, energy supply). The Moon's value at cosmic scale rests on (a) atmospheric chemistry making Earth-launch socially or environmentally unacceptable at high cadence — q2's territory; (b) ~100x energy efficiency per kg delivered from the lunar surface vs. Earth chemical; (c) destination economics beyond LEO (Mars, NEAs, Belt, Mercury) where the Moon's low gravity well is decisive — q3 and q8 territory. The 'Moon is necessary' argument lives in q2 + synthesis q9, not in q1's industrial-input analysis."
+  type: derived
+  evidence:
+    - source: handmer-mass-driver-2026
+      ref: lunar-mass-driver-design-point
+      verdict: supports
+  confidence: medium-high
+  derivation_path: passes/pass-02c-planetary-ceilings.md
+  audit:
+    gpt:
+      status: unaudited
+      audit_file: null
