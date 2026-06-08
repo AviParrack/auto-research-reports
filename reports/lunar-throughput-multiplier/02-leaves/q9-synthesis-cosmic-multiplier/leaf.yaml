@@ -1,0 +1,23 @@
+id: q9-synthesis-cosmic-multiplier
+question: "Integrating Earth ceilings (q1-q3), lunar capability (q4-q7), and the Moon-as-supplier channel (q8): at maturity, what is the throughput multiplier from adding a lunar base, per destination — and at cosmic scales (Tt/yr Dyson-relevant), does the Moon make achievable a throughput regime Earth alone cannot reach?"
+type: synthesis
+status: pending
+claims_file: claims.yaml
+passes_status:
+  research: deferred
+  calc: deferred
+  reconcile: deferred
+  source-review: deferred
+  consistency: pending
+  write: pending
+last_pass: 0
+contradictions_with: []
+depends_on:
+  - q1-earth-industrial-ceiling
+  - q2-earth-atmospheric-ceiling
+  - q3-earth-destination-reachability
+  - q4-lunar-power-ceiling
+  - q5-lunar-materials-ceiling
+  - q6-mass-driver-throughput
+  - q7-receiver-infrastructure
+  - q8-moon-as-supplier

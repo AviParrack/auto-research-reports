@@ -1,0 +1,21 @@
+id: q2-earth-atmospheric-ceiling
+question: "What is the Earth-launch throughput ceiling imposed by atmospheric chemistry — ozone depletion (Cl, BC, NOx), stratospheric water-vapor injection, reentry metal injection (alumina, Na, Fe), and thermal forcing — distinguishing launch from reentry, at what launches/yr or kt/yr does each effect become climate or ozone binding?"
+type: leaf
+status: pending
+claims_file: claims.yaml
+passes_status:
+  research: pending
+  calc: pending
+  reconcile: pending
+  source-review: pending
+  consistency: pending
+  write: pending
+last_pass: 0
+contradictions_with: []
+seed_anchors:
+  - Murphy et al. 2023 PNAS — stratospheric metals from reentry
+  - Maloney et al. 2025 npj-CAS — near-future rocket launches/ozone
+  - Barker et al. 2026 Earth's Future — megaconstellation radiative forcing
+  - Ryan et al. 2022 Earth's Future
+  - NASA TM-20240013276
+  - NOAA CSL 2025 news on aluminum

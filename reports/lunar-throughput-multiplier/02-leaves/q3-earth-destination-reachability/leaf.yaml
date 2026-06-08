@@ -1,0 +1,20 @@
+id: q3-earth-destination-reachability
+question: "Conditional on any LEO mass flux from Earth, what fraction of that mass reaches each destination (GEO, cislunar, Mars, NEAs, asteroid belt, Mercury, sundivers, outer planets) under chemical rockets only — and which destinations are categorically unreachable single-stage from Earth chemical at any cadence?"
+type: constraint
+status: pending
+claims_file: claims.yaml
+passes_status:
+  research: pending
+  calc: pending
+  reconcile: pending
+  source-review: pending
+  consistency: pending
+  write: pending
+last_pass: 0
+contradictions_with: []
+seed_anchors:
+  - Tsiolkovsky rocket equation; Δv budgets
+  - methalox / hydrolox Isp tables
+  - Workshop/Space/solar-system/Lunar-Economics/full-analysis.md (Earth-direct destination math)
+  - NASA Deep Space Mission Analysis tools
+  - Casey Handmer multiple posts on payload fractions

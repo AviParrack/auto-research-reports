@@ -1,0 +1,17 @@
+slug: lunar-throughput-multiplier
+root_question: "Does building a base on the Moon increase the total mass throughput humanity can deliver to elsewhere in the solar system — and at cosmic scales (Tt/yr), what constraints bind first on each side?"
+status: in_progress
+current_pass: 1
+created: 2026-06-08
+last_updated: 2026-06-08T20:35:00Z
+tree_nodes: 9
+tree_summary: "3 Earth-side leaves (industrial inputs, atmospheric chemistry, destination reachability), 4 Moon-side (power, materials, mass-driver throughput, receiver infrastructure), 1 cross-cutting (Moon-as-supplier), 1 final synthesis (per-destination multiplier + cosmic scale)."
+models:
+  primary: claude-opus-4-7
+  critic: gpt-5-pro
+deploy:
+  mode: cloudflare
+  cloudflare_project: lunar-throughput-multiplier
+termination:
+  root_answered: false
+  all_figures_reviewed: false

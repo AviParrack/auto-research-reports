@@ -1,0 +1,132 @@
+root:
+  id: root
+  question: "Does building a base on the Moon increase the total mass throughput humanity can deliver to elsewhere in the solar system — and at cosmic scales (Tt/yr), what constraints bind first on each side?"
+  answer: null
+  status: open
+
+nodes:
+  - id: q1-earth-industrial-ceiling
+    parent: root
+    depth: 1
+    type: leaf
+    question: "What is the Earth-launch throughput ceiling imposed by industrial inputs (LOX, methane, engine production, pad cadence, stainless steel, ASU power) for chemical rockets — at what kt/yr or Mt/yr to LEO does each input bind?"
+    status: open
+    answer: null
+    confidence: null
+    leaf_path: 02-leaves/q1-earth-industrial-ceiling/
+    created_by: agent
+    created_pass: 0
+    last_touched_pass: 0
+    children: []
+
+  - id: q2-earth-atmospheric-ceiling
+    parent: root
+    depth: 1
+    type: leaf
+    question: "What is the Earth-launch throughput ceiling imposed by atmospheric chemistry — ozone depletion (Cl, BC, NOx), stratospheric water-vapor injection, reentry metal injection (alumina, Na, Fe), and thermal forcing — distinguishing launch from reentry, at what launches/yr or kt/yr does each effect become climate or ozone binding?"
+    status: open
+    answer: null
+    confidence: null
+    leaf_path: 02-leaves/q2-earth-atmospheric-ceiling/
+    created_by: agent
+    created_pass: 0
+    last_touched_pass: 0
+    children: []
+
+  - id: q3-earth-destination-reachability
+    parent: root
+    depth: 1
+    type: constraint
+    question: "Conditional on any LEO mass flux from Earth, what fraction of that mass reaches each destination (GEO, cislunar, Mars, NEAs, asteroid belt, Mercury, sundivers, outer planets) under chemical rockets only — and which destinations are categorically unreachable single-stage from Earth chemical at any cadence?"
+    status: open
+    answer: null
+    confidence: null
+    leaf_path: 02-leaves/q3-earth-destination-reachability/
+    created_by: agent
+    created_pass: 0
+    last_touched_pass: 0
+    children: []
+
+  - id: q4-lunar-power-ceiling
+    parent: root
+    depth: 1
+    type: leaf
+    question: "What is the achievable power-supply ceiling for a mature lunar industrial base (Peaks of Eternal Light solar, beamed power, surface PV, fission, fusion) — and how does that GW ceiling map to mass-driver mechanical throughput at 2.4 km/s (= 2.88 MJ/kg minimum energy, > 3 MJ/kg after efficiency losses)?"
+    status: open
+    answer: null
+    confidence: null
+    leaf_path: 02-leaves/q4-lunar-power-ceiling/
+    created_by: agent
+    created_pass: 0
+    last_touched_pass: 0
+    children: []
+
+  - id: q5-lunar-materials-ceiling
+    parent: root
+    depth: 1
+    type: leaf
+    question: "What is the lunar regolith mining + processing rate ceiling at industrial maturity, and what fraction of launched mass must remain Earth-shipped 'vitamin' material (copper, REE, polymers, electronics, lubricants) — does that fraction shrink with closure or asymptote at a non-trivial floor?"
+    status: open
+    answer: null
+    confidence: null
+    leaf_path: 02-leaves/q5-lunar-materials-ceiling/
+    created_by: agent
+    created_pass: 0
+    last_touched_pass: 0
+    children: []
+
+  - id: q6-mass-driver-throughput
+    parent: root
+    depth: 1
+    type: leaf
+    question: "First-principles: given input power P (GW) and required exit velocity v_e (km/s), what mass-driver throughput (kg/s, kt/yr) is achievable, after accounting for duty cycle, cycle-life, thermal dissipation in vacuum, and structural-acceleration limits on the payload?"
+    status: open
+    answer: null
+    confidence: null
+    leaf_path: 02-leaves/q6-mass-driver-throughput/
+    created_by: agent
+    created_pass: 0
+    last_touched_pass: 0
+    children: []
+
+  - id: q7-receiver-infrastructure
+    parent: root
+    depth: 1
+    type: constraint
+    question: "What catcher/receiver infrastructure (orbital catcher, magsail decelerator, atmospheric capture, rotovator) is required to convert mass-driver-launched mass into useful payload at each destination — at what kt/yr does the receiver bind instead of the driver?"
+    status: open
+    answer: null
+    confidence: null
+    leaf_path: 02-leaves/q7-receiver-infrastructure/
+    created_by: agent
+    created_pass: 0
+    last_touched_pass: 0
+    children: []
+
+  - id: q8-moon-as-supplier
+    parent: root
+    depth: 1
+    type: leaf
+    question: "If the Moon supplies LOX, LH2, H2O, and structural mass to LEO and cislunar (rather than launching cargo directly to interplanetary destinations), how much does Earth-launched cargo's effective rocket-equation tax to Mars/NEAs/Belt fall, and what is the resulting throughput multiplier per Earth launch?"
+    status: open
+    answer: null
+    confidence: null
+    leaf_path: 02-leaves/q8-moon-as-supplier/
+    created_by: agent
+    created_pass: 0
+    last_touched_pass: 0
+    children: []
+
+  - id: q9-synthesis-cosmic-multiplier
+    parent: root
+    depth: 1
+    type: synthesis
+    question: "Integrating Earth ceilings (q1-q3), lunar capability (q4-q7), and the Moon-as-supplier channel (q8): at maturity, what is the throughput multiplier from adding a lunar base, per destination — and at cosmic scales (Tt/yr Dyson-relevant), does the Moon make achievable a throughput regime Earth alone cannot reach?"
+    status: open
+    answer: null
+    confidence: null
+    leaf_path: 02-leaves/q9-synthesis-cosmic-multiplier/
+    created_by: agent
+    created_pass: 0
+    last_touched_pass: 0
+    children: []

@@ -1,0 +1,20 @@
+id: q8-moon-as-supplier
+question: "If the Moon supplies LOX, LH2, H2O, and structural mass to LEO and cislunar (rather than launching cargo directly to interplanetary destinations), how much does Earth-launched cargo's effective rocket-equation tax to Mars/NEAs/Belt fall, and what is the resulting throughput multiplier per Earth launch?"
+type: leaf
+status: pending
+claims_file: claims.yaml
+passes_status:
+  research: pending
+  calc: pending
+  reconcile: pending
+  source-review: pending
+  consistency: pending
+  write: pending
+last_pass: 0
+contradictions_with: []
+seed_anchors:
+  - Sowers — lunar propellant economics
+  - Metzger 2023 — gear ratio + propellant export
+  - Linne et al. — SRU to satisfy lunar oxygen demand
+  - PRIME-1 / VIPER prospecting data
+  - propellant depot architecture (Boeing / ULA papers)

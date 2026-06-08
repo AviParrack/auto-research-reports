@@ -1,0 +1,20 @@
+id: q5-lunar-materials-ceiling
+question: "What is the lunar regolith mining + processing rate ceiling at industrial maturity, and what fraction of launched mass must remain Earth-shipped 'vitamin' material (copper, REE, polymers, electronics, lubricants) — does that fraction shrink with closure or asymptote at a non-trivial floor?"
+type: leaf
+status: pending
+claims_file: claims.yaml
+passes_status:
+  research: pending
+  calc: pending
+  reconcile: pending
+  source-review: pending
+  consistency: pending
+  write: pending
+last_pass: 0
+contradictions_with: []
+seed_anchors:
+  - Streeck et al. 2021 anthropogenic stocks
+  - Metzger 2023 ISRU economics
+  - NASA NTRS lunar ISRU plans 2022 / 2025
+  - hybrid lunar ISRU plant analyses
+  - Workshop/Space/solar-system/Lunar-Economics (Structural vs Must-ship decomposition)

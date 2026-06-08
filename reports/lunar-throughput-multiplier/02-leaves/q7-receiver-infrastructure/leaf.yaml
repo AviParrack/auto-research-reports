@@ -1,0 +1,20 @@
+id: q7-receiver-infrastructure
+question: "What catcher/receiver infrastructure (orbital catcher, magsail decelerator, atmospheric capture, rotovator) is required to convert mass-driver-launched mass into useful payload at each destination — at what kt/yr does the receiver bind instead of the driver?"
+type: constraint
+status: pending
+claims_file: claims.yaml
+passes_status:
+  research: pending
+  calc: pending
+  reconcile: pending
+  source-review: pending
+  consistency: pending
+  write: pending
+last_pass: 0
+contradictions_with: []
+seed_anchors:
+  - O'Neill 1976 mass catcher designs
+  - Hoyt rotovators / momentum-exchange tethers
+  - Andrews magsail
+  - Mars atmospheric capture (aerocapture / aerobraking)
+  - patent literature on inductive deceleration

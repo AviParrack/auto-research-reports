@@ -1,0 +1,20 @@
+id: q4-lunar-power-ceiling
+question: "What is the achievable power-supply ceiling for a mature lunar industrial base (Peaks of Eternal Light solar, beamed power, surface PV, fission, fusion) — and how does that GW ceiling map to mass-driver mechanical throughput at 2.4 km/s (= 2.88 MJ/kg minimum energy, > 3 MJ/kg after efficiency losses)?"
+type: leaf
+status: pending
+claims_file: claims.yaml
+passes_status:
+  research: pending
+  calc: pending
+  reconcile: pending
+  source-review: pending
+  consistency: pending
+  write: pending
+last_pass: 0
+contradictions_with: []
+seed_anchors:
+  - Casey Handmer 2022 "Powering the lunar base, version 2"
+  - Workshop/Space/solar-system/Lunar-Economics/full-analysis.md (power-scaling law)
+  - NASA Kilopower / Fission Surface Power studies
+  - Peaks of Eternal Light site area constraints
+  - thin-film PV on regolith / autonomous deployment

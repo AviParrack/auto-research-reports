@@ -1,0 +1,22 @@
+id: q6-mass-driver-throughput
+question: "First-principles: given input power P (GW) and required exit velocity v_e (km/s), what mass-driver throughput (kg/s, kt/yr) is achievable, after accounting for duty cycle, cycle-life, thermal dissipation in vacuum, and structural-acceleration limits on the payload?"
+type: leaf
+status: pending
+claims_file: claims.yaml
+passes_status:
+  research: pending
+  calc: pending
+  reconcile: pending
+  source-review: pending
+  consistency: pending
+  write: pending
+last_pass: 0
+contradictions_with: []
+seed_anchors:
+  - Casey Handmer May 2026 lunar mass driver
+  - NASA SP-428 / O'Neill / Snyder
+  - arXiv 2410.09616 lunar gravity anomalies
+  - Miller 2023 SJSU
+  - Navy EMRG cycle-life data
+  - AIAA 2025 cost-benefit
+  - Workshop/Space/dyson-swarm/strategy/all-notes.md (g-load tradeoffs)
