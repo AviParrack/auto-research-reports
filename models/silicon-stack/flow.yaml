@@ -1,108 +1,139 @@
-# Material/value flow graph for the leading-edge logic chip stack.
-# Rendered as an interactive Sankey on the Overview tab. Ribbon width = value_usd
-# (value added per wafer); hover shows throughput + embodied energy.
+# Material/value flow for the leading-edge logic chip stack, restructured from
+# the research pass into THREE converging rails + a back-end the naive chain omits.
+# Ribbon width = approximate USD value of that flow. Hover shows throughput/energy.
 #
-# DISCIPLINE: every edge is a claim. It carries EITHER evidence.source (a slug
-# under sources/, → clickable citation) OR evidence.estimate: true with a note
-# (→ labelled principled estimate). No bare numbers. All values below are
-# SCAFFOLD placeholders pending the auto-model swarm.
+# AXIS CAVEAT (honest): front-end edges are per 300 mm wafer; back-end (packaging)
+# edges are per finished accelerator PACKAGE. A wafer yields ~60 large dies, so a
+# clean per-die normalization is a known follow-up — see model.yaml notes.
+# Every edge carries evidence.source (→ citation) or evidence.estimate (→ labelled).
 
-unit: "per 300 mm leading-edge logic wafer"
+unit: "per 300 mm leading-edge logic wafer (front-end) / per accelerator package (back-end)"
 
 nodes:
-  - id: quartz
-    label: "High-purity quartz"
-    stage: raw-material
-    entity: the-quartz-corp
-  - id: carbon
-    label: "Carbon / coke"
-    stage: raw-material
-    entity: commodity-carbon
-  - id: mg-si
-    label: "Metallurgical-grade Si"
-    stage: refining
-    entity: ferroglobe
-  - id: polysilicon
-    label: "Polysilicon (11N)"
-    stage: refining
-    entity: wacker
-  - id: ingot
-    label: "Monocrystalline ingot + wafer"
-    stage: substrate
-    entity: shin-etsu
-  - id: euv
-    label: "EUV lithography"
-    stage: equipment
-    entity: asml
-  - id: fab-materials
-    label: "Photoresist, gases, CMP, dopants"
-    stage: materials
-    entity: fab-materials-cluster
-  - id: fab
-    label: "Wafer fabrication (front-end)"
-    stage: fab
-    entity: tsmc
-  - id: packaging
-    label: "Advanced packaging (CoWoS)"
-    stage: packaging
-    entity: tsmc
-  - id: die
-    label: "Finished logic die"
-    stage: product
-    entity: nvidia
+  # --- materials rail ---
+  - { id: quartz, label: "High-purity quartz", stage: raw-material, entity: the-quartz-corp }
+  - { id: mg-si, label: "Metallurgical-grade Si", stage: refining, entity: ferroglobe }
+  - { id: polysilicon, label: "Polysilicon (11N)", stage: refining, entity: wacker }
+  - { id: wafer, label: "300 mm prime wafer", stage: substrate, entity: shin-etsu }
+  # --- tool rail (upstream of ASML) ---
+  - { id: zeiss, label: "Zeiss optics", stage: equipment, entity: zeiss }
+  - { id: cymer, label: "Cymer EUV source", stage: equipment, entity: cymer }
+  - { id: trumpf, label: "Trumpf drive laser", stage: equipment, entity: trumpf }
+  - { id: asml, label: "ASML EUV scanner", stage: equipment, entity: asml }
+  # --- design rail (amortized per wafer) ---
+  - { id: eda, label: "EDA + IP", stage: design, entity: synopsys }
+  - { id: photomask, label: "Photomask set", stage: design, entity: photomask-cluster }
+  # --- consumables ---
+  - { id: gases, label: "Neon / specialty gases", stage: materials, entity: gas-cluster }
+  # --- fab ---
+  - { id: fab, label: "TSMC front-end fab", stage: fab, entity: tsmc }
+  - { id: die, label: "Logic die (patterned wafer)", stage: product, entity: nvidia }
+  # --- back-end / packaging rail ---
+  - { id: hbm, label: "HBM memory stacks", stage: memory, entity: sk-hynix }
+  - { id: abf, label: "ABF build-up film", stage: materials, entity: ajinomoto }
+  - { id: substrate, label: "FC-BGA substrate", stage: packaging, entity: substrate-cluster }
+  - { id: cowos, label: "CoWoS advanced packaging", stage: packaging, entity: tsmc }
+  - { id: osat, label: "OSAT assembly & test", stage: packaging, entity: ase }
+  - { id: package, label: "Packaged AI accelerator", stage: product, entity: nvidia }
 
 edges:
+  # materials rail
   - from: quartz
     to: mg-si
     value_usd: 4
     throughput: "~8 Mt/yr high-purity quartz globally"
-    energy_mj: 60
-    evidence: { estimate: true, note: "Scaffold estimate: quartz cost contribution per wafer is negligible vs downstream." }
-  - from: carbon
-    to: mg-si
-    value_usd: 3
-    throughput: "carbothermic reductant"
-    energy_mj: 40
-    evidence: { estimate: true, note: "Scaffold estimate." }
+    evidence: { estimate: true, note: "Quartz cost contribution per wafer is negligible vs downstream." }
   - from: mg-si
     to: polysilicon
     value_usd: 12
     throughput: "~9 Mt/yr MG-Si globally (mostly non-semiconductor)"
-    energy_mj: 110
-    evidence: { estimate: true, note: "Scaffold estimate: Siemens-process polysilicon is energy-intensive; cost/wafer still small." }
+    energy_mj: 43
+    evidence: { source: si-energy-exergy, ref: carbothermic, note: "Carbothermic MG-Si ~11–13 kWh/kg electric (~43 MJ/kg) + similar carbon chemical energy." }
   - from: polysilicon
-    to: ingot
+    to: wafer
     value_usd: 60
-    throughput: "semiconductor-grade poly is <5% of total poly output"
-    energy_mj: 250
-    evidence: { source: bcg-semiconductor-supply-chain-2021, ref: "value-chain-overview", note: "Order-of-magnitude; refine in swarm." }
-  - from: ingot
+    throughput: "semiconductor-grade poly <5% of total poly output"
+    energy_mj: 360
+    evidence: { source: fraunhofer-ise-eg-2025, ref: eg-siemens, note: "Electronic-grade Siemens poly 92–124 kWh/kg (Fraunhofer ISE 2025, for Wacker)." }
+  - from: wafer
     to: fab
-    value_usd: 220
-    throughput: "~12–13 M leading-edge wafers/yr"
-    energy_mj: 300
-    evidence: { estimate: true, note: "Scaffold estimate: blank 300 mm prime wafer ~ low hundreds of $." }
-  - from: euv
+    value_usd: 200
+    throughput: "~12–13 M leading-edge wafers/yr; Shin-Etsu+SUMCO ~54% of 300 mm"
+    evidence: { source: toms-wafer-blank, ref: blank-wafer, note: "Blank 300 mm prime wafer >$200 by 2024 — ~1% of the patterned wafer value." }
+  # tool rail
+  - from: trumpf
+    to: cymer
+    value_usd: 0
+    throughput: "CO₂ drive laser → tin-plasma EUV source"
+    evidence: { source: generalist-asml, ref: euv-bought-in, note: "Trumpf laser vaporizes tin droplets; part of the ~85% bought-in EUV BOM." }
+  - from: cymer
+    to: asml
+    value_usd: 0
+    throughput: "ASML acquired Cymer ~$2.5B (2013)"
+    evidence: { source: generalist-asml, ref: cymer, note: "LPP tin-droplet EUV light source, sole-source." }
+  - from: zeiss
+    to: asml
+    value_usd: 0
+    throughput: "ASML invested ~$1B in Zeiss"
+    evidence: { source: generalist-asml, ref: zeiss, note: "Exclusive sole-source EUV optics — the most expensive, irreplaceable subsystem." }
+  - from: asml
     to: fab
-    value_usd: 5200
-    throughput: "ASML ships <100 EUV systems/yr; amortized per wafer"
-    energy_mj: 1400
-    evidence: { source: asml-annual-report-2024, ref: "euv-systems-shipped", note: "Amortized tool + service per wafer, scaffold split." }
-  - from: fab-materials
-    to: fab
-    value_usd: 900
-    throughput: "photoresist, specialty gases, CMP slurry, dopants"
+    value_usd: 800
+    throughput: "48 EUV systems/yr; ~10–25 EUV layers/wafer"
     energy_mj: 200
-    evidence: { estimate: true, note: "Scaffold estimate: consumable materials per leading-edge wafer." }
+    evidence: { source: semianalysis-highna-cost, ref: per-wafer-layer, note: "~$30–70/wafer/layer × ~10–25 layers ≈ $300–1,500/wafer of EUV scanner cost; ~$800 midpoint." }
+  # design rail (amortized per wafer)
+  - from: eda
+    to: photomask
+    value_usd: 50
+    throughput: "Synopsys+Cadence ~74% of EDA; Arm royalty ~1–4%"
+    evidence: { source: snps-cdns-duopoly, ref: eda-duopoly, note: "Design tools + IP, amortized to a small per-wafer share of a $400–600M 3nm NRE." }
+  - from: photomask
+    to: fab
+    value_usd: 300
+    throughput: "3nm mask set ~$15M, amortized over ~50k wafers"
+    evidence: { source: siliconanalysts-3nm-cost, ref: mask-set, note: "$15M 3nm mask set / ~50k wafers ≈ $300/wafer (vs $6.5M at 5nm)." }
+  # consumables
+  - from: gases
+    to: fab
+    value_usd: 20
+    throughput: "neon ~96–97.5% of excimer mix; Ukraine ~50–70% of supply pre-2022"
+    evidence: { source: usitc-neon, ref: neon, note: "Tiny $ line, severe single-point-of-failure; prices ~4× in early 2022." }
+  # fab → die
   - from: fab
-    to: packaging
-    value_usd: 9000
-    throughput: "front-end process value add"
-    energy_mj: 1800
-    evidence: { estimate: true, note: "Scaffold estimate: fab process is the dominant value-add per wafer." }
-  - from: packaging
     to: die
-    value_usd: 2400
-    throughput: "CoWoS / advanced packaging is capacity-constrained"
-    energy_mj: 350
-    evidence: { estimate: true, note: "Scaffold estimate: advanced packaging value add per wafer-equivalent." }
+    value_usd: 18000
+    throughput: "TSMC 3nm patterned wafer ASP; ~2,000 kWh/wafer company-avg"
+    energy_mj: 7200
+    evidence: { source: toms-3nm-wafer, ref: wafer-asp, note: "TSMC 3nm 300 mm wafer ASP ~$18,000 (2024 analyst); ~$19.5k 2026. Energy: ~2 MWh/wafer company-average (leading-edge higher)." }
+  # back-end / packaging rail (per package)
+  - from: die
+    to: cowos
+    value_usd: 10000
+    throughput: "CoWoS wafer ASP ~$10k (2026), near 7nm node ASP"
+    evidence: { source: trendforce-cowos-asp, ref: cowos-asp, note: "Advanced packaging now a key TSMC profit driver." }
+  - from: hbm
+    to: cowos
+    value_usd: 3000
+    throughput: "6–8 HBM3E stacks/accelerator @ ~$300–500/stack"
+    evidence: { source: trendforce-hbm3e-price, ref: hbm3e, note: "HBM often rivals or exceeds the logic-die cost — the biggest omission of the naive chain." }
+  - from: abf
+    to: substrate
+    value_usd: 0
+    throughput: "Ajinomoto >95% of ABF film"
+    evidence: { source: biggo-ajinomoto, ref: abf, note: "ABF dielectric film near-monopoly; 30% price hike Q3 2026." }
+  - from: substrate
+    to: cowos
+    value_usd: 300
+    throughput: "Ibiden/Unimicron/Shinko FC-BGA substrate"
+    evidence: { source: biggo-ajinomoto, ref: fcbga, note: "High-layer-count ABF substrate is a recurring AI-package bottleneck." }
+  - from: cowos
+    to: osat
+    value_usd: 600
+    throughput: "interposer + assembly per package"
+    evidence: { estimate: true, note: "Silicon interposer + assembly within the ~$500–1,500 CoWoS package adder." }
+  - from: osat
+    to: package
+    value_usd: 200
+    throughput: "final assembly & test (ASE, Amkor)"
+    evidence: { estimate: true, note: "Final test/assembly value per package." }

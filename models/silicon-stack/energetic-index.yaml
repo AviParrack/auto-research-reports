@@ -1,50 +1,50 @@
-# Energetic idiot index = actual cradle-to-gate energy per unit ÷ the
-# thermodynamic floor (minimum energy the physics demands for the same atoms).
-# This is the "above Musk" industrial-explosion lens: joules, not dollars,
-# including mining, reduction, purification, crystal growth, and fab.
-# Each line carries citation-or-estimate. SCAFFOLD placeholders pending swarm.
+# Energetic idiot index = actual energy ÷ thermodynamic floor for the same atoms.
+# Floor = the irreducible chemistry: carbothermic reduction SiO2 + 2C → Si + 2CO,
+# ΔH = +689.9 kJ/mol = 24.6 MJ/kg Si (NIST-JANAF). Note the floor is per-kg for
+# the refining rows and per-wafer (4.5 mol Si ≈ 3.1 MJ) for the full-stack row.
+# Each side cites a source or is a labelled estimate.
 
-- id: ei-packaged-die
-  product: "Packaged leading-edge logic die"
-  entity: nvidia
-  actual:
-    label: "Actual cradle-to-gate energy"
-    value_mj: 4900
-    evidence: { estimate: true, note: "Scaffold: sum of per-wafer edge energies ÷ dies/wafer, order-of-magnitude." }
-  floor:
-    label: "Thermodynamic floor (same atoms)"
-    value_mj: 40
-    evidence: { estimate: true, note: "Scaffold: free-energy of separation/reduction for the material content." }
-  ratio: 122
-  confidence: low
-  note: "Scaffold estimate. Fab + EUV dominate; floor is tiny vs actual."
-
-- id: ei-polysilicon
-  product: "Semiconductor-grade polysilicon (per kg)"
-  entity: wacker
-  actual:
-    label: "Siemens-process energy"
-    value_mj: 580
-    evidence: { source: bcg-semiconductor-supply-chain-2021, ref: "energy-intensity", note: "Scaffold: Siemens process is famously energy-hungry (~kWh/kg range)." }
-  floor:
-    label: "Thermodynamic purification floor"
-    value_mj: 5
-    evidence: { estimate: true, note: "Scaffold: ideal separation work for impurity removal." }
-  ratio: 116
-  confidence: low
-  note: "Scaffold estimate."
-
-- id: ei-wafer-fab
-  product: "Front-end wafer fabrication (per wafer)"
+- id: ei-wafer-full
+  product: "Full cradle-to-gate energy per leading-edge wafer"
   entity: tsmc
   actual:
-    label: "Fab process energy / wafer"
-    value_mj: 3200
-    evidence: { estimate: true, note: "Scaffold: leading-edge fab energy per wafer, order-of-magnitude." }
+    label: "Fab electricity per wafer (company avg)"
+    value_mj: 7200
+    evidence: { source: semivision-tsmc-power-2024, ref: tsmc-power, note: "TSMC 25.55 TWh / 12.9 M wafers ≈ 2,000 kWh/wafer = 7,200 MJ (company average; leading-edge is higher). Upstream poly+crystal add more." }
   floor:
-    label: "Patterning thermodynamic floor"
-    value_mj: 30
-    evidence: { estimate: true, note: "Scaffold: Landauer-ish + chemical floor is negligible vs actual." }
-  ratio: 107
-  confidence: low
-  note: "Scaffold estimate."
+    label: "Thermodynamic floor (Si in one wafer)"
+    value_mj: 3.1
+    evidence: { source: nist-quartz, ref: carbothermic-enthalpy, note: "4.5 mol Si × 689.9 kJ/mol = 3.1 MJ/wafer (≈0.87 kWh). The irreducible energy to win the silicon atoms." }
+  ratio: 2300
+  confidence: medium
+  note: "The full chip stack burns ~2,000–3,000× the thermodynamic minimum for its silicon — vast headroom, the energetic industrial-explosion signal."
+
+- id: ei-carbothermic
+  product: "Metallurgical silicon smelting (per kg Si)"
+  entity: ferroglobe
+  actual:
+    label: "Submerged-arc furnace electricity"
+    value_mj: 43
+    evidence: { source: si-energy-exergy, ref: carbothermic, note: "~11–13 kWh/kg electric ≈ 43 MJ/kg (+ comparable carbon chemical energy)." }
+  floor:
+    label: "Reduction enthalpy ΔH"
+    value_mj: 24.6
+    evidence: { source: nist-quartz, ref: carbothermic-enthalpy, note: "689.9 kJ/mol ÷ 28.09 g/mol = 24.6 MJ/kg. NIST SiO2 + Argonne CO." }
+  ratio: 2
+  confidence: high
+  note: "The smelting step is already close to its floor (~2×) — the silicon-winning chemistry is near-optimal. The waste is all downstream."
+
+- id: ei-polysilicon-purification
+  product: "Siemens polysilicon purification (per kg)"
+  entity: wacker
+  actual:
+    label: "Electronic-grade Siemens energy"
+    value_mj: 389
+    evidence: { source: fraunhofer-ise-eg-2025, ref: eg-siemens, note: "~92–124 kWh/kg (≈108 kWh/kg ≈ 389 MJ/kg) for electronic grade — Fraunhofer ISE 2025." }
+  floor:
+    label: "Ideal separation work"
+    value_mj: 0.005
+    evidence: { estimate: true, note: "Entropy-of-mixing floor to purify from ~1% impurity ≈ 5 kJ/kg = 0.005 MJ/kg. The atoms are already reduced; only un-mixing remains." }
+  ratio: 78000
+  confidence: medium
+  note: "Purification is the single most thermodynamically wasteful step — ~78,000× the ideal separation work. The biggest energetic opportunity in the stack."

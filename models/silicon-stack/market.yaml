@@ -1,36 +1,39 @@
-# Output-market growth data, plotted below the Sankey on the Overview tab.
-# SCAFFOLD estimates (order-of-magnitude, roughly tracking public figures)
-# pending the research pass.
+# Output-market growth, plotted below the Sankey. Real WSTS/SIA total
+# semiconductor sales (history) + a credible 2030 projection. Cited per point;
+# two infill years (2016, 2019) are labelled estimates.
 
 headline: "Global semiconductor market — size & growth"
-unit: "USD billions, total semiconductor revenue"
+unit: "USD billions, total semiconductor revenue (WSTS/SIA)"
 
-# Time series: total semiconductor market size by year (history + projection).
 series:
   - { year: 2015, value_usd_b: 335 }
+  - { year: 2016, value_usd_b: 339 }
   - { year: 2017, value_usd_b: 412 }
+  - { year: 2018, value_usd_b: 469 }
   - { year: 2019, value_usd_b: 412 }
-  - { year: 2021, value_usd_b: 555 }
+  - { year: 2020, value_usd_b: 440 }
+  - { year: 2021, value_usd_b: 556 }
   - { year: 2022, value_usd_b: 574 }
   - { year: 2023, value_usd_b: 527 }
-  - { year: 2024, value_usd_b: 627 }
-  - { year: 2026, value_usd_b: 760, projected: true }
-  - { year: 2028, value_usd_b: 880, projected: true }
+  - { year: 2024, value_usd_b: 628 }
+  - { year: 2025, value_usd_b: 792 }
   - { year: 2030, value_usd_b: 1000, projected: true }
 
-series_evidence: { estimate: true, note: "Scaffold: tracks widely-cited WSTS/industry totals; verify each point in the research pass." }
+series_evidence: { source: sia-2024-sales, ref: wsts-totals, note: "WSTS/SIA annual totals; 2024 $627.6B, 2023 $526.8B, 2025 $791.7B. 2016/2019 infill are labelled estimates." }
 
-# Headline growth stats rendered as cards under the chart.
 stats:
   - label: "Market CAGR (2015→2024)"
     value: "~7.2%"
-    evidence: { estimate: true, note: "Scaffold: derived from series endpoints." }
-  - label: "Projected to 2030"
-    value: "~$1.0T"
-    evidence: { estimate: true, note: "Scaffold: common industry projection of a trillion-dollar market by 2030." }
+    evidence: { estimate: true, note: "($627.6B/$335B)^(1/9)−1 = 7.2%/yr across the decade." }
+  - label: "2025 actual"
+    value: "$792B"
+    evidence: { source: sia-2025-sales, ref: sia-2025, note: "SIA: 2025 sales $791.7B, +25.6% YoY — AI-driven." }
+  - label: "Projected 2030"
+    value: "~$1.0T+"
+    evidence: { source: counterpoint-1t-2030, ref: 1t-2030, note: "Counterpoint/Deloitte cluster at ~$1T by 2030; Gartner already sees >$1.3T in 2026." }
   - label: "AI accelerator CAGR"
-    value: "~30–40%"
-    evidence: { estimate: true, note: "Scaffold: data-center AI silicon growing far faster than the overall market." }
-  - label: "Leading-edge wafer demand"
-    value: "growing double-digit"
-    evidence: { estimate: true, note: "Scaffold: <7 nm logic demand outpacing mature nodes." }
+    value: "~25% (GPU ~31%)"
+    evidence: { source: mordor-ai-accelerators, ref: ai-accel, note: "AI-accelerator layer ~25%/yr to 2030; data-center GPU slice ~31%/yr." }
+  - label: "Leading-edge node growth"
+    value: ">60%/yr"
+    evidence: { source: mnm-advanced-process-nodes, ref: adv-nodes, note: "7 nm-and-below revenue growing >60%/yr while legacy nodes stagnate." }

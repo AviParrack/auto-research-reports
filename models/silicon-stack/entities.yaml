@@ -1,37 +1,27 @@
-# Companies / places referenced by flow nodes. Clicking a Sankey node opens the
-# company's dossier (internal) when one exists, else its website. revenue_usd is
-# annual revenue relevant to this chain — it drives the company-value readout on
-# each Sankey node. All revenue figures are SCAFFOLD estimates pending the swarm.
+# Companies / places in the chain. Clicking a Sankey node opens its dossier
+# (internal) when one exists, else its website. revenue_usd is annual revenue
+# relevant to this chain — it drives the node outline weighting. Figures are
+# real where cited in dossiers/sources; private/segment figures are estimates.
 
+# --- materials rail ---
 the-quartz-corp:
   name: "The Quartz Corp"
   url: "https://www.thequartzcorp.com/"
   dossier: the-quartz-corp
   tier: B
-  role: "High-purity quartz (Spruce Pine, NC) — feedstock for crucibles & optics"
+  role: "High-purity quartz (Spruce Pine, NC)"
   location: "Spruce Pine, North Carolina, USA"
   revenue_usd: 200000000
-  revenue_note: "Scaffold estimate: private JV; high-purity quartz sales only."
-  note: "Near-monopoly on the highest-purity quartz sand; privately held (JV)."
-
-commodity-carbon:
-  name: "Carbon / coke (commodity)"
-  url: ""
-  role: "Carbothermic reductant for silica → silicon"
-  location: "Global"
-  note: "Commodity input; not a single supplier."
-
+  revenue_note: "Estimate: private JV; high-purity quartz sales only."
 ferroglobe:
   name: "Ferroglobe"
   url: "https://www.ferroglobe.com/"
   dossier: ferroglobe
   tier: B
   role: "Metallurgical-grade silicon smelting"
-  location: "Global (Spain/US/France)"
+  location: "Spain / US / France"
   revenue_usd: 1600000000
-  revenue_note: "Scaffold estimate: group revenue across silicon + silicon-based alloys."
-  note: "Scaffold: one representative MG-Si producer; Elkem, Wacker also major."
-
+  revenue_note: "Estimate: group revenue across silicon + alloys."
 wacker:
   name: "Wacker Chemie"
   url: "https://www.wacker.com/"
@@ -40,20 +30,41 @@ wacker:
   role: "Semiconductor-grade polysilicon (Siemens process)"
   location: "Germany / USA"
   revenue_usd: 6400000000
-  revenue_note: "Scaffold estimate: total group revenue; polysilicon is one segment."
-  note: "Scaffold: Wacker + Hemlock dominate semiconductor-grade poly."
-
+  revenue_note: "Group revenue; polysilicon is one segment. Siemens EG poly ~92–124 kWh/kg (Fraunhofer ISE 2025)."
 shin-etsu:
   name: "Shin-Etsu Chemical"
   url: "https://www.shinetsu.co.jp/en/"
   dossier: shin-etsu
   tier: B
-  role: "Monocrystalline silicon wafers (300 mm prime)"
+  role: "Monocrystalline 300 mm silicon wafers"
   location: "Japan"
   revenue_usd: 18000000000
-  revenue_note: "Scaffold estimate: total group revenue; silicon wafers a major segment."
-  note: "Scaffold: Shin-Etsu + SUMCO ~half of global wafer supply."
+  revenue_note: "Group revenue; Shin-Etsu+SUMCO ~54% of 300 mm wafer supply."
 
+# --- tool rail ---
+zeiss:
+  name: "Carl Zeiss SMT"
+  url: "https://www.zeiss.com/semiconductor-manufacturing-technology/"
+  tier: B
+  role: "EUV optics (sole supplier to ASML)"
+  location: "Oberkochen, Germany"
+  revenue_usd: 11000000000
+  revenue_note: "Carl Zeiss group ~€11B; SMT (lithography optics) is a high-value segment. ASML invested ~$1B to secure supply."
+cymer:
+  name: "Cymer (ASML)"
+  url: "https://www.asml.com/"
+  tier: B
+  role: "EUV light source (LPP tin-droplet)"
+  location: "San Diego, CA, USA"
+  revenue_note: "Acquired by ASML for ~$2.5B in 2013; now an ASML subsidiary."
+trumpf:
+  name: "Trumpf"
+  url: "https://www.trumpf.com/"
+  tier: B
+  role: "High-power CO₂ drive laser for EUV source"
+  location: "Ditzingen, Germany"
+  revenue_usd: 5400000000
+  revenue_note: "Group revenue; EUV drive lasers a specialty line."
 asml:
   name: "ASML"
   url: "https://www.asml.com/"
@@ -61,35 +72,88 @@ asml:
   tier: B
   role: "EUV lithography systems (sole supplier)"
   location: "Veldhoven, Netherlands"
-  revenue_usd: 30000000000
-  revenue_note: "Scaffold estimate: total system + service revenue (~€28B)."
-  note: "Sole EUV supplier; Zeiss optics, Cymer light source upstream."
+  revenue_usd: 36000000000
+  revenue_note: "FY2025 €32.7B (~$36B); 48 EUV systems; ~85% of an EUV scanner is bought-in."
 
-fab-materials-cluster:
-  name: "Fab materials (cluster)"
+# --- design rail ---
+synopsys:
+  name: "Synopsys (+ Cadence, Arm)"
+  url: "https://www.synopsys.com/"
+  dossier: synopsys
+  tier: B
+  role: "EDA tools + IP (design rail)"
+  location: "Sunnyvale, CA, USA"
+  revenue_usd: 6500000000
+  revenue_note: "Synopsys ~$6.5B; with Cadence ~$4.5B forms the ~74% EDA duopoly. Arm IP royalties ~1–4% of chip revenue."
+photomask-cluster:
+  name: "Photomask + mask blanks (Hoya, AGC, Toppan)"
   url: ""
-  role: "Photoresist, specialty gases, CMP slurry, dopants"
-  location: "Japan / Korea / US / EU"
-  note: "Scaffold: JSR, TOK, Shin-Etsu, Air Liquide, Linde, etc."
+  tier: C
+  role: "EUV photomask set + defect-free mask blanks"
+  location: "Japan / global"
+  revenue_note: "Cluster; 3nm mask set ~$15M, amortized per wafer."
 
+# --- consumables ---
+gas-cluster:
+  name: "Specialty gases (Linde, Air Liquide; Ukraine neon)"
+  url: ""
+  tier: C
+  role: "Neon / excimer + process gases"
+  location: "Global (neon ~50–70% Ukraine pre-2022)"
+  revenue_note: "Cluster; neon is ~96–97.5% of the excimer laser gas mix."
+
+# --- fab ---
 tsmc:
   name: "TSMC"
   url: "https://www.tsmc.com/"
   dossier: tsmc
   tier: B
-  role: "Leading-edge wafer fabrication + advanced packaging (CoWoS)"
-  location: "Hsinchu, Taiwan (+ AZ, JP, DE)"
+  role: "Leading-edge fab + advanced packaging (CoWoS)"
+  location: "Hsinchu, Taiwan"
   revenue_usd: 90000000000
-  revenue_note: "Scaffold estimate: total foundry revenue; leading-edge is the high-value share."
-  note: "Dominant leading-edge foundry; ~90%+ of <7 nm logic."
+  revenue_note: "FY2024 $90.08B revenue, $29.76B capex, 56% gross margin, 25.55 TWh electricity. ~90%+ of <7 nm logic."
 
+# --- back-end rail ---
+sk-hynix:
+  name: "SK Hynix (+ Samsung, Micron)"
+  url: "https://www.skhynix.com/"
+  dossier: sk-hynix
+  tier: B
+  role: "HBM memory stacks"
+  location: "South Korea"
+  revenue_usd: 30000000000
+  revenue_note: "Group memory revenue; HBM3E ~$300–500/stack, 6–8 stacks per accelerator."
+ajinomoto:
+  name: "Ajinomoto"
+  url: "https://www.ajinomoto.com/"
+  tier: B
+  role: "ABF build-up film (>95% share)"
+  location: "Japan"
+  revenue_usd: 8000000000
+  revenue_note: "Group revenue (food + fine chemicals); ABF is a tiny but >95%-share line."
+substrate-cluster:
+  name: "FC-BGA substrate (Ibiden, Unimicron, Shinko)"
+  url: ""
+  tier: C
+  role: "Flip-chip BGA package substrate"
+  location: "Japan / Taiwan"
+  revenue_note: "Cluster; Ibiden ~35%, Shinko ~18%, Unimicron ~14%."
+ase:
+  name: "ASE Technology (OSAT)"
+  url: "https://www.aseglobal.com/"
+  tier: B
+  role: "Outsourced assembly & test"
+  location: "Kaohsiung, Taiwan"
+  revenue_usd: 20000000000
+  revenue_note: "Largest OSAT; final assembly/test of packaged accelerators."
+
+# --- product owner ---
 nvidia:
   name: "NVIDIA (product owner)"
   url: "https://www.nvidia.com/"
   dossier: nvidia
   tier: B
-  role: "Fabless designer of the finished logic die"
+  role: "Fabless designer of the finished accelerator"
   location: "Santa Clara, CA, USA"
   revenue_usd: 130000000000
-  revenue_note: "Scaffold estimate: total revenue; data-center/GPU dominant."
-  note: "Representative end product (GPU-class die)."
+  revenue_note: "Representative end product; data-center/GPU dominant. Largest idiot index in the chain."

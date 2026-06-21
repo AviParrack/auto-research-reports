@@ -1,24 +1,23 @@
-# Bill of materials / input decomposition for a leading-edge logic chip.
-# Each row expands to a short explainer: what it is, how it's made, who makes it
-# (makers link to the company tab). SCAFFOLD placeholders pending the swarm.
+# Bill of materials / input decomposition. Click a row to expand: what it is,
+# how it's made, who makes it (linked to the company). Figures cited or labelled.
 
 - id: in-quartz
   component: "High-purity quartz (SiO₂)"
   stage: raw-material
   pct_of_mass: "~40% of input mass"
-  pct_of_value: "<0.1% of final value"
-  evidence: { estimate: true, note: "Scaffold: silicon is most of the die mass but trivial cost." }
-  what_it_is: "Ultra-pure crystalline silica — the original source of the silicon atoms in every chip. The very highest grades (low metal impurities) come from a small number of deposits, most famously Spruce Pine, North Carolina."
-  how_made: "Mined, crushed, chemically/physically purified, and floated/leached to remove metal impurities down to parts-per-billion levels for crucible-grade and optics-grade material."
+  pct_of_value: "<0.01% of final value"
+  evidence: { source: mg-si-price, ref: mg-si, note: "Raw silicon atoms in a wafer cost ~$0.20–0.40 — see the idiot index." }
+  what_it_is: "Ultra-pure crystalline silica — the original source of the silicon atoms in every chip. The highest grades come from a few deposits, most famously Spruce Pine, NC."
+  how_made: "Mined, crushed, and chemically/physically purified to remove metal impurities to parts-per-billion for crucible- and optics-grade material."
   makers: [the-quartz-corp]
 
 - id: in-mgsi
   component: "Metallurgical-grade silicon (MG-Si)"
   stage: refining
-  pct_of_mass: "~feedstock for poly"
+  pct_of_mass: "feedstock for poly"
   pct_of_value: "~tiny"
-  evidence: { estimate: true, note: "Scaffold." }
-  what_it_is: "~98–99% pure silicon, the bulk commodity form. Most output goes to aluminum alloys and silicones; only a small slice is purified further for electronics."
+  evidence: { source: si-energy-exergy, ref: carbothermic, note: "Carbothermic furnace ~11–13 kWh/kg — runs only ~2× its thermodynamic floor (24.6 MJ/kg)." }
+  what_it_is: "~99% pure silicon, the bulk commodity form. Most output goes to aluminum alloys and silicones; only a sliver is purified further for electronics."
   how_made: "Carbothermic reduction of quartz with carbon in a submerged-arc furnace at ~2000 °C — extremely energy-intensive."
   makers: [ferroglobe]
 
@@ -27,47 +26,67 @@
   stage: refining
   pct_of_mass: "die feedstock"
   pct_of_value: "small"
-  evidence: { source: bcg-semiconductor-supply-chain-2021, ref: "value-chain-overview", note: "Scaffold: order-of-magnitude." }
-  what_it_is: "Silicon purified to 99.999999999% (eleven nines) — the feedstock for growing single-crystal ingots. A different, far purer product than solar-grade poly."
-  how_made: "MG-Si converted to trichlorosilane, distilled, then deposited as ultrapure polysilicon via the Siemens process (hot rods, chemical vapor deposition) — famously energy-hungry."
+  evidence: { source: fraunhofer-ise-eg-2025, ref: eg-siemens, note: "Electronic-grade Siemens process ~92–124 kWh/kg (Fraunhofer ISE 2025)." }
+  what_it_is: "Silicon purified to eleven nines (99.999999999%) — feedstock for single-crystal ingots. A different, far purer product than solar-grade poly."
+  how_made: "MG-Si → trichlorosilane → distilled → deposited as ultrapure polysilicon via the Siemens CVD process. Famously energy-hungry."
   makers: [wacker]
 
 - id: in-wafer
   component: "Monocrystalline 300 mm prime wafer"
   stage: substrate
   pct_of_mass: "the substrate"
-  pct_of_value: "~1–2% of wafer cost"
-  evidence: { estimate: true, note: "Scaffold: blank prime wafer ~ low hundreds of $." }
+  pct_of_value: "~1% of wafer cost"
+  evidence: { source: toms-wafer-blank, ref: blank-wafer, note: "Blank prime wafer >$200; ~1% of the $18k patterned wafer." }
   what_it_is: "A defect-free single crystal of silicon, sliced and polished into mirror-flat 300 mm discs — the canvas every transistor is built on."
-  how_made: "Polysilicon melted and pulled into a single-crystal ingot (Czochralski process), then sliced, lapped, etched, and chemically-mechanically polished to atomic flatness."
+  how_made: "Polysilicon pulled into a single crystal (Czochralski), then sliced, lapped, etched, and chemically-mechanically polished to atomic flatness."
   makers: [shin-etsu]
 
 - id: in-litho
   component: "EUV lithography (amortized capital)"
   stage: equipment
   pct_of_mass: "n/a (capital)"
-  pct_of_value: "~25–35% of wafer cost"
-  evidence: { source: asml-annual-report-2024, ref: "euv-systems-shipped", note: "Scaffold split of amortized tool cost." }
-  what_it_is: "The machines that print the smallest features, using 13.5 nm extreme-ultraviolet light. The single hardest tool in the stack and a sole-supplier chokepoint."
-  how_made: "Built by ASML from ~100,000 parts incl. Zeiss precision optics and a tin-plasma light source; only a limited number ship per year at very high price."
-  makers: [asml]
+  pct_of_value: "~$300–1,500 / wafer"
+  evidence: { source: semianalysis-highna-cost, ref: per-wafer-layer, note: "~$30–70/wafer/layer × ~10–25 EUV layers. ASML is ~85% bought-in (Zeiss optics, Cymer source)." }
+  what_it_is: "The machines that print the smallest features using 13.5 nm EUV light — the hardest tool in the stack and a sole-supplier chokepoint."
+  how_made: "Built by ASML from ~100,000 parts incl. Zeiss optics and a Cymer tin-plasma source; Low-NA ~$180M, High-NA ~$380M; 48 EUV systems shipped in 2025."
+  makers: [asml, zeiss, cymer]
 
-- id: in-materials
-  component: "Photoresist, specialty gases, CMP slurry, dopants"
+- id: in-design
+  component: "Chip design: EDA tools + IP + mask set"
+  stage: design
+  pct_of_mass: "n/a (NRE)"
+  pct_of_value: "amortized ~$350+/wafer"
+  evidence: { source: siliconanalysts-3nm-cost, ref: mask-set, note: "3nm mask set ~$15M (~$300/wafer over 50k); design NRE $400–600M. EDA is a Synopsys+Cadence duopoly (~74%)." }
+  what_it_is: "The parallel design rail: electronic design automation (EDA) software, licensed IP cores, and the photomask set that encodes the design onto silicon."
+  how_made: "Designed on Synopsys/Cadence tools with Arm and third-party IP; a 3nm design NRE is $400–600M, resolving into a ~$15M mask set."
+  makers: [synopsys, photomask-cluster]
+
+- id: in-gases
+  component: "Neon / specialty gases + fab chemicals"
   stage: materials
   pct_of_mass: "consumables"
-  pct_of_value: "~5–10% of wafer cost"
-  evidence: { estimate: true, note: "Scaffold: specialty chemicals, high $/unit, low mass." }
-  what_it_is: "The consumable chemistry of fabrication: light-sensitive resists, ultra-pure etch/deposition gases, polishing slurries, and the dopant atoms that make silicon a semiconductor."
-  how_made: "Produced by a specialized materials cluster (e.g. JSR, TOK, Shin-Etsu, Air Liquide, Linde) to extreme purity specs."
-  makers: [fab-materials-cluster]
+  pct_of_value: "~1–3% of wafer cost"
+  evidence: { source: usitc-neon, ref: neon, note: "Neon ~96–97.5% of the excimer laser gas mix; Ukraine ~50–70% of supply pre-2022; prices ~4× in 2022." }
+  what_it_is: "The consumable chemistry of fabrication: neon for the lasers, ultra-pure etch/deposition gases, photoresist, CMP slurry, and dopants."
+  how_made: "Neon is a byproduct of legacy steel plants; specialty gases and resists come from Linde, Air Liquide, JSR, TOK, etc."
+  makers: [gas-cluster]
 
-- id: in-fab
-  component: "Process / labor / yield (fab value-add)"
-  stage: fab
-  pct_of_mass: "n/a"
-  pct_of_value: "balance (dominant)"
-  evidence: { estimate: true, note: "Scaffold: process know-how + yield is the real cost." }
-  what_it_is: "The ~1,000+ step front-end process, the cleanroom, the energy and ultrapure water, and above all the process know-how and yield that turn a blank wafer into working logic."
-  how_made: "Run by leading-edge foundries; the accumulated process IP and yield learning is the dominant, hardest-to-copy value."
-  makers: [tsmc]
+- id: in-hbm
+  component: "HBM memory stacks"
+  stage: memory
+  pct_of_mass: "co-packaged dies"
+  pct_of_value: "~$2,000–4,000 / accelerator"
+  evidence: { source: trendforce-hbm3e-price, ref: hbm3e, note: "6–8 HBM3E stacks/accelerator at ~$300–500/stack — often rivals the logic-die cost." }
+  what_it_is: "High-bandwidth memory: stacks of DRAM die bonded beside the logic die in the package. The naive chain omits it; it's a huge share of accelerator value."
+  how_made: "SK Hynix, Samsung, and Micron stack and TSV-bond DRAM dies; co-packaged with the logic die via CoWoS."
+  makers: [sk-hynix]
+
+- id: in-packaging
+  component: "Advanced packaging (CoWoS + substrate)"
+  stage: packaging
+  pct_of_mass: "package"
+  pct_of_value: "~$10k CoWoS wafer + substrate"
+  evidence: { source: trendforce-cowos-asp, ref: cowos-asp, note: "CoWoS wafer ASP ~$10k (2026); ABF substrate near-monopoly (Ajinomoto >95%)." }
+  what_it_is: "The back-end that turns a die into an accelerator: silicon interposer, ABF build-up film, FC-BGA substrate, and the CoWoS assembly that ties logic + memory together."
+  how_made: "TSMC CoWoS bonds die + HBM onto a silicon interposer; Ajinomoto ABF film and Ibiden/Unimicron/Shinko substrates underneath; OSATs do final test."
+  makers: [tsmc, ajinomoto, substrate-cluster, ase]

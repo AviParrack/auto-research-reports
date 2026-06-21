@@ -1,53 +1,64 @@
-# Musk's idiot index = (cost / value of finished product) ÷ (cost of raw inputs).
-# A high number means you are far from the fundamental material cost floor —
-# i.e. there is room to improve. Each numerator and denominator carries its own
-# citation-or-estimate. SCAFFOLD placeholders pending the auto-model swarm.
-#
-# Discipline (auto-research P2): the denominator is derived from raw-material
-# floors with quoted prices SEALED, then reconciled — so the ratio is a genuine
-# model-vs-reality gap, not a borrowed figure.
+# Musk's idiot index = product cost ÷ raw-input cost. High = far from the
+# material floor = room to improve. Denominators use first-principles material
+# floors (raw silicon atoms, blank substrate) so each ratio is a real
+# model-vs-reality gap. Every side cites a source or is a labelled estimate.
 
-- id: ii-packaged-die
-  product: "Packaged leading-edge logic die (GPU-class)"
-  entity: nvidia
-  numerator:
-    label: "Finished die value"
-    value_usd: 18000
-    evidence: { estimate: true, note: "Scaffold: per-die share of value added across the chain." }
-  denominator:
-    label: "Raw-material input cost"
-    value_usd: 3.3
-    evidence: { estimate: true, note: "Scaffold: quartz + carbon + dopants + gases at commodity floor." }
-  ratio: 5500
-  confidence: low
-  note: "Scaffold estimate. Real value: derive material floor sealed, then reconcile."
-
-- id: ii-wafer
-  product: "Processed 300 mm leading-edge wafer (pre-dicing)"
+- id: ii-wafer-vs-atoms
+  product: "Leading-edge 3nm wafer vs. the raw silicon atoms in it"
   entity: tsmc
   numerator:
-    label: "Processed wafer cost"
+    label: "TSMC 3nm patterned wafer ASP"
     value_usd: 18000
-    evidence: { estimate: true, note: "Scaffold: leading-edge wafer processing cost, order-of-magnitude." }
+    evidence: { source: toms-3nm-wafer, ref: wafer-asp, note: "~$18k (2024 analyst); ~$19.5k by 2026." }
   denominator:
-    label: "Blank prime wafer + materials"
-    value_usd: 420
-    evidence: { estimate: true, note: "Scaffold: substrate + consumables floor." }
-  ratio: 43
-  confidence: low
-  note: "Scaffold estimate."
+    label: "Raw silicon atoms (~128 g @ MG-Si price)"
+    value_usd: 0.30
+    evidence: { source: mg-si-price, ref: mg-si, note: "~0.128 kg Si × $1–3.5/kg metallurgical silicon = $0.13–0.45/wafer. Dopants are micro-dollars." }
+  ratio: 60000
+  confidence: high
+  note: "The headline gap: a finished leading-edge wafer is ~60,000× the cost of the silicon atoms in it. Value is in litho/process, not silicon."
+
+- id: ii-wafer-vs-blank
+  product: "Processed 3nm wafer vs. the blank substrate it started as"
+  entity: tsmc
+  numerator:
+    label: "TSMC 3nm patterned wafer ASP"
+    value_usd: 18000
+    evidence: { source: toms-3nm-wafer, ref: wafer-asp, note: "Fully fabricated 300 mm wafer." }
+  denominator:
+    label: "Blank 300 mm prime wafer"
+    value_usd: 200
+    evidence: { source: toms-wafer-blank, ref: blank-wafer, note: ">$200 by 2024 (Shin-Etsu/SUMCO)." }
+  ratio: 90
+  confidence: high
+  note: "Fab processing adds ~90× the value of the blank wafer it consumes."
 
 - id: ii-polysilicon
-  product: "Semiconductor-grade polysilicon (11N)"
+  product: "Semiconductor-grade polysilicon vs. metallurgical-grade silicon"
   entity: wacker
   numerator:
-    label: "Semiconductor-grade poly price"
-    value_usd: 100
-    evidence: { estimate: true, note: "Scaffold: per-kg semiconductor-grade vs solar-grade premium." }
+    label: "Electronic-grade (11N) polysilicon"
+    value_usd: 70
+    evidence: { estimate: true, note: "EG poly sold on confidential contracts; ~$40–100/kg, ~10×+ solar-grade. No public spot index." }
   denominator:
-    label: "MG-Si + energy floor"
-    value_usd: 3
-    evidence: { estimate: true, note: "Scaffold: metallurgical silicon + purification energy floor." }
-  ratio: 33
+    label: "Metallurgical-grade silicon (~99%)"
+    value_usd: 2.25
+    evidence: { source: mg-si-price, ref: mg-si, note: "$1–3.5/kg across regions 2024–25." }
+  ratio: 31
+  confidence: medium
+  note: "Purification from 99% to eleven-nines adds ~30× value (and is energy-hungry — see Energetic Index)."
+
+- id: ii-accelerator
+  product: "Finished AI accelerator vs. the raw material atoms in it"
+  entity: nvidia
+  numerator:
+    label: "High-end accelerator street value"
+    value_usd: 30000
+    evidence: { estimate: true, note: "Estimate: H100/H200-class accelerator sells ~$25–40k; logic die + HBM + CoWoS + substrate BOM." }
+  denominator:
+    label: "Raw material atoms (Si + dopants + trace)"
+    value_usd: 5
+    evidence: { estimate: true, note: "Estimate: silicon + memory + package material content at commodity floor, order-of-magnitude." }
+  ratio: 6000
   confidence: low
-  note: "Scaffold estimate."
+  note: "Scaffold-grade estimate end-to-end; the wafer-vs-atoms row above is the well-sourced one."

@@ -99,7 +99,10 @@ const tabs = [
         host.innerHTML = '';
 
         const width = host.clientWidth || 960;
-        const height = Math.max(420, payload.nodes.length * 46);
+        // Height scales with the busiest column, not total node count, so the
+        // many leaf-input nodes don't crowd. Estimate the largest input layer.
+        const depth0 = payload.nodes.filter((n) => !payload.links.some((l) => (l.target === n.id))).length;
+        const height = Math.max(560, Math.max(payload.nodes.length, depth0 * 2) * 40);
         const stages = Array.from(new Set(payload.nodes.map((n) => n.stage)));
         const colorFor = (n) => STAGE_COLORS[Math.max(0, stages.indexOf(n.stage)) % STAGE_COLORS.length];
 
@@ -112,8 +115,9 @@ const tabs = [
         const sk = sankey()
           .nodeId((d) => d.id)
           .nodeWidth(16)
-          .nodePadding(16)
-          .extent([[8, 12], [width - 8, height - 12]]);
+          .nodePadding(22)
+          .nodeSort(null)
+          .extent([[8, 14], [width - 8, height - 14]]);
 
         const graph = sk({
           nodes: payload.nodes.map((d) => Object.assign({}, d)),
