@@ -1,0 +1,36 @@
+# Output-market growth data, plotted below the Sankey on the Overview tab.
+# SCAFFOLD estimates (order-of-magnitude, roughly tracking public figures)
+# pending the research pass.
+
+headline: "Global semiconductor market — size & growth"
+unit: "USD billions, total semiconductor revenue"
+
+# Time series: total semiconductor market size by year (history + projection).
+series:
+  - { year: 2015, value_usd_b: 335 }
+  - { year: 2017, value_usd_b: 412 }
+  - { year: 2019, value_usd_b: 412 }
+  - { year: 2021, value_usd_b: 555 }
+  - { year: 2022, value_usd_b: 574 }
+  - { year: 2023, value_usd_b: 527 }
+  - { year: 2024, value_usd_b: 627 }
+  - { year: 2026, value_usd_b: 760, projected: true }
+  - { year: 2028, value_usd_b: 880, projected: true }
+  - { year: 2030, value_usd_b: 1000, projected: true }
+
+series_evidence: { estimate: true, note: "Scaffold: tracks widely-cited WSTS/industry totals; verify each point in the research pass." }
+
+# Headline growth stats rendered as cards under the chart.
+stats:
+  - label: "Market CAGR (2015→2024)"
+    value: "~7.2%"
+    evidence: { estimate: true, note: "Scaffold: derived from series endpoints." }
+  - label: "Projected to 2030"
+    value: "~$1.0T"
+    evidence: { estimate: true, note: "Scaffold: common industry projection of a trillion-dollar market by 2030." }
+  - label: "AI accelerator CAGR"
+    value: "~30–40%"
+    evidence: { estimate: true, note: "Scaffold: data-center AI silicon growing far faster than the overall market." }
+  - label: "Leading-edge wafer demand"
+    value: "growing double-digit"
+    evidence: { estimate: true, note: "Scaffold: <7 nm logic demand outpacing mature nodes." }

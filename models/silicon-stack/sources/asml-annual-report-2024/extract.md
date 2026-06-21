@@ -6,6 +6,7 @@ authors: ["ASML Holding N.V."]
 year: 2024
 type: report
 tier: B
+topics: [lithography, equipment, euv]
 fetched: 2026-06-21
 fetcher: claude
 scaffold: true

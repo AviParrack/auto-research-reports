@@ -6,6 +6,7 @@ authors: ["BCG", "Semiconductor Industry Association (SIA)"]
 year: 2021
 type: report
 tier: A
+topics: [value-chain, polysilicon, energy-intensity]
 fetched: 2026-06-21
 fetcher: claude
 scaffold: true

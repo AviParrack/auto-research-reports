@@ -54,6 +54,7 @@ const tabs = [
             if (document.documentElement.dataset.theme === next) return;
             document.documentElement.dataset.theme = next;
             if (window.__renderSankey && window.__sankeyData) window.__renderSankey(window.__sankeyData, next);
+            if (window.__renderMarketChart && window.__marketData) window.__renderMarketChart(window.__marketData, next);
           };
           if (mq.addEventListener) mq.addEventListener('change', onSysChange);
           else if (mq.addListener) mq.addListener(onSysChange);
@@ -120,6 +121,23 @@ const tabs = [
         });
 
         const fmtUsd = (v) => v == null ? '—' : '$' + d3.format(',')(Math.round(v));
+        const fmtRev = (v) => {
+          if (v == null) return '';
+          if (v >= 1e9) return '$' + (v / 1e9).toFixed(v >= 1e10 ? 0 : 1) + 'B';
+          if (v >= 1e6) return '$' + Math.round(v / 1e6) + 'M';
+          return '$' + d3.format(',')(Math.round(v));
+        };
+        const nav = (d) => {
+          if (!d.href) return;
+          if (d.external) window.open(d.href, '_blank', 'noopener');
+          else window.location.href = d.href;
+        };
+        // Node outline thickness encodes company revenue (the company's value in
+        // this chain), on a log scale, so bigger players read at a glance.
+        const revVals = graph.nodes.map((n) => n.revenue).filter((v) => v && v > 0);
+        const revScale = revVals.length
+          ? d3.scaleLog().domain([Math.min(...revVals), Math.max(...revVals)]).range([0.75, 4]).clamp(true)
+          : null;
 
         // Links
         svg.append('g').attr('fill', 'none')
@@ -145,12 +163,18 @@ const tabs = [
           .attr('height', (d) => Math.max(2, d.y1 - d.y0))
           .attr('width', (d) => d.x1 - d.x0)
           .attr('fill', (d) => colorFor(d))
+          .attr('stroke', (d) => (revScale && d.revenue) ? (dark ? '#e5e2d8' : '#1a1a1a') : 'none')
+          .attr('stroke-width', (d) => (revScale && d.revenue) ? revScale(d.revenue) : 0)
           .attr('rx', 3)
-          .style('cursor', (d) => d.url ? 'pointer' : 'default')
-          .on('click', (_e, d) => { if (d.url) window.open(d.url, '_blank', 'noopener'); })
-          .append('title').text((d) => d.entityName ? `${d.label} — ${d.entityName}${d.url ? ' (click to open)' : ''}` : d.label);
+          .style('cursor', (d) => d.href ? 'pointer' : 'default')
+          .on('click', (_e, d) => nav(d))
+          .append('title').text((d) => {
+            const rev = d.revenue ? `\nrevenue: ${fmtRev(d.revenue)} (chain-relevant)` : '';
+            const open = d.href ? (d.external ? '\n(click → company site)' : '\n(click → company dossier)') : '';
+            return (d.entityName ? `${d.label} — ${d.entityName}` : d.label) + rev + open;
+          });
 
-        node.append('text')
+        const label = node.append('text')
           .attr('x', (d) => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
           .attr('y', (d) => (d.y1 + d.y0) / 2)
           .attr('dy', '0.35em')
@@ -158,40 +182,89 @@ const tabs = [
           .attr('fill', ink)
           .style('font-size', '12px')
           .style('font-weight', '600')
-          .style('cursor', (d) => d.url ? 'pointer' : 'default')
-          .on('click', (_e, d) => { if (d.url) window.open(d.url, '_blank', 'noopener'); })
-          .text((d) => d.label)
-          .append('tspan')
+          .style('cursor', (d) => d.href ? 'pointer' : 'default')
+          .on('click', (_e, d) => nav(d))
+          .text((d) => d.label);
+        label.append('tspan')
           .attr('x', (d) => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
           .attr('dy', '1.2em')
           .attr('fill', inkSoft)
           .style('font-size', '10px')
           .style('font-weight', '400')
-          .text((d) => d.entityName || '');
+          .text((d) => d.entityName ? d.entityName + (d.revenue ? ` · ${fmtRev(d.revenue)}` : '') : '');
+      };
+
+      // Market growth chart (line + projection) rendered below the Sankey.
+      window.__renderMarketChart = (data, theme) => {
+        const host = document.getElementById('market-chart');
+        if (!host || !data || !data.series || !data.series.length) return;
+        const dark = theme === 'dark';
+        const ink = dark ? '#e5e2d8' : '#1a1a1a';
+        const inkSoft = dark ? '#9c9789' : '#4a4a4a';
+        const accent = '#c4622d';
+        const line = dark ? '#3a352e' : '#d4d2c7';
+        host.innerHTML = '';
+        const width = host.clientWidth || 900;
+        const height = 260;
+        const m = { top: 14, right: 16, bottom: 28, left: 48 };
+        const series = data.series.slice().sort((a, b) => a.year - b.year);
+        const svg = d3.select(host).append('svg')
+          .attr('viewBox', `0 0 ${width} ${height}`).attr('width', '100%').attr('height', height)
+          .style('font-family', 'Inter, system-ui, sans-serif');
+        const x = d3.scaleLinear().domain(d3.extent(series, (d) => d.year)).range([m.left, width - m.right]);
+        const y = d3.scaleLinear().domain([0, d3.max(series, (d) => d.value_usd_b) * 1.1]).range([height - m.bottom, m.top]);
+        // axes
+        svg.append('g').attr('transform', `translate(0,${height - m.bottom})`)
+          .call(d3.axisBottom(x).ticks(6).tickFormat(d3.format('d')))
+          .call((g) => g.selectAll('text').attr('fill', inkSoft).style('font-size', '10px'))
+          .call((g) => g.selectAll('line,path').attr('stroke', line));
+        svg.append('g').attr('transform', `translate(${m.left},0)`)
+          .call(d3.axisLeft(y).ticks(5).tickFormat((v) => '$' + v + 'B'))
+          .call((g) => g.selectAll('text').attr('fill', inkSoft).style('font-size', '10px'))
+          .call((g) => g.selectAll('line,path').attr('stroke', line));
+        const lineGen = d3.line().x((d) => x(d.year)).y((d) => y(d.value_usd_b)).curve(d3.curveMonotoneX);
+        const solid = series.filter((d) => !d.projected);
+        const lastSolid = solid[solid.length - 1];
+        const proj = series.filter((d) => d.projected);
+        const projLine = lastSolid ? [lastSolid, ...proj] : proj;
+        svg.append('path').datum(solid).attr('fill', 'none').attr('stroke', accent).attr('stroke-width', 2.5).attr('d', lineGen);
+        if (projLine.length > 1) svg.append('path').datum(projLine).attr('fill', 'none').attr('stroke', accent).attr('stroke-width', 2).attr('stroke-dasharray', '5 4').attr('opacity', 0.7).attr('d', lineGen);
+        svg.append('g').selectAll('circle').data(series).join('circle')
+          .attr('cx', (d) => x(d.year)).attr('cy', (d) => y(d.value_usd_b)).attr('r', 3)
+          .attr('fill', (d) => d.projected ? (dark ? '#25221e' : '#fafaf7') : accent)
+          .attr('stroke', accent).attr('stroke-width', 1.5)
+          .append('title').text((d) => `${d.year}: $${d.value_usd_b}B${d.projected ? ' (projected)' : ''}`);
+        svg.append('text').attr('x', width - m.right).attr('y', m.top + 4).attr('text-anchor', 'end')
+          .attr('fill', inkSoft).style('font-size', '10px').text('dashed = projection');
       };
 
       window.addEventListener('resize', () => {
-        if (window.__renderSankey && window.__sankeyData) {
-          const t = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
-          window.__renderSankey(window.__sankeyData, t);
-        }
+        const t = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+        if (window.__renderSankey && window.__sankeyData) window.__renderSankey(window.__sankeyData, t);
+        if (window.__renderMarketChart && window.__marketData) window.__renderMarketChart(window.__marketData, t);
       });
+
     </script>
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
     <script src="/pagefind/pagefind-ui.js" defer></script>
     <script is:inline define:vars={{ BUILD_HASH }}>
       async function checkAndReload() {
+        const badge = document.getElementById('freshness-badge');
+        const setBadge = (t, title, color) => { if (!badge) return; badge.textContent = t; badge.title = title; if (color) badge.style.color = color; };
         try {
           const resp = await fetch('/build-hash.txt?cb=' + Date.now(), { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
-          if (!resp.ok) return;
+          if (!resp.ok) { setBadge('?', 'HTTP ' + resp.status, '#d97706'); return; }
           const live = (await resp.text()).trim();
           if (live && live !== BUILD_HASH) {
+            setBadge('↻', 'newer deploy detected, reloading…', '#c4622d');
             const url = new URL(location.href);
             url.searchParams.set('v', live);
             location.replace(url.toString());
+            return;
           }
-        } catch (e) {}
+          setBadge('✓', 'latest (checked ' + new Date().toLocaleTimeString() + ')', '#2d6a4f');
+        } catch (e) { setBadge('⚠', 'check error — click reload', '#b91c1c'); }
       }
       window.__forceReload = () => {
         const url = new URL(location.href);
@@ -214,6 +287,56 @@ const tabs = [
     </script>
   </head>
   <body class="min-h-screen">
+    {/* Search modal — opens on Cmd+K / Ctrl+K */}
+    <div id="search-modal" class="hidden fixed inset-0 z-50 bg-black/40" onclick="window.__closeSearch()">
+      <div class="max-w-2xl mx-auto mt-20 bg-[var(--color-paper)] border border-[var(--color-line)] rounded-lg shadow-2xl" onclick="event.stopPropagation()">
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs uppercase tracking-wider text-[var(--color-ink-soft)]">Search models &amp; reports</span>
+            <span class="text-xs font-mono text-[var(--color-ink-soft)]">esc to close</span>
+          </div>
+          <div id="search-target"></div>
+        </div>
+      </div>
+    </div>
+    <script is:inline>
+      (function() {
+        let initialised = false;
+        let selectedIdx = -1;
+        function tryInit() {
+          if (initialised) return;
+          if (typeof PagefindUI !== 'function') { return setTimeout(tryInit, 100); }
+          new PagefindUI({ element: '#search-target', showSubResults: true, resetStyles: false, showImages: false,
+            translations: { placeholder: 'Search inputs, companies, sources…', zero_results: 'No matches for "[SEARCH_TERM]"' } });
+          initialised = true;
+        }
+        function getResultLinks() { return Array.from(document.querySelectorAll('#search-target .pagefind-ui__result a')); }
+        function highlight(idx) {
+          const links = getResultLinks(); if (!links.length) return;
+          if (idx < 0) idx = links.length - 1; if (idx >= links.length) idx = 0; selectedIdx = idx;
+          links.forEach((a, i) => { if (i === idx) { a.style.background = 'var(--color-paper-dim)'; a.style.outline = '2px solid var(--color-accent)'; a.scrollIntoView({ block: 'nearest' }); } else { a.style.background = ''; a.style.outline = ''; } });
+        }
+        function openSelected() { const links = getResultLinks(); if (selectedIdx >= 0 && selectedIdx < links.length) links[selectedIdx].click(); else if (links.length) links[0].click(); }
+        function closeSearch() { document.getElementById('search-modal').classList.add('hidden'); selectedIdx = -1; }
+        window.__closeSearch = closeSearch;
+        document.addEventListener('keydown', (e) => {
+          const modal = document.getElementById('search-modal');
+          const isOpen = modal && !modal.classList.contains('hidden');
+          if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+            e.preventDefault(); tryInit();
+            if (isOpen) closeSearch();
+            else { modal.classList.remove('hidden'); setTimeout(() => { const inp = modal.querySelector('input'); if (inp) inp.focus(); }, 50); }
+            return;
+          }
+          if (!isOpen) return;
+          if (e.key === 'Escape') return closeSearch();
+          if (e.key === 'ArrowDown') { e.preventDefault(); return highlight(selectedIdx + 1); }
+          if (e.key === 'ArrowUp') { e.preventDefault(); return highlight(selectedIdx - 1); }
+          if (e.key === 'Enter') { if (selectedIdx >= 0) { e.preventDefault(); openSelected(); } return; }
+        });
+      })();
+    </script>
+
     {model.meta.scaffold && (
       <div class="border-b-2 text-sm" style="background: color-mix(in srgb, var(--color-warn) 14%, transparent); border-color: var(--color-warn);">
         <div class="max-w-6xl mx-auto px-6 py-2.5 flex items-center gap-2 text-[var(--color-ink)] font-medium">
@@ -263,6 +386,14 @@ const tabs = [
           ))}
         </div>
         <div class="flex items-center gap-4 pb-3">
+          <button
+            onclick="document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))"
+            class="text-xs text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] flex items-center gap-1"
+            title="Search the model (Cmd+K)"
+          >
+            <span>Search</span>
+            <kbd class="font-mono px-1.5 py-0.5 rounded border border-[var(--color-line)] bg-[var(--color-paper-dim)] text-[10px]">⌘K</kbd>
+          </button>
           <button id="theme-toggle" type="button" class="text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] transition-colors flex items-center" aria-label="Toggle dark mode" title="Toggle dark / light mode">
             <svg class="w-4 h-4 hidden [html[data-theme='dark']_&]:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="4" />
@@ -284,6 +415,7 @@ const tabs = [
             document.documentElement.dataset.theme = next;
             try { localStorage.setItem('ar-theme', next); } catch (e) {}
             if (window.__renderSankey && window.__sankeyData) window.__renderSankey(window.__sankeyData, next);
+            if (window.__renderMarketChart && window.__marketData) window.__renderMarketChart(window.__marketData, next);
           });
         })();
       </script>
@@ -295,6 +427,7 @@ const tabs = [
       <div>model updated {model.meta.last_updated}</div>
       <div class="flex items-center gap-2">
         <span>site built <span class="font-mono">{buildTime}</span></span>
+        <span id="freshness-badge" class="px-1.5 py-0.5 rounded bg-[var(--color-paper-dim)]" title="checking for new deploys…">⏳</span>
         <button onclick="window.__forceReload && window.__forceReload()" class="ml-1 px-2 py-0.5 rounded border border-[var(--color-line)] hover:bg-[var(--color-paper-dim)] hover:border-[var(--color-accent)] transition-colors" title="Force reload bypassing any cache">↻ reload</button>
       </div>
     </footer>

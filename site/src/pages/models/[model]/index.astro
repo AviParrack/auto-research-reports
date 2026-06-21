@@ -1,5 +1,6 @@
 ---
 import ModelLayout from '../../../layouts/ModelLayout.astro';
+import EvidenceChip from '../../../components/EvidenceChip.astro';
 import { loadAllModels, loadModel, buildSankeyPayload } from '../../../lib/models';
 
 export function getStaticPaths() {
@@ -10,6 +11,7 @@ const { model: slug } = Astro.params;
 const model = loadModel(slug!);
 const sankey = buildSankeyPayload(model);
 const summary = model.meta.summary || [];
+const market = model.market;
 ---
 <ModelLayout model={model} title={model.meta.product} activeTab="overview">
   {model.meta.question && (
@@ -29,9 +31,9 @@ const summary = model.meta.summary || [];
   )}
 
   <section class="mb-8">
-    <div class="flex items-baseline justify-between mb-3">
+    <div class="flex items-baseline justify-between mb-3 gap-3 flex-wrap">
       <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)]">Supply-chain flow</h2>
-      <span class="text-[11px] text-[var(--color-ink-soft)]">ribbon width = value added / wafer · hover a flow · click a node → company</span>
+      <span class="text-[11px] text-[var(--color-ink-soft)]">ribbon = value added/wafer · node outline = company revenue · hover a flow · click a node → company</span>
     </div>
     <div class="border border-[var(--color-line)] rounded-lg p-4 bg-[var(--color-paper)]">
       <div id="sankey" style="width:100%; min-height: 420px;"></div>
@@ -41,17 +43,45 @@ const summary = model.meta.summary || [];
     </div>
   </section>
 
+  {market && market.series.length > 0 && (
+    <section class="mb-8">
+      <div class="flex items-baseline justify-between mb-3 gap-3 flex-wrap">
+        <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)]">{market.headline || 'Output market — growth'}</h2>
+        <span class="text-[11px] text-[var(--color-ink-soft)] flex items-center gap-1.5">{market.unit}<EvidenceChip evidence={market.series_evidence} modelSlug={model.slug} /></span>
+      </div>
+      <div class="border border-[var(--color-line)] rounded-lg p-4 bg-[var(--color-paper)] mb-3">
+        <div id="market-chart" style="width:100%; min-height: 260px;"></div>
+      </div>
+      {market.stats.length > 0 && (
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {market.stats.map((s) => (
+            <div class="border border-[var(--color-line)] rounded-lg p-3">
+              <div class="text-[11px] uppercase tracking-wider text-[var(--color-ink-soft)] mb-1">{s.label}</div>
+              <div class="flex items-baseline justify-between gap-2">
+                <span class="text-lg font-serif font-semibold text-[var(--color-ink)]">{s.value}</span>
+                <EvidenceChip evidence={s.evidence} modelSlug={model.slug} />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  )}
+
   <div class="text-xs text-[var(--color-ink-soft)] max-w-3xl space-y-1">
     {model.meta.boundary && <p><span class="font-medium text-[var(--color-ink)]">Boundary:</span> {model.meta.boundary}</p>}
     <p><span class="font-medium text-[var(--color-ink)]">Discipline:</span> every flow is a claim carrying a citation (<span class="font-mono">cite</span>) or a labelled estimate (<span class="font-mono">est.</span>). See the Idiot Index and References tabs.</p>
   </div>
 
-  <script is:inline define:vars={{ payload: sankey }}>
+  <script is:inline define:vars={{ payload: sankey, market }}>
     window.__sankeyData = payload;
+    window.__marketData = market;
     function go() {
       const theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
-      if (window.__renderSankey) window.__renderSankey(payload, theme);
-      else setTimeout(go, 80);
+      let waiting = false;
+      if (window.__renderSankey) window.__renderSankey(payload, theme); else waiting = true;
+      if (market && window.__renderMarketChart) window.__renderMarketChart(market, theme); else if (market) waiting = true;
+      if (waiting) setTimeout(go, 80);
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go);
     else go();

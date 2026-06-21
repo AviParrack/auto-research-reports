@@ -58,6 +58,16 @@ export interface Entity {
   role?: string;
   location?: string;
   note?: string;
+  revenue_usd?: number;
+  revenue_note?: string;
+  dossier?: string;     // company-dossier slug, if one exists → internal link
+  tier?: string;
+}
+
+export interface Maker {
+  name?: string;       // free-text maker name
+  entity?: string;     // OR an entity id → resolves to a company dossier link
+  url?: string;
 }
 
 export interface FlowNode {
@@ -83,6 +93,29 @@ export interface InputItem {
   pct_of_mass?: string;
   pct_of_value?: string;
   evidence?: Evidence;
+  what_it_is?: string;
+  how_made?: string;
+  makers?: string[];    // entity ids → resolve to company dossier links
+}
+
+export interface MarketStat {
+  label: string;
+  value: string;
+  evidence?: Evidence;
+}
+
+export interface MarketPoint {
+  year: number;
+  value_usd_b: number;
+  projected?: boolean;
+}
+
+export interface MarketData {
+  headline?: string;
+  unit?: string;
+  series: MarketPoint[];
+  series_evidence?: Evidence;
+  stats: MarketStat[];
 }
 
 export interface IndexSide {
@@ -125,6 +158,15 @@ export interface CompanyDossier {
   body: string;
 }
 
+export interface ReviewSummary {
+  consistent: number;
+  novelSupporting: number;
+  meritsInvestigation: number;
+  differentConclusion: number;
+  notRelevant: number;
+  total: number;
+}
+
 export interface ModelSource {
   slug: string;
   title?: string;
@@ -133,7 +175,10 @@ export interface ModelSource {
   year?: number | string;
   type?: string;
   tier?: string;
+  topics?: string[];
   scaffold?: boolean;
+  reviewed: boolean;
+  reviewSummary?: ReviewSummary;
   body: string;
 }
 
@@ -155,6 +200,19 @@ export interface Model {
   companies: CompanyDossier[];
   sources: ModelSource[];
   glossary: GlossaryEntry[];
+  market: MarketData | null;
+}
+
+/** Internal link to an entity's company dossier if it has one, else its external
+ *  URL. Returns null if neither exists. external=true means open in a new tab. */
+export function entityLink(model: Model, id?: string): { href: string; external: boolean } | null {
+  if (!id) return null;
+  const e = model.entities[id];
+  if (!e) return null;
+  const hasDossier = e.dossier && model.companies.some((c) => c.slug === e.dossier);
+  if (hasDossier) return { href: `/models/${model.slug}/companies/${e.dossier}/`, external: false };
+  if (e.url) return { href: e.url, external: true };
+  return null;
 }
 
 function safeYamlLoad<T = any>(filePath: string, fallback: T): T {
@@ -177,6 +235,36 @@ function safeMatter(filePath: string): { data: Record<string, any>; content: str
     const m = text.match(/^---\n[\s\S]*?\n---\n?/);
     return { data: {}, content: m ? text.slice(m[0].length) : text };
   }
+}
+
+/** Parse a Newman-taxonomy verdict-count table from a review.md body. Looks for
+ *  a `## Summary` markdown table; falls back to counting `**Verdict:**` lines.
+ *  Mirrors auto-research's parseReviewSummary so the References tab QoL matches. */
+function parseReviewSummary(body: string): ReviewSummary | undefined {
+  const bucket = (raw: string): keyof Omit<ReviewSummary, 'total'> | null => {
+    const x = raw.toLowerCase().trim();
+    if (x.includes('consistent')) return 'consistent';
+    if (x.includes('novel')) return 'novelSupporting';
+    if (x.includes('merit')) return 'meritsInvestigation';
+    if (x.includes('different')) return 'differentConclusion';
+    if (x.includes('not relevant') || x.includes('n/a')) return 'notRelevant';
+    return null;
+  };
+  const sum: ReviewSummary = { consistent: 0, novelSupporting: 0, meritsInvestigation: 0, differentConclusion: 0, notRelevant: 0, total: 0 };
+  let found = false;
+  const rowRe = /\|\s*([A-Za-z/ ]+?)\s*\|\s*(\d+)\s*\|/g;
+  let m: RegExpExecArray | null;
+  while ((m = rowRe.exec(body))) {
+    const k = bucket(m[1]);
+    if (k) { sum[k] += parseInt(m[2], 10) || 0; found = true; }
+  }
+  if (!found) {
+    const verdicts = body.match(/\*\*Verdict:\*\*\s*([A-Za-z/ ]+)/g) || [];
+    for (const v of verdicts) { const k = bucket(v.replace(/\*\*Verdict:\*\*/, '')); if (k) { sum[k] += 1; found = true; } }
+  }
+  if (!found) return undefined;
+  sum.total = sum.consistent + sum.novelSupporting + sum.meritsInvestigation + sum.differentConclusion + sum.notRelevant;
+  return sum.total > 0 ? sum : undefined;
 }
 
 export function listModelSlugs(): string[] {
@@ -242,6 +330,13 @@ export function loadModel(slug: string): Model {
       if (!fs.existsSync(extractPath)) continue;
       const parsed = safeMatter(extractPath);
       const d = parsed.data as any;
+      const reviewPath = path.join(srcDir, entry.name, 'review.md');
+      let reviewed = false;
+      let reviewSummary: ReviewSummary | undefined;
+      if (fs.existsSync(reviewPath)) {
+        reviewed = true;
+        reviewSummary = parseReviewSummary(safeMatter(reviewPath).content);
+      }
       sources.push({
         slug: entry.name,
         title: d.title,
@@ -250,14 +345,21 @@ export function loadModel(slug: string): Model {
         year: d.year,
         type: d.type,
         tier: typeof d.tier === 'string' ? d.tier.toUpperCase() : undefined,
+        topics: Array.isArray(d.topics) ? d.topics : undefined,
         scaffold: d.scaffold === true,
+        reviewed,
+        reviewSummary,
         body: parsed.content,
       });
     }
     sources.sort((a, b) => (a.title || a.slug).localeCompare(b.title || b.slug));
   }
 
-  return { slug, meta, flow, entities, inputs, idiotIndex, energeticIndex, companies, sources, glossary };
+  const market = safeYamlLoad<MarketData | null>(path.join(dir, 'market.yaml'), null);
+  if (market && !Array.isArray(market.series)) market.series = [];
+  if (market && !Array.isArray(market.stats)) market.stats = [];
+
+  return { slug, meta, flow, entities, inputs, idiotIndex, energeticIndex, companies, sources, glossary, market };
 }
 
 export function loadAllModels(): Model[] {
@@ -267,16 +369,21 @@ export function loadAllModels(): Model[] {
 /** Build a d3-sankey payload from the flow graph. Ribbon weight = value_usd.
  *  Resolves each node's entity URL so nodes are click-through. */
 export function buildSankeyPayload(model: Model) {
-  const entityUrl = (entId?: string) => (entId && model.entities[entId]?.url) || '';
-  const entityName = (entId?: string) => (entId && model.entities[entId]?.name) || '';
-  const nodes = model.flow.nodes.map((n) => ({
-    id: n.id,
-    label: n.label,
-    stage: n.stage || '',
-    entity: n.entity || '',
-    entityName: entityName(n.entity),
-    url: entityUrl(n.entity),
-  }));
+  const nodes = model.flow.nodes.map((n) => {
+    const e = n.entity ? model.entities[n.entity] : undefined;
+    const link = entityLink(model, n.entity);
+    return {
+      id: n.id,
+      label: n.label,
+      stage: n.stage || '',
+      entity: n.entity || '',
+      entityName: e?.name || '',
+      revenue: e?.revenue_usd ?? null,
+      revenueNote: e?.revenue_note || '',
+      href: link?.href || '',          // dossier (internal) if it exists, else external url
+      external: link?.external ?? true,
+    };
+  });
   const known = new Set(nodes.map((n) => n.id));
   const links = model.flow.edges
     .filter((e) => known.has(e.from) && known.has(e.to))

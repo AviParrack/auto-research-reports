@@ -1,7 +1,7 @@
 ---
 import ModelLayout from '../../../layouts/ModelLayout.astro';
 import EvidenceChip from '../../../components/EvidenceChip.astro';
-import { loadAllModels, loadModel } from '../../../lib/models';
+import { loadAllModels, loadModel, entityLink } from '../../../lib/models';
 
 export function getStaticPaths() {
   return loadAllModels().map((m) => ({ params: { model: m.slug } }));
@@ -12,33 +12,52 @@ const model = loadModel(slug!);
 ---
 <ModelLayout model={model} title={`Inputs — ${model.meta.product}`} activeTab="inputs">
   <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-1">Input decomposition (BOM)</h2>
-  <p class="text-xs text-[var(--color-ink-soft)] mb-5 max-w-3xl">Every relevant input, what fraction of the final product it represents by mass and by value, and where it sits in the stack. The gap between "fraction of mass" and "fraction of value" is the idiot index in miniature.</p>
+  <p class="text-xs text-[var(--color-ink-soft)] mb-5 max-w-3xl">Every relevant input, what fraction of the final product it is by mass and by value, and where it sits in the stack. <span class="text-[var(--color-ink)]">Click any row</span> to expand a short explainer — what it is, how it's made, and who makes it (linked to the company). The gap between "% of mass" and "% of value" is the idiot index in miniature.</p>
 
-  <div class="overflow-x-auto border border-[var(--color-line)] rounded-lg">
-    <table class="w-full text-sm">
-      <thead>
-        <tr class="bg-[var(--color-paper-dim)] text-left text-xs uppercase tracking-wider text-[var(--color-ink-soft)]">
-          <th class="px-4 py-3 font-medium">Component</th>
-          <th class="px-4 py-3 font-medium">Stage</th>
-          <th class="px-4 py-3 font-medium">% of mass</th>
-          <th class="px-4 py-3 font-medium">% of value</th>
-          <th class="px-4 py-3 font-medium">Source</th>
-        </tr>
-      </thead>
-      <tbody>
-        {model.inputs.map((it) => (
-          <tr class="border-t border-[var(--color-line)] hover:bg-[var(--color-paper-dim)]">
-            <td class="px-4 py-3 font-medium text-[var(--color-ink)]">{it.component}</td>
-            <td class="px-4 py-3 text-[var(--color-ink-soft)]"><span class="font-mono text-xs">{it.stage}</span></td>
-            <td class="px-4 py-3 text-[var(--color-ink-soft)]">{it.pct_of_mass}</td>
-            <td class="px-4 py-3 text-[var(--color-ink-soft)]">{it.pct_of_value}</td>
-            <td class="px-4 py-3"><EvidenceChip evidence={it.evidence} modelSlug={model.slug} /></td>
-          </tr>
-        ))}
-        {model.inputs.length === 0 && (
-          <tr><td colspan="5" class="px-4 py-6 text-center text-[var(--color-ink-soft)]">No inputs yet.</td></tr>
-        )}
-      </tbody>
-    </table>
+  <div class="space-y-2">
+    {model.inputs.map((it) => (
+      <details class="group border border-[var(--color-line)] rounded-lg overflow-hidden">
+        <summary class="cursor-pointer list-none px-4 py-3 hover:bg-[var(--color-paper-dim)] transition-colors flex items-center gap-3 flex-wrap">
+          <span class="text-[var(--color-ink-soft)] transition-transform group-open:rotate-90">▶</span>
+          <span class="font-medium text-[var(--color-ink)] flex-1 min-w-[12rem]">{it.component}</span>
+          <span class="font-mono text-[11px] px-1.5 py-0.5 rounded bg-[var(--color-paper-dim)] text-[var(--color-ink-soft)]">{it.stage}</span>
+          <span class="text-xs text-[var(--color-ink-soft)] w-32 hidden sm:block">mass: {it.pct_of_mass}</span>
+          <span class="text-xs text-[var(--color-ink-soft)] w-32 hidden sm:block">value: {it.pct_of_value}</span>
+          <EvidenceChip evidence={it.evidence} modelSlug={model.slug} />
+        </summary>
+        <div class="px-4 pb-4 pt-1 border-t border-[var(--color-line)] text-sm space-y-3">
+          <div class="sm:hidden flex gap-4 text-xs text-[var(--color-ink-soft)]">
+            <span>mass: {it.pct_of_mass}</span><span>value: {it.pct_of_value}</span>
+          </div>
+          {it.what_it_is && (
+            <div><div class="text-[11px] uppercase tracking-wider text-[var(--color-ink-soft)] mb-0.5">What it is</div><p class="text-[var(--color-ink)]">{it.what_it_is}</p></div>
+          )}
+          {it.how_made && (
+            <div><div class="text-[11px] uppercase tracking-wider text-[var(--color-ink-soft)] mb-0.5">How it's made</div><p class="text-[var(--color-ink)]">{it.how_made}</p></div>
+          )}
+          {it.makers && it.makers.length > 0 && (
+            <div>
+              <div class="text-[11px] uppercase tracking-wider text-[var(--color-ink-soft)] mb-1">Who makes it</div>
+              <div class="flex flex-wrap gap-2">
+                {it.makers.map((mid) => {
+                  const ent = model.entities[mid];
+                  const link = entityLink(model, mid);
+                  const name = ent?.name || mid;
+                  return link ? (
+                    <a href={link.href} target={link.external ? '_blank' : undefined} rel={link.external ? 'noopener' : undefined}
+                       class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-[var(--color-line)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-colors">
+                      {name} {link.external ? '↗' : '→'}
+                    </a>
+                  ) : (
+                    <span class="inline-flex items-center text-xs px-2 py-1 rounded border border-[var(--color-line)] text-[var(--color-ink-soft)]">{name}</span>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      </details>
+    ))}
+    {model.inputs.length === 0 && <div class="text-[var(--color-ink-soft)]">No inputs yet.</div>}
   </div>
 </ModelLayout>

@@ -1,11 +1,17 @@
-# Companies / places referenced by flow nodes. Clicking a Sankey node opens
-# the entity URL. valuation/role/location are SCAFFOLD notes pending the swarm.
+# Companies / places referenced by flow nodes. Clicking a Sankey node opens the
+# company's dossier (internal) when one exists, else its website. revenue_usd is
+# annual revenue relevant to this chain — it drives the company-value readout on
+# each Sankey node. All revenue figures are SCAFFOLD estimates pending the swarm.
 
 the-quartz-corp:
   name: "The Quartz Corp"
   url: "https://www.thequartzcorp.com/"
+  dossier: the-quartz-corp
+  tier: B
   role: "High-purity quartz (Spruce Pine, NC) — feedstock for crucibles & optics"
   location: "Spruce Pine, North Carolina, USA"
+  revenue_usd: 200000000
+  revenue_note: "Scaffold estimate: private JV; high-purity quartz sales only."
   note: "Near-monopoly on the highest-purity quartz sand; privately held (JV)."
 
 commodity-carbon:
@@ -18,29 +24,45 @@ commodity-carbon:
 ferroglobe:
   name: "Ferroglobe"
   url: "https://www.ferroglobe.com/"
+  dossier: ferroglobe
+  tier: B
   role: "Metallurgical-grade silicon smelting"
   location: "Global (Spain/US/France)"
+  revenue_usd: 1600000000
+  revenue_note: "Scaffold estimate: group revenue across silicon + silicon-based alloys."
   note: "Scaffold: one representative MG-Si producer; Elkem, Wacker also major."
 
 wacker:
   name: "Wacker Chemie"
   url: "https://www.wacker.com/"
+  dossier: wacker
+  tier: B
   role: "Semiconductor-grade polysilicon (Siemens process)"
   location: "Germany / USA"
+  revenue_usd: 6400000000
+  revenue_note: "Scaffold estimate: total group revenue; polysilicon is one segment."
   note: "Scaffold: Wacker + Hemlock dominate semiconductor-grade poly."
 
 shin-etsu:
   name: "Shin-Etsu Chemical"
   url: "https://www.shinetsu.co.jp/en/"
+  dossier: shin-etsu
+  tier: B
   role: "Monocrystalline silicon wafers (300 mm prime)"
   location: "Japan"
+  revenue_usd: 18000000000
+  revenue_note: "Scaffold estimate: total group revenue; silicon wafers a major segment."
   note: "Scaffold: Shin-Etsu + SUMCO ~half of global wafer supply."
 
 asml:
   name: "ASML"
   url: "https://www.asml.com/"
+  dossier: asml
+  tier: B
   role: "EUV lithography systems (sole supplier)"
   location: "Veldhoven, Netherlands"
+  revenue_usd: 30000000000
+  revenue_note: "Scaffold estimate: total system + service revenue (~€28B)."
   note: "Sole EUV supplier; Zeiss optics, Cymer light source upstream."
 
 fab-materials-cluster:
@@ -53,13 +75,21 @@ fab-materials-cluster:
 tsmc:
   name: "TSMC"
   url: "https://www.tsmc.com/"
+  dossier: tsmc
+  tier: B
   role: "Leading-edge wafer fabrication + advanced packaging (CoWoS)"
   location: "Hsinchu, Taiwan (+ AZ, JP, DE)"
+  revenue_usd: 90000000000
+  revenue_note: "Scaffold estimate: total foundry revenue; leading-edge is the high-value share."
   note: "Dominant leading-edge foundry; ~90%+ of <7 nm logic."
 
 nvidia:
   name: "NVIDIA (product owner)"
   url: "https://www.nvidia.com/"
+  dossier: nvidia
+  tier: B
   role: "Fabless designer of the finished logic die"
   location: "Santa Clara, CA, USA"
+  revenue_usd: 130000000000
+  revenue_note: "Scaffold estimate: total revenue; data-center/GPU dominant."
   note: "Representative end product (GPU-class die)."

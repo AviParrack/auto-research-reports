@@ -1,8 +1,6 @@
 # Bill of materials / input decomposition for a leading-edge logic chip.
-# Each row: what fraction of the final product it represents, by mass and by
-# value, and where it sits in the stack. SCAFFOLD placeholders pending swarm.
-# pct_of_value is the headline "idiot index" intuition: raw materials are a
-# vanishing fraction of final value.
+# Each row expands to a short explainer: what it is, how it's made, who makes it
+# (makers link to the company tab). SCAFFOLD placeholders pending the swarm.
 
 - id: in-quartz
   component: "High-purity quartz (SiO₂)"
@@ -10,39 +8,66 @@
   pct_of_mass: "~40% of input mass"
   pct_of_value: "<0.1% of final value"
   evidence: { estimate: true, note: "Scaffold: silicon is most of the die mass but trivial cost." }
-- id: in-dopants
-  component: "Dopants (B, P, As) + epitaxial layers"
-  stage: materials
-  pct_of_mass: "<0.01% of mass"
+  what_it_is: "Ultra-pure crystalline silica — the original source of the silicon atoms in every chip. The very highest grades (low metal impurities) come from a small number of deposits, most famously Spruce Pine, North Carolina."
+  how_made: "Mined, crushed, chemically/physically purified, and floated/leached to remove metal impurities down to parts-per-billion levels for crucible-grade and optics-grade material."
+  makers: [the-quartz-corp]
+
+- id: in-mgsi
+  component: "Metallurgical-grade silicon (MG-Si)"
+  stage: refining
+  pct_of_mass: "~feedstock for poly"
+  pct_of_value: "~tiny"
+  evidence: { estimate: true, note: "Scaffold." }
+  what_it_is: "~98–99% pure silicon, the bulk commodity form. Most output goes to aluminum alloys and silicones; only a small slice is purified further for electronics."
+  how_made: "Carbothermic reduction of quartz with carbon in a submerged-arc furnace at ~2000 °C — extremely energy-intensive."
+  makers: [ferroglobe]
+
+- id: in-poly
+  component: "Semiconductor-grade polysilicon (11N)"
+  stage: refining
+  pct_of_mass: "die feedstock"
   pct_of_value: "small"
-  evidence: { estimate: true, note: "Scaffold." }
-- id: in-photoresist
-  component: "EUV photoresist + ancillary chemicals"
-  stage: materials
-  pct_of_mass: "consumable"
-  pct_of_value: "~3–6% of wafer cost"
-  evidence: { estimate: true, note: "Scaffold: specialty chemicals, high $/L, low mass." }
-- id: in-gases
-  component: "Specialty / bulk gases (incl. neon for lasers)"
-  stage: materials
-  pct_of_mass: "consumable"
-  pct_of_value: "~1–3% of wafer cost"
-  evidence: { estimate: true, note: "Scaffold." }
+  evidence: { source: bcg-semiconductor-supply-chain-2021, ref: "value-chain-overview", note: "Scaffold: order-of-magnitude." }
+  what_it_is: "Silicon purified to 99.999999999% (eleven nines) — the feedstock for growing single-crystal ingots. A different, far purer product than solar-grade poly."
+  how_made: "MG-Si converted to trichlorosilane, distilled, then deposited as ultrapure polysilicon via the Siemens process (hot rods, chemical vapor deposition) — famously energy-hungry."
+  makers: [wacker]
+
+- id: in-wafer
+  component: "Monocrystalline 300 mm prime wafer"
+  stage: substrate
+  pct_of_mass: "the substrate"
+  pct_of_value: "~1–2% of wafer cost"
+  evidence: { estimate: true, note: "Scaffold: blank prime wafer ~ low hundreds of $." }
+  what_it_is: "A defect-free single crystal of silicon, sliced and polished into mirror-flat 300 mm discs — the canvas every transistor is built on."
+  how_made: "Polysilicon melted and pulled into a single-crystal ingot (Czochralski process), then sliced, lapped, etched, and chemically-mechanically polished to atomic flatness."
+  makers: [shin-etsu]
+
 - id: in-litho
   component: "EUV lithography (amortized capital)"
   stage: equipment
   pct_of_mass: "n/a (capital)"
   pct_of_value: "~25–35% of wafer cost"
   evidence: { source: asml-annual-report-2024, ref: "euv-systems-shipped", note: "Scaffold split of amortized tool cost." }
-- id: in-energy
-  component: "Electricity + ultrapure water + cleanroom"
-  stage: fab
-  pct_of_mass: "n/a"
+  what_it_is: "The machines that print the smallest features, using 13.5 nm extreme-ultraviolet light. The single hardest tool in the stack and a sole-supplier chokepoint."
+  how_made: "Built by ASML from ~100,000 parts incl. Zeiss precision optics and a tin-plasma light source; only a limited number ship per year at very high price."
+  makers: [asml]
+
+- id: in-materials
+  component: "Photoresist, specialty gases, CMP slurry, dopants"
+  stage: materials
+  pct_of_mass: "consumables"
   pct_of_value: "~5–10% of wafer cost"
-  evidence: { estimate: true, note: "Scaffold: fab energy + utilities." }
-- id: in-labor-yield
-  component: "Process / labor / yield loss (value-add)"
+  evidence: { estimate: true, note: "Scaffold: specialty chemicals, high $/unit, low mass." }
+  what_it_is: "The consumable chemistry of fabrication: light-sensitive resists, ultra-pure etch/deposition gases, polishing slurries, and the dopant atoms that make silicon a semiconductor."
+  how_made: "Produced by a specialized materials cluster (e.g. JSR, TOK, Shin-Etsu, Air Liquide, Linde) to extreme purity specs."
+  makers: [fab-materials-cluster]
+
+- id: in-fab
+  component: "Process / labor / yield (fab value-add)"
   stage: fab
   pct_of_mass: "n/a"
   pct_of_value: "balance (dominant)"
   evidence: { estimate: true, note: "Scaffold: process know-how + yield is the real cost." }
+  what_it_is: "The ~1,000+ step front-end process, the cleanroom, the energy and ultrapure water, and above all the process know-how and yield that turn a blank wafer into working logic."
+  how_made: "Run by leading-edge foundries; the accumulated process IP and yield learning is the dominant, hardest-to-copy value."
+  makers: [tsmc]
