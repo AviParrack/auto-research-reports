@@ -1,0 +1,57 @@
+---
+import ModelLayout from '../../../layouts/ModelLayout.astro';
+import EvidenceChip from '../../../components/EvidenceChip.astro';
+import { loadAllModels, loadModel, entityFor } from '../../../lib/models';
+
+export function getStaticPaths() {
+  return loadAllModels().map((m) => ({ params: { model: m.slug } }));
+}
+
+const { model: slug } = Astro.params;
+const model = loadModel(slug!);
+const fmt = (v?: number) => (v == null ? '—' : '$' + v.toLocaleString());
+---
+<ModelLayout model={model} title={`Idiot Index — ${model.meta.product}`} activeTab="idiot">
+  <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-1">Idiot index</h2>
+  <p class="text-xs text-[var(--color-ink-soft)] mb-5 max-w-3xl">
+    <span class="font-mono">I = product cost ÷ raw-input cost</span>. A high number means you are far from the material cost floor — there is room to improve. The denominator is derived from raw-material floors with quoted prices sealed, then reconciled, so the ratio is a real model-vs-reality gap. Each side carries a citation or a labelled estimate.
+  </p>
+
+  <div class="space-y-4">
+    {model.idiotIndex.map((row) => {
+      const ent = entityFor(model, row.entity);
+      return (
+        <div class="border border-[var(--color-line)] rounded-lg p-5">
+          <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
+            <div>
+              <h3 class="font-serif text-lg font-semibold text-[var(--color-ink)]">{row.product}</h3>
+              {ent && <div class="text-xs text-[var(--color-ink-soft)]">{ent.url ? <a href={ent.url} target="_blank" rel="noopener" class="hover:text-[var(--color-accent)]">{ent.name} ↗</a> : ent.name}</div>}
+            </div>
+            <div class="text-right">
+              <div class="text-3xl font-serif font-bold text-[var(--color-accent)]">{row.ratio != null ? row.ratio.toLocaleString() + '×' : '—'}</div>
+              {row.confidence && <div class="text-[11px] uppercase tracking-wide text-[var(--color-ink-soft)]">{row.confidence} confidence</div>}
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--color-paper-dim)] rounded p-3">
+              <div class="text-[11px] uppercase tracking-wider text-[var(--color-ink-soft)] mb-1">Numerator · {row.numerator.label}</div>
+              <div class="flex items-baseline justify-between">
+                <span class="text-lg font-mono text-[var(--color-ink)]">{fmt(row.numerator.value_usd)}</span>
+                <EvidenceChip evidence={row.numerator.evidence} modelSlug={model.slug} />
+              </div>
+            </div>
+            <div class="bg-[var(--color-paper-dim)] rounded p-3">
+              <div class="text-[11px] uppercase tracking-wider text-[var(--color-ink-soft)] mb-1">Denominator · {row.denominator.label}</div>
+              <div class="flex items-baseline justify-between">
+                <span class="text-lg font-mono text-[var(--color-ink)]">{fmt(row.denominator.value_usd)}</span>
+                <EvidenceChip evidence={row.denominator.evidence} modelSlug={model.slug} />
+              </div>
+            </div>
+          </div>
+          {row.note && <p class="text-[11px] text-[var(--color-ink-soft)] mt-2">{row.note}</p>}
+        </div>
+      );
+    })}
+    {model.idiotIndex.length === 0 && <div class="text-[var(--color-ink-soft)]">No idiot-index rows yet.</div>}
+  </div>
+</ModelLayout>

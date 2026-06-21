@@ -1,0 +1,302 @@
+---
+import '../styles/global.css';
+import type { Model } from '../lib/models';
+import { BUILD_HASH } from '../lib/build-hash';
+import { SITE_VERSION, SITE_STAGE } from '../lib/version';
+
+interface Props {
+  model: Model;
+  title: string;
+  activeTab?: 'overview' | 'inputs' | 'companies' | 'idiot' | 'energetic' | 'sources';
+}
+
+const { model, title, activeTab = 'overview' } = Astro.props;
+const buildTime = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
+
+const tabs = [
+  { id: 'overview', label: 'Overview', href: `/models/${model.slug}/` },
+  { id: 'inputs', label: 'Inputs', href: `/models/${model.slug}/inputs/` },
+  { id: 'companies', label: 'Companies', href: `/models/${model.slug}/companies/` },
+  { id: 'idiot', label: 'Idiot Index', href: `/models/${model.slug}/idiot-index/` },
+  { id: 'energetic', label: 'Energetic Index', href: `/models/${model.slug}/energetic-index/` },
+  { id: 'sources', label: 'References', href: `/models/${model.slug}/sources/` },
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="build-hash" content={BUILD_HASH} />
+    <meta http-equiv="refresh" content="120" />
+    <title>{title} — Auto-Model</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline>
+      (function () {
+        function resolveTheme() {
+          try {
+            var saved = localStorage.getItem('ar-theme');
+            if (saved === 'light' || saved === 'dark') return saved;
+          } catch (e) {}
+          try {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
+          } catch (e) {}
+          return 'light';
+        }
+        document.documentElement.dataset.theme = resolveTheme();
+        try {
+          var mq = window.matchMedia('(prefers-color-scheme: dark)');
+          var onSysChange = function (e) {
+            var saved = null;
+            try { saved = localStorage.getItem('ar-theme'); } catch (_) {}
+            if (saved === 'light' || saved === 'dark') return;
+            var next = e.matches ? 'dark' : 'light';
+            if (document.documentElement.dataset.theme === next) return;
+            document.documentElement.dataset.theme = next;
+            if (window.__renderSankey && window.__sankeyData) window.__renderSankey(window.__sankeyData, next);
+          };
+          if (mq.addEventListener) mq.addEventListener('change', onSysChange);
+          else if (mq.addListener) mq.addListener(onSysChange);
+        } catch (e) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"></script>
+    <script is:inline>
+      window.addEventListener('DOMContentLoaded', () => {
+        if (typeof renderMathInElement !== 'function') return;
+        renderMathInElement(document.body, {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '\\(', right: '\\)', display: false },
+            { left: '\\[', right: '\\]', display: true },
+          ],
+          throwOnError: false,
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        });
+      });
+    </script>
+
+    {/* d3-sankey loader — exposes window.__renderSankey(payload, theme).
+        Palette tracks data-theme, same convention as the mermaid loader. */}
+    <script type="module" is:inline>
+      import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm';
+      import { sankey, sankeyLinkHorizontal } from 'https://cdn.jsdelivr.net/npm/d3-sankey@0.12/+esm';
+
+      const STAGE_COLORS = [
+        '#c4622d', '#2d6a4f', '#d97706', '#3b6ea5', '#8b5cf6',
+        '#0891b2', '#b45309', '#6b7280', '#be185d', '#15803d',
+      ];
+
+      window.__renderSankey = (payload, theme) => {
+        const host = document.getElementById('sankey');
+        if (!host || !payload || !payload.nodes || !payload.nodes.length) return;
+        const dark = theme === 'dark';
+        const ink = dark ? '#e5e2d8' : '#1a1a1a';
+        const inkSoft = dark ? '#9c9789' : '#4a4a4a';
+        host.innerHTML = '';
+
+        const width = host.clientWidth || 960;
+        const height = Math.max(420, payload.nodes.length * 46);
+        const stages = Array.from(new Set(payload.nodes.map((n) => n.stage)));
+        const colorFor = (n) => STAGE_COLORS[Math.max(0, stages.indexOf(n.stage)) % STAGE_COLORS.length];
+
+        const svg = d3.select(host).append('svg')
+          .attr('viewBox', `0 0 ${width} ${height}`)
+          .attr('width', '100%')
+          .attr('height', height)
+          .style('font-family', 'Inter, system-ui, sans-serif');
+
+        const sk = sankey()
+          .nodeId((d) => d.id)
+          .nodeWidth(16)
+          .nodePadding(16)
+          .extent([[8, 12], [width - 8, height - 12]]);
+
+        const graph = sk({
+          nodes: payload.nodes.map((d) => Object.assign({}, d)),
+          links: payload.links.map((d) => Object.assign({}, d)),
+        });
+
+        const fmtUsd = (v) => v == null ? '—' : '$' + d3.format(',')(Math.round(v));
+
+        // Links
+        svg.append('g').attr('fill', 'none')
+          .selectAll('path').data(graph.links).join('path')
+          .attr('d', sankeyLinkHorizontal())
+          .attr('stroke', (d) => colorFor(d.source))
+          .attr('stroke-opacity', 0.38)
+          .attr('stroke-width', (d) => Math.max(1.5, d.width))
+          .style('cursor', 'help')
+          .append('title')
+          .text((d) => {
+            const cite = d.cited ? `cited: ${d.sourceSlug}` : 'estimate';
+            return `${d.source.label} → ${d.target.label}\nvalue: ${fmtUsd(d.valueUsd)} / wafer\n` +
+              (d.throughput ? `throughput: ${d.throughput}\n` : '') +
+              (d.energyMj != null ? `energy: ${d.energyMj} MJ/wafer\n` : '') +
+              `(${cite})${d.note ? '\n' + d.note : ''}`;
+          });
+
+        // Nodes
+        const node = svg.append('g').selectAll('g').data(graph.nodes).join('g');
+        node.append('rect')
+          .attr('x', (d) => d.x0).attr('y', (d) => d.y0)
+          .attr('height', (d) => Math.max(2, d.y1 - d.y0))
+          .attr('width', (d) => d.x1 - d.x0)
+          .attr('fill', (d) => colorFor(d))
+          .attr('rx', 3)
+          .style('cursor', (d) => d.url ? 'pointer' : 'default')
+          .on('click', (_e, d) => { if (d.url) window.open(d.url, '_blank', 'noopener'); })
+          .append('title').text((d) => d.entityName ? `${d.label} — ${d.entityName}${d.url ? ' (click to open)' : ''}` : d.label);
+
+        node.append('text')
+          .attr('x', (d) => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
+          .attr('y', (d) => (d.y1 + d.y0) / 2)
+          .attr('dy', '0.35em')
+          .attr('text-anchor', (d) => d.x0 < width / 2 ? 'start' : 'end')
+          .attr('fill', ink)
+          .style('font-size', '12px')
+          .style('font-weight', '600')
+          .style('cursor', (d) => d.url ? 'pointer' : 'default')
+          .on('click', (_e, d) => { if (d.url) window.open(d.url, '_blank', 'noopener'); })
+          .text((d) => d.label)
+          .append('tspan')
+          .attr('x', (d) => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
+          .attr('dy', '1.2em')
+          .attr('fill', inkSoft)
+          .style('font-size', '10px')
+          .style('font-weight', '400')
+          .text((d) => d.entityName || '');
+      };
+
+      window.addEventListener('resize', () => {
+        if (window.__renderSankey && window.__sankeyData) {
+          const t = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+          window.__renderSankey(window.__sankeyData, t);
+        }
+      });
+    </script>
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script is:inline define:vars={{ BUILD_HASH }}>
+      async function checkAndReload() {
+        try {
+          const resp = await fetch('/build-hash.txt?cb=' + Date.now(), { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
+          if (!resp.ok) return;
+          const live = (await resp.text()).trim();
+          if (live && live !== BUILD_HASH) {
+            const url = new URL(location.href);
+            url.searchParams.set('v', live);
+            location.replace(url.toString());
+          }
+        } catch (e) {}
+      }
+      window.__forceReload = () => {
+        const url = new URL(location.href);
+        url.searchParams.set('v', String(Date.now()));
+        location.replace(url.toString());
+      };
+      (async () => {
+        try {
+          if ('serviceWorker' in navigator) {
+            const regs = await navigator.serviceWorker.getRegistrations();
+            for (const r of regs) { try { await r.unregister(); } catch {} }
+          }
+        } catch {}
+        checkAndReload();
+      })();
+      document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkAndReload(); });
+      window.addEventListener('pageshow', () => checkAndReload());
+      window.addEventListener('focus', () => checkAndReload());
+      setInterval(checkAndReload, 30000);
+    </script>
+  </head>
+  <body class="min-h-screen">
+    {model.meta.scaffold && (
+      <div class="border-b-2 text-sm" style="background: color-mix(in srgb, var(--color-warn) 14%, transparent); border-color: var(--color-warn);">
+        <div class="max-w-6xl mx-auto px-6 py-2.5 flex items-center gap-2 text-[var(--color-ink)] font-medium">
+          <span>🧪</span>
+          <span>Scaffold model — placeholder numbers, every value labelled as an estimate. Not yet populated by the research swarm.</span>
+        </div>
+      </div>
+    )}
+
+    <header class="border-b border-[var(--color-line)] bg-[var(--color-paper)]">
+      <div class="max-w-6xl mx-auto px-6 py-4">
+        <div class="flex items-baseline justify-between mb-3">
+          <div class="text-sm text-[var(--color-ink-soft)] flex items-center gap-2 flex-wrap">
+            <a href="/" class="hover:text-[var(--color-accent)] flex items-baseline gap-1.5">
+              ← Auto-Research
+              <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border" style="background: var(--color-warn); color: var(--color-paper); border-color: var(--color-warn); letter-spacing: 0.05em;">{SITE_STAGE} {SITE_VERSION}</span>
+            </a>
+            <span class="text-[var(--color-line)]">/</span>
+            <span class="font-mono text-xs px-1.5 py-0.5 rounded" style="background: var(--color-accent); color: var(--color-paper);">model</span>
+            <span class="font-mono text-xs">{model.slug}</span>
+          </div>
+          <div class="text-xs text-[var(--color-ink-soft)] font-mono">
+            {model.meta.status}
+          </div>
+        </div>
+        <h1 class="text-2xl font-serif font-semibold text-[var(--color-ink)] leading-snug">
+          {model.meta.product}
+        </h1>
+        {model.meta.unit_of_analysis && (
+          <p class="text-xs text-[var(--color-ink-soft)] mt-1 font-mono">unit: {model.meta.unit_of_analysis}</p>
+        )}
+      </div>
+      <nav class="max-w-6xl mx-auto px-6 flex items-center justify-between -mb-px">
+        <div class="flex gap-6 overflow-x-auto">
+          {tabs.map((tab) => (
+            <a
+              href={tab.href}
+              class:list={[
+                'pb-3 text-sm border-b-2 transition-colors whitespace-nowrap',
+                activeTab === tab.id
+                  ? 'border-[var(--color-accent)] text-[var(--color-accent)] font-medium'
+                  : 'border-transparent text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]',
+              ]}
+            >
+              {tab.label}
+            </a>
+          ))}
+        </div>
+        <div class="flex items-center gap-4 pb-3">
+          <button id="theme-toggle" type="button" class="text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] transition-colors flex items-center" aria-label="Toggle dark mode" title="Toggle dark / light mode">
+            <svg class="w-4 h-4 hidden [html[data-theme='dark']_&]:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+            </svg>
+            <svg class="w-4 h-4 [html[data-theme='dark']_&]:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+        </div>
+      </nav>
+      <script is:inline>
+        (function () {
+          const btn = document.getElementById('theme-toggle');
+          if (!btn) return;
+          btn.addEventListener('click', () => {
+            const cur = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+            const next = cur === 'dark' ? 'light' : 'dark';
+            document.documentElement.dataset.theme = next;
+            try { localStorage.setItem('ar-theme', next); } catch (e) {}
+            if (window.__renderSankey && window.__sankeyData) window.__renderSankey(window.__sankeyData, next);
+          });
+        })();
+      </script>
+    </header>
+    <main class="max-w-6xl mx-auto px-6 py-8">
+      <slot />
+    </main>
+    <footer class="max-w-6xl mx-auto px-6 py-6 mt-12 border-t border-[var(--color-line)] text-xs text-[var(--color-ink-soft)] flex justify-between items-center">
+      <div>model updated {model.meta.last_updated}</div>
+      <div class="flex items-center gap-2">
+        <span>site built <span class="font-mono">{buildTime}</span></span>
+        <button onclick="window.__forceReload && window.__forceReload()" class="ml-1 px-2 py-0.5 rounded border border-[var(--color-line)] hover:bg-[var(--color-paper-dim)] hover:border-[var(--color-accent)] transition-colors" title="Force reload bypassing any cache">↻ reload</button>
+      </div>
+    </footer>
+  </body>
+</html>

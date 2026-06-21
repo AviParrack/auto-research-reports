@@ -1,0 +1,59 @@
+---
+import ModelLayout from '../../../layouts/ModelLayout.astro';
+import { loadAllModels, loadModel, buildSankeyPayload } from '../../../lib/models';
+
+export function getStaticPaths() {
+  return loadAllModels().map((m) => ({ params: { model: m.slug } }));
+}
+
+const { model: slug } = Astro.params;
+const model = loadModel(slug!);
+const sankey = buildSankeyPayload(model);
+const summary = model.meta.summary || [];
+---
+<ModelLayout model={model} title={model.meta.product} activeTab="overview">
+  {model.meta.question && (
+    <p class="text-[var(--color-ink-soft)] mb-6 max-w-3xl">{model.meta.question}</p>
+  )}
+
+  {summary.length > 0 && (
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+      {summary.map((s) => (
+        <div class="border border-[var(--color-line)] rounded-lg p-4">
+          <div class="text-xs uppercase tracking-wider text-[var(--color-ink-soft)] mb-1">{s.label}</div>
+          <div class="text-xl font-serif font-semibold text-[var(--color-ink)]">{s.value}</div>
+          {s.note && <div class="text-[11px] text-[var(--color-ink-soft)] mt-1 leading-snug">{s.note}</div>}
+        </div>
+      ))}
+    </div>
+  )}
+
+  <section class="mb-8">
+    <div class="flex items-baseline justify-between mb-3">
+      <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)]">Supply-chain flow</h2>
+      <span class="text-[11px] text-[var(--color-ink-soft)]">ribbon width = value added / wafer · hover a flow · click a node → company</span>
+    </div>
+    <div class="border border-[var(--color-line)] rounded-lg p-4 bg-[var(--color-paper)]">
+      <div id="sankey" style="width:100%; min-height: 420px;"></div>
+      {sankey.nodes.length === 0 && (
+        <div class="text-[var(--color-ink-soft)] text-sm">No flow data yet.</div>
+      )}
+    </div>
+  </section>
+
+  <div class="text-xs text-[var(--color-ink-soft)] max-w-3xl space-y-1">
+    {model.meta.boundary && <p><span class="font-medium text-[var(--color-ink)]">Boundary:</span> {model.meta.boundary}</p>}
+    <p><span class="font-medium text-[var(--color-ink)]">Discipline:</span> every flow is a claim carrying a citation (<span class="font-mono">cite</span>) or a labelled estimate (<span class="font-mono">est.</span>). See the Idiot Index and References tabs.</p>
+  </div>
+
+  <script is:inline define:vars={{ payload: sankey }}>
+    window.__sankeyData = payload;
+    function go() {
+      const theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+      if (window.__renderSankey) window.__renderSankey(payload, theme);
+      else setTimeout(go, 80);
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go);
+    else go();
+  </script>
+</ModelLayout>

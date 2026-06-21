@@ -1,0 +1,108 @@
+# Material/value flow graph for the leading-edge logic chip stack.
+# Rendered as an interactive Sankey on the Overview tab. Ribbon width = value_usd
+# (value added per wafer); hover shows throughput + embodied energy.
+#
+# DISCIPLINE: every edge is a claim. It carries EITHER evidence.source (a slug
+# under sources/, → clickable citation) OR evidence.estimate: true with a note
+# (→ labelled principled estimate). No bare numbers. All values below are
+# SCAFFOLD placeholders pending the auto-model swarm.
+
+unit: "per 300 mm leading-edge logic wafer"
+
+nodes:
+  - id: quartz
+    label: "High-purity quartz"
+    stage: raw-material
+    entity: the-quartz-corp
+  - id: carbon
+    label: "Carbon / coke"
+    stage: raw-material
+    entity: commodity-carbon
+  - id: mg-si
+    label: "Metallurgical-grade Si"
+    stage: refining
+    entity: ferroglobe
+  - id: polysilicon
+    label: "Polysilicon (11N)"
+    stage: refining
+    entity: wacker
+  - id: ingot
+    label: "Monocrystalline ingot + wafer"
+    stage: substrate
+    entity: shin-etsu
+  - id: euv
+    label: "EUV lithography"
+    stage: equipment
+    entity: asml
+  - id: fab-materials
+    label: "Photoresist, gases, CMP, dopants"
+    stage: materials
+    entity: fab-materials-cluster
+  - id: fab
+    label: "Wafer fabrication (front-end)"
+    stage: fab
+    entity: tsmc
+  - id: packaging
+    label: "Advanced packaging (CoWoS)"
+    stage: packaging
+    entity: tsmc
+  - id: die
+    label: "Finished logic die"
+    stage: product
+    entity: nvidia
+
+edges:
+  - from: quartz
+    to: mg-si
+    value_usd: 4
+    throughput: "~8 Mt/yr high-purity quartz globally"
+    energy_mj: 60
+    evidence: { estimate: true, note: "Scaffold estimate: quartz cost contribution per wafer is negligible vs downstream." }
+  - from: carbon
+    to: mg-si
+    value_usd: 3
+    throughput: "carbothermic reductant"
+    energy_mj: 40
+    evidence: { estimate: true, note: "Scaffold estimate." }
+  - from: mg-si
+    to: polysilicon
+    value_usd: 12
+    throughput: "~9 Mt/yr MG-Si globally (mostly non-semiconductor)"
+    energy_mj: 110
+    evidence: { estimate: true, note: "Scaffold estimate: Siemens-process polysilicon is energy-intensive; cost/wafer still small." }
+  - from: polysilicon
+    to: ingot
+    value_usd: 60
+    throughput: "semiconductor-grade poly is <5% of total poly output"
+    energy_mj: 250
+    evidence: { source: bcg-semiconductor-supply-chain-2021, ref: "value-chain-overview", note: "Order-of-magnitude; refine in swarm." }
+  - from: ingot
+    to: fab
+    value_usd: 220
+    throughput: "~12–13 M leading-edge wafers/yr"
+    energy_mj: 300
+    evidence: { estimate: true, note: "Scaffold estimate: blank 300 mm prime wafer ~ low hundreds of $." }
+  - from: euv
+    to: fab
+    value_usd: 5200
+    throughput: "ASML ships <100 EUV systems/yr; amortized per wafer"
+    energy_mj: 1400
+    evidence: { source: asml-annual-report-2024, ref: "euv-systems-shipped", note: "Amortized tool + service per wafer, scaffold split." }
+  - from: fab-materials
+    to: fab
+    value_usd: 900
+    throughput: "photoresist, specialty gases, CMP slurry, dopants"
+    energy_mj: 200
+    evidence: { estimate: true, note: "Scaffold estimate: consumable materials per leading-edge wafer." }
+  - from: fab
+    to: packaging
+    value_usd: 9000
+    throughput: "front-end process value add"
+    energy_mj: 1800
+    evidence: { estimate: true, note: "Scaffold estimate: fab process is the dominant value-add per wafer." }
+  - from: packaging
+    to: die
+    value_usd: 2400
+    throughput: "CoWoS / advanced packaging is capacity-constrained"
+    energy_mj: 350
+    evidence: { estimate: true, note: "Scaffold estimate: advanced packaging value add per wafer-equivalent." }

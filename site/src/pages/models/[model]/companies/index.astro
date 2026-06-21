@@ -1,0 +1,35 @@
+---
+import ModelLayout from '../../../../layouts/ModelLayout.astro';
+import { loadAllModels, loadModel } from '../../../../lib/models';
+
+export function getStaticPaths() {
+  return loadAllModels().map((m) => ({ params: { model: m.slug } }));
+}
+
+const { model: slug } = Astro.params;
+const model = loadModel(slug!);
+---
+<ModelLayout model={model} title={`Companies — ${model.meta.product}`} activeTab="companies">
+  <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-1">Company dossiers</h2>
+  <p class="text-xs text-[var(--color-ink-soft)] mb-5 max-w-3xl">Company-by-company deep reads. Each dossier synthesizes a detailed picture of internal processes from technical disclosures, filings, teardowns, and interviews — every claim cited.</p>
+
+  {model.companies.length === 0 ? (
+    <div class="text-[var(--color-ink-soft)]">No company dossiers yet.</div>
+  ) : (
+    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {model.companies.map((c) => (
+        <li class="border border-[var(--color-line)] rounded-lg p-5 hover:border-[var(--color-accent)] transition-colors">
+          <a href={`/models/${model.slug}/companies/${c.slug}/`} class="block">
+            <div class="flex items-baseline justify-between mb-1">
+              <h3 class="font-serif text-lg font-semibold text-[var(--color-ink)]">{c.name}</h3>
+              {c.tier && <span class="text-[11px] font-mono px-1.5 py-0.5 rounded bg-[var(--color-paper-dim)] text-[var(--color-ink-soft)]">tier {c.tier}</span>}
+            </div>
+            {c.role && <p class="text-sm text-[var(--color-ink-soft)]">{c.role}</p>}
+            {c.location && <p class="text-xs text-[var(--color-ink-soft)] mt-1 font-mono">{c.location}</p>}
+            {c.scaffold && <p class="text-[11px] text-[var(--color-warn)] mt-2">🧪 scaffold stub</p>}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</ModelLayout>

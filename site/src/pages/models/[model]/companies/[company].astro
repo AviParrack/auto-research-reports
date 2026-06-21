@@ -1,0 +1,27 @@
+---
+import ModelLayout from '../../../../layouts/ModelLayout.astro';
+import { loadAllModels, loadModel, renderMath } from '../../../../lib/models';
+
+export function getStaticPaths() {
+  return loadAllModels().flatMap((m) =>
+    m.companies.map((c) => ({ params: { model: m.slug, company: c.slug } })),
+  );
+}
+
+const { model: slug, company: companySlug } = Astro.params;
+const model = loadModel(slug!);
+const company = model.companies.find((c) => c.slug === companySlug)!;
+const bodyHtml = renderMath(company.body || '', { inline: false });
+---
+<ModelLayout model={model} title={`${company.name} — ${model.meta.product}`} activeTab="companies">
+  <div class="mb-4 text-sm">
+    <a href={`/models/${model.slug}/companies/`} class="text-[var(--color-ink-soft)] hover:text-[var(--color-accent)]">← all companies</a>
+  </div>
+  <div class="flex items-baseline justify-between mb-1 flex-wrap gap-2">
+    <h1 class="font-serif text-2xl font-semibold text-[var(--color-ink)]">{company.name}</h1>
+    {company.url && <a href={company.url} target="_blank" rel="noopener" class="text-sm text-[var(--color-accent)] hover:underline">{company.url} ↗</a>}
+  </div>
+  {company.role && <p class="text-sm text-[var(--color-ink-soft)] mb-6">{company.role}{company.location ? ` · ${company.location}` : ''}</p>}
+
+  <article class="prose-leaf max-w-3xl" set:html={bodyHtml}></article>
+</ModelLayout>

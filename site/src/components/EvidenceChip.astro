@@ -1,0 +1,29 @@
+---
+// Renders the citation-or-estimate marker for a single line item.
+//  - evidence.source  → a clickable citation chip linking to the source page
+//  - otherwise        → a muted "est." chip carrying the estimate note on hover
+import type { Evidence } from '../lib/models';
+
+interface Props {
+  evidence?: Evidence;
+  modelSlug: string;
+}
+const { evidence, modelSlug } = Astro.props;
+const cited = !!evidence?.source;
+---
+{cited ? (
+  <a
+    href={`/models/${modelSlug}/sources/${evidence!.source}/`}
+    class="inline-flex items-center gap-1 text-[11px] font-mono px-1.5 py-0.5 rounded border border-[var(--color-accent)] text-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-[var(--color-paper)] transition-colors"
+    title={evidence?.note || evidence?.source}
+  >
+    cite ↗ {evidence!.source}
+  </a>
+) : (
+  <span
+    class="inline-flex items-center text-[11px] font-mono px-1.5 py-0.5 rounded border border-[var(--color-line)] text-[var(--color-ink-soft)] cursor-help"
+    title={evidence?.note || 'Principled estimate — no external source'}
+  >
+    est.
+  </span>
+)}

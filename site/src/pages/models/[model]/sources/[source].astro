@@ -1,0 +1,30 @@
+---
+import ModelLayout from '../../../../layouts/ModelLayout.astro';
+import { loadAllModels, loadModel, renderMath } from '../../../../lib/models';
+
+export function getStaticPaths() {
+  return loadAllModels().flatMap((m) =>
+    m.sources.map((s) => ({ params: { model: m.slug, source: s.slug } })),
+  );
+}
+
+const { model: slug, source: sourceSlug } = Astro.params;
+const model = loadModel(slug!);
+const source = model.sources.find((s) => s.slug === sourceSlug)!;
+const bodyHtml = renderMath(source.body || '', { inline: false });
+---
+<ModelLayout model={model} title={`${source.title || source.slug} — References`} activeTab="sources">
+  <div class="mb-4 text-sm">
+    <a href={`/models/${model.slug}/sources/`} class="text-[var(--color-ink-soft)] hover:text-[var(--color-accent)]">← all references</a>
+  </div>
+  <div class="flex items-baseline justify-between mb-1 flex-wrap gap-2">
+    <h1 class="font-serif text-2xl font-semibold text-[var(--color-ink)]">{source.title || source.slug}</h1>
+    {source.tier && <span class="text-[11px] font-mono px-1.5 py-0.5 rounded bg-[var(--color-paper-dim)] text-[var(--color-ink-soft)]">tier {source.tier}</span>}
+  </div>
+  <div class="text-xs text-[var(--color-ink-soft)] mb-2">
+    {[source.authors?.join(', '), source.year, source.type].filter(Boolean).join(' · ')}
+  </div>
+  {source.url && <a href={source.url} target="_blank" rel="noopener" class="text-sm text-[var(--color-accent)] hover:underline break-all">{source.url} ↗</a>}
+
+  <article class="prose-leaf max-w-3xl mt-6" set:html={bodyHtml}></article>
+</ModelLayout>

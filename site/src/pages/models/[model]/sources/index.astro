@@ -1,0 +1,39 @@
+---
+import ModelLayout from '../../../../layouts/ModelLayout.astro';
+import { loadAllModels, loadModel } from '../../../../lib/models';
+
+export function getStaticPaths() {
+  return loadAllModels().map((m) => ({ params: { model: m.slug } }));
+}
+
+const { model: slug } = Astro.params;
+const model = loadModel(slug!);
+---
+<ModelLayout model={model} title={`References — ${model.meta.product}`} activeTab="sources">
+  <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-1">References</h2>
+  <p class="text-xs text-[var(--color-ink-soft)] mb-5 max-w-3xl">Every source cited anywhere in the model, with its metadata. Each cite chip elsewhere in the model links here.</p>
+
+  {model.sources.length === 0 ? (
+    <div class="text-[var(--color-ink-soft)]">No sources yet.</div>
+  ) : (
+    <ul class="space-y-3">
+      {model.sources.map((s) => (
+        <li class="border border-[var(--color-line)] rounded-lg p-4 hover:border-[var(--color-accent)] transition-colors">
+          <a href={`/models/${model.slug}/sources/${s.slug}/`} class="block">
+            <div class="flex items-baseline justify-between gap-3 flex-wrap">
+              <h3 class="font-medium text-[var(--color-ink)]">{s.title || s.slug}</h3>
+              <div class="flex items-center gap-2 shrink-0">
+                {s.tier && <span class="text-[11px] font-mono px-1.5 py-0.5 rounded bg-[var(--color-paper-dim)] text-[var(--color-ink-soft)]">tier {s.tier}</span>}
+                {s.scaffold && <span class="text-[11px] text-[var(--color-warn)]">🧪 stub</span>}
+              </div>
+            </div>
+            <div class="text-xs text-[var(--color-ink-soft)] mt-1">
+              {[s.authors?.join(', '), s.year, s.type].filter(Boolean).join(' · ')}
+            </div>
+            <div class="text-[11px] font-mono text-[var(--color-ink-soft)] mt-1">{s.slug}</div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</ModelLayout>

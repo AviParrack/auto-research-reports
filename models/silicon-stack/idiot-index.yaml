@@ -1,0 +1,53 @@
+# Musk's idiot index = (cost / value of finished product) ÷ (cost of raw inputs).
+# A high number means you are far from the fundamental material cost floor —
+# i.e. there is room to improve. Each numerator and denominator carries its own
+# citation-or-estimate. SCAFFOLD placeholders pending the auto-model swarm.
+#
+# Discipline (auto-research P2): the denominator is derived from raw-material
+# floors with quoted prices SEALED, then reconciled — so the ratio is a genuine
+# model-vs-reality gap, not a borrowed figure.
+
+- id: ii-packaged-die
+  product: "Packaged leading-edge logic die (GPU-class)"
+  entity: nvidia
+  numerator:
+    label: "Finished die value"
+    value_usd: 18000
+    evidence: { estimate: true, note: "Scaffold: per-die share of value added across the chain." }
+  denominator:
+    label: "Raw-material input cost"
+    value_usd: 3.3
+    evidence: { estimate: true, note: "Scaffold: quartz + carbon + dopants + gases at commodity floor." }
+  ratio: 5500
+  confidence: low
+  note: "Scaffold estimate. Real value: derive material floor sealed, then reconcile."
+
+- id: ii-wafer
+  product: "Processed 300 mm leading-edge wafer (pre-dicing)"
+  entity: tsmc
+  numerator:
+    label: "Processed wafer cost"
+    value_usd: 18000
+    evidence: { estimate: true, note: "Scaffold: leading-edge wafer processing cost, order-of-magnitude." }
+  denominator:
+    label: "Blank prime wafer + materials"
+    value_usd: 420
+    evidence: { estimate: true, note: "Scaffold: substrate + consumables floor." }
+  ratio: 43
+  confidence: low
+  note: "Scaffold estimate."
+
+- id: ii-polysilicon
+  product: "Semiconductor-grade polysilicon (11N)"
+  entity: wacker
+  numerator:
+    label: "Semiconductor-grade poly price"
+    value_usd: 100
+    evidence: { estimate: true, note: "Scaffold: per-kg semiconductor-grade vs solar-grade premium." }
+  denominator:
+    label: "MG-Si + energy floor"
+    value_usd: 3
+    evidence: { estimate: true, note: "Scaffold: metallurgical silicon + purification energy floor." }
+  ratio: 33
+  confidence: low
+  note: "Scaffold estimate."

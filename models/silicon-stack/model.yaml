@@ -1,0 +1,40 @@
+slug: silicon-stack
+product: "Leading-edge logic chip (300 mm wafer → packaged GPU-class die)"
+question: "What does it physically and economically take to make a leading-edge logic chip, end to end?"
+unit_of_analysis: "Per 300 mm leading-edge logic wafer (~5 nm-class), unless a row states otherwise"
+boundary: "Cradle-to-gate: from mined quartz/carbon through fab + advanced packaging to a finished die. Excludes board assembly, distribution, use-phase."
+status: scaffold            # scaffold | in_progress | done
+scaffold: true             # placeholder data — NOT a populated model yet
+current_pass: 0
+created: 2026-06-21
+last_updated: 2026-06-21
+models:
+  primary: claude-opus-4-8
+  critic: codex:gpt-5
+deploy:
+  mode: cloudflare
+  cloudflare_project: auto-research-reports
+termination:
+  every_edge_sourced_or_estimated: false
+  every_company_dossiered: false
+
+# Headline numbers rendered as stat cards on the Overview tab.
+# All values below are SCAFFOLD placeholders (order-of-magnitude), to be
+# replaced by the auto-model swarm. Each carries an explicit estimate note.
+summary:
+  - key: max_global_throughput
+    label: "Max global throughput"
+    value: "~12–13 M wafers / yr"
+    note: "Scaffold estimate: global leading-edge logic wafer-start capacity, order-of-magnitude."
+  - key: total_chain_value
+    label: "Chain value added"
+    value: "~$18,000 / wafer"
+    note: "Scaffold estimate: approximate value added from raw material to packaged die, per leading-edge wafer."
+  - key: top_idiot_index
+    label: "Top idiot index"
+    value: "~5,500×"
+    note: "Scaffold estimate: packaged-die value ÷ raw-material input cost. Huge headroom = far from material floors."
+  - key: top_energetic_index
+    label: "Top energetic idiot index"
+    value: "~120×"
+    note: "Scaffold estimate: actual cradle-to-gate energy ÷ thermodynamic floor for the same atoms."

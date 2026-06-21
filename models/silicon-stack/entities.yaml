@@ -1,0 +1,65 @@
+# Companies / places referenced by flow nodes. Clicking a Sankey node opens
+# the entity URL. valuation/role/location are SCAFFOLD notes pending the swarm.
+
+the-quartz-corp:
+  name: "The Quartz Corp"
+  url: "https://www.thequartzcorp.com/"
+  role: "High-purity quartz (Spruce Pine, NC) — feedstock for crucibles & optics"
+  location: "Spruce Pine, North Carolina, USA"
+  note: "Near-monopoly on the highest-purity quartz sand; privately held (JV)."
+
+commodity-carbon:
+  name: "Carbon / coke (commodity)"
+  url: ""
+  role: "Carbothermic reductant for silica → silicon"
+  location: "Global"
+  note: "Commodity input; not a single supplier."
+
+ferroglobe:
+  name: "Ferroglobe"
+  url: "https://www.ferroglobe.com/"
+  role: "Metallurgical-grade silicon smelting"
+  location: "Global (Spain/US/France)"
+  note: "Scaffold: one representative MG-Si producer; Elkem, Wacker also major."
+
+wacker:
+  name: "Wacker Chemie"
+  url: "https://www.wacker.com/"
+  role: "Semiconductor-grade polysilicon (Siemens process)"
+  location: "Germany / USA"
+  note: "Scaffold: Wacker + Hemlock dominate semiconductor-grade poly."
+
+shin-etsu:
+  name: "Shin-Etsu Chemical"
+  url: "https://www.shinetsu.co.jp/en/"
+  role: "Monocrystalline silicon wafers (300 mm prime)"
+  location: "Japan"
+  note: "Scaffold: Shin-Etsu + SUMCO ~half of global wafer supply."
+
+asml:
+  name: "ASML"
+  url: "https://www.asml.com/"
+  role: "EUV lithography systems (sole supplier)"
+  location: "Veldhoven, Netherlands"
+  note: "Sole EUV supplier; Zeiss optics, Cymer light source upstream."
+
+fab-materials-cluster:
+  name: "Fab materials (cluster)"
+  url: ""
+  role: "Photoresist, specialty gases, CMP slurry, dopants"
+  location: "Japan / Korea / US / EU"
+  note: "Scaffold: JSR, TOK, Shin-Etsu, Air Liquide, Linde, etc."
+
+tsmc:
+  name: "TSMC"
+  url: "https://www.tsmc.com/"
+  role: "Leading-edge wafer fabrication + advanced packaging (CoWoS)"
+  location: "Hsinchu, Taiwan (+ AZ, JP, DE)"
+  note: "Dominant leading-edge foundry; ~90%+ of <7 nm logic."
+
+nvidia:
+  name: "NVIDIA (product owner)"
+  url: "https://www.nvidia.com/"
+  role: "Fabless designer of the finished logic die"
+  location: "Santa Clara, CA, USA"
+  note: "Representative end product (GPU-class die)."

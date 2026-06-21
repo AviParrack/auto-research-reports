@@ -1,0 +1,50 @@
+# Energetic idiot index = actual cradle-to-gate energy per unit ÷ the
+# thermodynamic floor (minimum energy the physics demands for the same atoms).
+# This is the "above Musk" industrial-explosion lens: joules, not dollars,
+# including mining, reduction, purification, crystal growth, and fab.
+# Each line carries citation-or-estimate. SCAFFOLD placeholders pending swarm.
+
+- id: ei-packaged-die
+  product: "Packaged leading-edge logic die"
+  entity: nvidia
+  actual:
+    label: "Actual cradle-to-gate energy"
+    value_mj: 4900
+    evidence: { estimate: true, note: "Scaffold: sum of per-wafer edge energies ÷ dies/wafer, order-of-magnitude." }
+  floor:
+    label: "Thermodynamic floor (same atoms)"
+    value_mj: 40
+    evidence: { estimate: true, note: "Scaffold: free-energy of separation/reduction for the material content." }
+  ratio: 122
+  confidence: low
+  note: "Scaffold estimate. Fab + EUV dominate; floor is tiny vs actual."
+
+- id: ei-polysilicon
+  product: "Semiconductor-grade polysilicon (per kg)"
+  entity: wacker
+  actual:
+    label: "Siemens-process energy"
+    value_mj: 580
+    evidence: { source: bcg-semiconductor-supply-chain-2021, ref: "energy-intensity", note: "Scaffold: Siemens process is famously energy-hungry (~kWh/kg range)." }
+  floor:
+    label: "Thermodynamic purification floor"
+    value_mj: 5
+    evidence: { estimate: true, note: "Scaffold: ideal separation work for impurity removal." }
+  ratio: 116
+  confidence: low
+  note: "Scaffold estimate."
+
+- id: ei-wafer-fab
+  product: "Front-end wafer fabrication (per wafer)"
+  entity: tsmc
+  actual:
+    label: "Fab process energy / wafer"
+    value_mj: 3200
+    evidence: { estimate: true, note: "Scaffold: leading-edge fab energy per wafer, order-of-magnitude." }
+  floor:
+    label: "Patterning thermodynamic floor"
+    value_mj: 30
+    evidence: { estimate: true, note: "Scaffold: Landauer-ish + chemical floor is negligible vs actual." }
+  ratio: 107
+  confidence: low
+  note: "Scaffold estimate."

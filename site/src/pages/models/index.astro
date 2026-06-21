@@ -1,0 +1,59 @@
+---
+import '../../styles/global.css';
+import { loadAllModels } from '../../lib/models';
+import { BUILD_HASH } from '../../lib/build-hash';
+
+const models = loadAllModels();
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="build-hash" content={BUILD_HASH} />
+    <title>Models — Auto-Model</title>
+    <script is:inline>
+      (function () {
+        function r() { try { var s = localStorage.getItem('ar-theme'); if (s === 'light' || s === 'dark') return s; } catch (e) {} try { if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark'; } catch (e) {} return 'light'; }
+        document.documentElement.dataset.theme = r();
+      })();
+    </script>
+  </head>
+  <body class="min-h-screen">
+    <header class="border-b border-[var(--color-line)]">
+      <div class="max-w-4xl mx-auto px-6 py-8">
+        <div class="text-sm text-[var(--color-ink-soft)] mb-2"><a href="/" class="hover:text-[var(--color-accent)]">← Auto-Research</a></div>
+        <h1 class="text-3xl font-serif font-semibold">Auto-Model</h1>
+        <p class="text-[var(--color-ink-soft)] mt-2 max-w-2xl">Technical supply-chain models: interactive flow, idiot indices, and per-company dossiers — every line item cited or labelled-estimate.</p>
+      </div>
+    </header>
+    <main class="max-w-4xl mx-auto px-6 py-8">
+      <h2 class="text-sm uppercase tracking-wider text-[var(--color-ink-soft)] mb-4">Models</h2>
+      {models.length === 0 ? (
+        <div class="text-[var(--color-ink-soft)]">No models yet.</div>
+      ) : (
+        <ul class="space-y-4">
+          {models.map((m) => (
+            <li class="border border-[var(--color-line)] rounded p-5 hover:border-[var(--color-accent)] transition-colors">
+              <a href={`/models/${m.slug}/`} class="block">
+                <div class="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+                  <h3 class="text-xl font-serif font-semibold">{m.meta.product}</h3>
+                  {m.meta.scaffold && <span class="text-[11px] text-[var(--color-warn)]">🧪 scaffold</span>}
+                </div>
+                <div class="flex gap-4 text-xs text-[var(--color-ink-soft)] flex-wrap">
+                  <span>{m.flow.nodes.length} flow nodes</span>
+                  <span>{m.companies.length} companies</span>
+                  <span>{m.idiotIndex.length} idiot-index rows</span>
+                  <span class="px-2 py-0.5 rounded bg-[var(--color-paper-dim)]">{m.meta.status}</span>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </main>
+    <footer class="max-w-4xl mx-auto px-6 py-6 mt-12 border-t border-[var(--color-line)] text-xs text-[var(--color-ink-soft)]">
+      <a href="https://github.com/AviParrack/auto-research-reports" class="hover:text-[var(--color-accent)]">github</a>
+    </footer>
+  </body>
+</html>
