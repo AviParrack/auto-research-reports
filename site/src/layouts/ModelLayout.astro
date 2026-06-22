@@ -98,7 +98,6 @@ const tabs = [
         const inkSoft = dark ? '#9c9789' : '#4a4a4a';
         host.innerHTML = '';
 
-        const width = host.clientWidth || 960;
         // Height scales with the busiest column, not total node count, so the
         // many leaf-input nodes don't crowd. Estimate the largest input layer.
         const depth0 = payload.nodes.filter((n) => !payload.links.some((l) => (l.target === n.id))).length;
@@ -106,23 +105,32 @@ const tabs = [
         const stages = Array.from(new Set(payload.nodes.map((n) => n.stage)));
         const colorFor = (n) => STAGE_COLORS[Math.max(0, stages.indexOf(n.stage)) % STAGE_COLORS.length];
 
-        const svg = d3.select(host).append('svg')
-          .attr('viewBox', `0 0 ${width} ${height}`)
-          .attr('width', '100%')
-          .attr('height', height)
-          .style('font-family', 'Inter, system-ui, sans-serif');
-
-        const sk = sankey()
-          .nodeId((d) => d.id)
-          .nodeWidth(16)
-          .nodePadding(22)
-          .nodeSort(null)
-          .extent([[8, 14], [width - 8, height - 14]]);
-
-        const graph = sk({
+        const mkSankey = (w) => sankey()
+          .nodeId((d) => d.id).nodeWidth(16).nodePadding(22).nodeSort(null)
+          .extent([[8, 14], [w - 8, height - 14]]);
+        const mkGraph = (sk) => sk({
           nodes: payload.nodes.map((d) => Object.assign({}, d)),
           links: payload.links.map((d) => Object.assign({}, d)),
         });
+
+        // Lay the diagram out in a region that leaves a right-hand margin for the
+        // labels (which ALL extend rightward — see below), then widen so every
+        // column gets ~175px. The container scrolls horizontally if needed.
+        const LABEL_PAD = 185;
+        let layoutW = Math.max(420, (host.clientWidth || 960) - LABEL_PAD);
+        let graph = mkGraph(mkSankey(layoutW));
+        const ncols = new Set(graph.nodes.map((n) => Math.round(n.x0))).size;
+        const wantW = Math.max(layoutW, ncols * 175 + 40);
+        if (wantW > layoutW + 20) { layoutW = wantW; graph = mkGraph(mkSankey(layoutW)); }
+        const width = layoutW + LABEL_PAD;
+
+        host.style.overflowX = 'auto';
+        const svg = d3.select(host).append('svg')
+          .attr('viewBox', `0 0 ${width} ${height}`)
+          .attr('width', width)
+          .attr('height', height)
+          .style('max-width', 'none')
+          .style('font-family', 'Inter, system-ui, sans-serif');
 
         const fmtUsd = (v) => v == null ? '—' : '$' + d3.format(',')(Math.round(v));
         const fmtRev = (v) => {
@@ -136,6 +144,8 @@ const tabs = [
           if (d.external) window.open(d.href, '_blank', 'noopener');
           else window.location.href = d.href;
         };
+        const trunc = (s, n) => (s && s.length > n) ? s.slice(0, n - 1).trim() + '…' : (s || '');
+        const haloFill = dark ? '#25221e' : '#fafaf7';
         // Node outline thickness encodes company revenue (the company's value in
         // this chain), on a log scale, so bigger players read at a glance.
         const revVals = graph.nodes.map((n) => n.revenue).filter((v) => v && v > 0);
@@ -160,6 +170,29 @@ const tabs = [
               `(${cite})${d.note ? '\n' + d.note : ''}`;
           });
 
+        // De-occlude labels: within each column, spread label centres so the
+        // two-line text blocks never overlap. Two-pass (push down, then clamp up).
+        const LH = 30; // min centre-to-centre spacing for a 2-line label
+        const topB = 10, botB = height - 10;
+        const cols = {};
+        graph.nodes.forEach((n) => {
+          n.cy = (n.y0 + n.y1) / 2;
+          const k = Math.round(n.x0);
+          (cols[k] = cols[k] || []).push(n);
+        });
+        Object.values(cols).forEach((g) => {
+          g.sort((a, b) => a.cy - b.cy);
+          g.forEach((n) => { n.labelY = n.cy; });
+          for (let i = 0; i < g.length; i++) {
+            const minY = i === 0 ? topB : g[i - 1].labelY + LH;
+            if (g[i].labelY < minY) g[i].labelY = minY;
+          }
+          for (let i = g.length - 1; i >= 0; i--) {
+            const maxY = i === g.length - 1 ? botB : g[i + 1].labelY - LH;
+            if (g[i].labelY > maxY) g[i].labelY = maxY;
+          }
+        });
+
         // Nodes
         const node = svg.append('g').selectAll('g').data(graph.nodes).join('g');
         node.append('rect')
@@ -178,24 +211,44 @@ const tabs = [
             return (d.entityName ? `${d.label} — ${d.entityName}` : d.label) + rev + open;
           });
 
+        // Optional faint leader line when a label was nudged off its node centre.
+        node.append('line')
+          .attr('x1', (d) => d.x1 + 2)
+          .attr('x2', (d) => d.x1 + 6)
+          .attr('y1', (d) => d.cy)
+          .attr('y2', (d) => d.labelY)
+          .attr('stroke', inkSoft)
+          .attr('stroke-width', 0.5)
+          .attr('opacity', (d) => Math.abs(d.labelY - d.cy) > 6 ? 0.4 : 0);
+
+        // ALL labels extend rightward from their node. Same direction everywhere
+        // means adjacent columns never point into the same gap (no inward
+        // collision); the reserved LABEL_PAD gives the last column room.
         const label = node.append('text')
-          .attr('x', (d) => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
-          .attr('y', (d) => (d.y1 + d.y0) / 2)
-          .attr('dy', '0.35em')
-          .attr('text-anchor', (d) => d.x0 < width / 2 ? 'start' : 'end')
+          .attr('x', (d) => d.x1 + 7)
+          .attr('y', (d) => d.labelY)
+          .attr('dy', '-0.1em')
+          .attr('text-anchor', 'start')
           .attr('fill', ink)
           .style('font-size', '12px')
           .style('font-weight', '600')
           .style('cursor', (d) => d.href ? 'pointer' : 'default')
+          // halo: paint a background-coloured stroke behind the glyphs so the
+          // text stays legible wherever it crosses a ribbon or another element.
+          .style('paint-order', 'stroke')
+          .style('stroke', haloFill)
+          .style('stroke-width', '3.5px')
+          .style('stroke-linejoin', 'round')
           .on('click', (_e, d) => nav(d))
-          .text((d) => d.label);
+          .text((d) => trunc(d.label, 22));
         label.append('tspan')
-          .attr('x', (d) => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
-          .attr('dy', '1.2em')
+          .attr('x', (d) => d.x1 + 7)
+          .attr('dy', '1.25em')
           .attr('fill', inkSoft)
           .style('font-size', '10px')
           .style('font-weight', '400')
-          .text((d) => d.entityName ? d.entityName + (d.revenue ? ` · ${fmtRev(d.revenue)}` : '') : '');
+          .style('stroke-width', '3.5px')
+          .text((d) => d.entityName ? trunc(d.entityName + (d.revenue ? ` · ${fmtRev(d.revenue)}` : ''), 26) : '');
       };
 
       // Market growth chart (line + projection) rendered below the Sankey.
